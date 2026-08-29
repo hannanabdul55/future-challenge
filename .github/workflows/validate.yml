@@ -1,0 +1,20 @@
+name: validate
+on:
+  pull_request:
+    paths: ["model-output/**", "model-metadata/**", "fc/**", "tests/**", "task-families/**", "hub-config/**"]
+  push:
+    branches: [main]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --extra dev
+      - run: uv run pytest -q
+      - name: validate model outputs
+        run: |
+          set -e
+          for f in $(git ls-files 'model-output/*/*.parquet' 'model-output/*/*.csv'); do
+            echo "== $f"; uv run fc validate "$f" --tasks hub-config/tasks.json
+          done

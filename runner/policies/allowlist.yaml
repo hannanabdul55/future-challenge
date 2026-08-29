@@ -1,0 +1,13 @@
+name: allowlist
+egress: allowlist
+description: Named data APIs only, through the logging proxy. Every request/response hash is published.
+allow:
+  - host: api.stlouisfed.org      # FRED
+  - host: api.bls.gov
+  - host: www.ncei.noaa.gov
+  - host: api.weather.gov
+  - host: wikimedia.org
+    path_prefix: /api/rest_v1/metrics/pageviews
+  - host: www.cisa.gov
+    path_prefix: /sites/default/files/feeds/known_exploited_vulnerabilities
+deny_everything_else: true

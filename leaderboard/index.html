@@ -1,0 +1,14 @@
+<!doctype html><meta charset=utf-8><title>Future Challenge leaderboard</title>
+<style>
+body{font-family:system-ui,sans-serif;margin:2rem auto;max-width:900px;color:#171a21;background:#f5f6f8}
+table{border-collapse:collapse;width:100%;font-size:.9rem}th,td{padding:.45rem .6rem;border-bottom:1px solid #d9dce3;text-align:left}
+th{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:#7a8194}
+td.num{font-variant-numeric:tabular-nums;text-align:right}.baseline{color:#7a8194}
+</style>
+<h1>Future Challenge — leaderboard</h1>
+<p>Relative skill = pairwise geometric-mean WIS ratio ÷ baseline (lower is better; &lt; 1 beats baseline).
+Intervals are 95 % bootstrap over questions. Contribution = Δ ensemble score when the model is removed (positive adds information).</p>
+<table><tr><th>#</th><th>Model</th><th>Rel. skill</th><th>95 % CI</th><th>Coverage</th><th>Contribution</th><th>N</th></tr>
+<tr><td class=num>1</td><td>example-trend</td><td class=num>0.529</td><td class=num>0.415 – 0.646</td><td class=num>100%</td><td class=num>+17.375</td><td class=num>12</td></tr><tr><td class=num>2</td><td>example-copycat</td><td class=num>0.977</td><td class=num>0.974 – 0.981</td><td class=num>100%</td><td class=num>-756.040</td><td class=num>12</td></tr><tr class="baseline"><td class=num>3</td><td>fc-baseline</td><td class=num>1.000</td><td class=num>1.000 – 1.000</td><td class=num>100%</td><td class=num>-788.305</td><td class=num>12</td></tr>
+</table>
+<p>12 resolved questions.</p>

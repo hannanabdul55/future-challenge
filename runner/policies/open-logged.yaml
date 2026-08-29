@@ -1,0 +1,5 @@
+name: open-logged
+egress: open-logged
+description: Any host; every request and response is hashed and published with the results. Prediction-market lookups become visible rather than forbidden.
+log_bodies: true
+publish: true

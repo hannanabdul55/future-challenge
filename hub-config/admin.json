@@ -1,0 +1,24 @@
+{
+  "schema_version": "https://raw.githubusercontent.com/hubverse-org/schemas/main/v4.0.0/admin-schema.json",
+  "name": "Future Challenge",
+  "maintainer": "Future Challenge steering group",
+  "contact": {"name": "TBD", "email": "TBD"},
+  "repository": {"host": "github", "owner": "TBD", "name": "future-challenge"},
+  "file_format": ["parquet", "csv"],
+  "timezone": "UTC",
+  "model_output_dir": "model-output",
+  "target_data_dir": "target-data",
+  "future_challenge": {
+    "rules_version": "2026.08",
+    "commit_window_close": "Wed 23:59 UTC",
+    "reveal_window_close": "Thu 12:00 UTC",
+    "revision_window_days": 28,
+    "min_shared_questions_for_pairwise": 20,
+    "min_questions_for_headline_board": 50,
+    "min_rounds_for_headline_board": 3,
+    "max_entries_per_team_per_round": 5,
+    "tiers": ["S", "A", "B", "H"],
+    "anchoring": ["opentimestamps", "sigstore-rekor"],
+    "merkle_root_interval_minutes": 10
+  }
+}

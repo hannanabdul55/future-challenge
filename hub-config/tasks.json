@@ -1,0 +1,30 @@
+{
+  "schema_note": "Reduced hubverse-style tasks config. Full hubverse tasks.json (task_id_vars / output_type blocks) can be generated from this by a converter once the hub is on hubverse tooling.",
+  "quantile_levels_default": [0.01, 0.025, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 0.975, 0.99],
+  "rounds": [
+    {
+      "round_id": "2026-w37",
+      "T_open": "2026-09-07T00:00:00Z",
+      "T_commit": "2026-09-09T23:59:00Z",
+      "T_reveal": "2026-09-10T12:00:00Z",
+      "rules_version": "2026.08",
+      "quantile_levels": [0.01, 0.025, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 0.975, 0.99],
+      "questions": [
+        {"question_id": "2026-w37-hosp-US-h0", "family": "epi-synthetic", "output_type": "quantile", "core": true, "horizon": 0},
+        {"question_id": "2026-w37-hosp-US-h1", "family": "epi-synthetic", "output_type": "quantile", "core": true, "horizon": 1},
+        {"question_id": "2026-w37-hosp-US-h2", "family": "epi-synthetic", "output_type": "quantile", "core": true, "horizon": 2},
+        {"question_id": "2026-w37-hosp-US-h3", "family": "epi-synthetic", "output_type": "quantile", "core": true, "horizon": 3},
+        {"question_id": "2026-w37-hosp-CA-h0", "family": "epi-synthetic", "output_type": "quantile", "core": true, "horizon": 0},
+        {"question_id": "2026-w37-hosp-CA-h1", "family": "epi-synthetic", "output_type": "quantile", "core": true, "horizon": 1},
+        {"question_id": "2026-w37-hosp-CA-h2", "family": "epi-synthetic", "output_type": "quantile", "core": true, "horizon": 2},
+        {"question_id": "2026-w37-hosp-CA-h3", "family": "epi-synthetic", "output_type": "quantile", "core": true, "horizon": 3},
+        {"question_id": "2026-w37-hosp-TX-h0", "family": "epi-synthetic", "output_type": "quantile", "core": true, "horizon": 0},
+        {"question_id": "2026-w37-hosp-TX-h1", "family": "epi-synthetic", "output_type": "quantile", "core": true, "horizon": 1},
+        {"question_id": "2026-w37-hosp-TX-h2", "family": "epi-synthetic", "output_type": "quantile", "core": true, "horizon": 2},
+        {"question_id": "2026-w37-hosp-TX-h3", "family": "epi-synthetic", "output_type": "quantile", "core": true, "horizon": 3},
+        {"question_id": "2026-w37-vuln-kev-additions", "family": "vulnerability", "output_type": "quantile", "core": true, "horizon": 2},
+        {"question_id": "2026-w37-geo-example-binary", "family": "geopolitics", "output_type": "binary", "core": false}
+      ]
+    }
+  ]
+}

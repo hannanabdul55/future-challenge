@@ -1,0 +1,3 @@
+name: closed
+egress: closed
+description: No network. Pure capability on generated tasks.

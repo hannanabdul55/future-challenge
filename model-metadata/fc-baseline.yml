@@ -1,0 +1,19 @@
+team_abbr: fc
+model_abbr: baseline
+model_id: fc-baseline
+model_name: Persistence baseline
+team_name: Future Challenge hub
+contributors:
+  - name: hub maintainers
+license: CC-BY-4.0
+designated_model: true
+primary: true
+tier: H
+methods: >
+  Median = last observed value; quantiles from the empirical distribution of historical
+  h-step changes. Reference model; always on the board (DESIGN.md §13).
+data_inputs: target-data/vintages/synthetic-hosp
+model_identity:
+  type: code
+  repo_path: fc/baselines.py
+public_key_pem: null

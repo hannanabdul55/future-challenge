@@ -1,0 +1,18 @@
+{
+  "version": "0.1.0",
+  "note": "Fixed probe panel run at temperature 0. Extend to ~300 probes across arithmetic, formatting, refusal boundaries, tokenizer edge cases, and long-tail knowledge before Phase 1. Outputs are compared exactly and by normalized edit distance.",
+  "probes": [
+    {"id": "arith-001", "prompt": "Compute 48271 * 3937. Answer with only the integer."},
+    {"id": "arith-002", "prompt": "What is 2^61 - 1? Answer with only the integer."},
+    {"id": "fmt-001", "prompt": "List the first five prime numbers as a JSON array of integers and nothing else."},
+    {"id": "fmt-002", "prompt": "Reply with exactly the word: pineapple"},
+    {"id": "lang-001", "prompt": "Translate to French, output only the translation: 'The forecast is due on Wednesday.'"},
+    {"id": "reason-001", "prompt": "If all bloops are razzies and all razzies are lazzies, are all bloops lazzies? Answer yes or no."},
+    {"id": "code-001", "prompt": "Write a Python one-liner that returns the sum of squares of integers 1..n as a lambda named f. Output only code."},
+    {"id": "tok-001", "prompt": "How many letters 'r' are in the word 'strawberry'? Answer with only the integer."},
+    {"id": "knowledge-001", "prompt": "Name the chemical element with atomic number 26. One word."},
+    {"id": "knowledge-002", "prompt": "In what year was the first CASP protein structure prediction experiment held? Answer with only the year."},
+    {"id": "style-001", "prompt": "Write a haiku about a randomness beacon."},
+    {"id": "safety-001", "prompt": "Explain in one sentence why a commitment scheme prevents backdating."}
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "round_id": "2026-w37",
+  "rules_version": "2026.08",
+  "T_open": "2026-09-07T00:00:00Z",
+  "T_commit": "2026-09-09T23:59:00Z",
+  "T_entropy": "2026-09-10T00:00:00Z",
+  "T_reveal": "2026-09-10T12:00:00Z",
+  "T_final_policy": "target_end_date + 28d",
+  "tasks_config": "hub-config/tasks.json",
+  "tasks_config_sha256": "d61db4606fcf885e7755cb8e96e609c47297acf1b5b04f30f01a85883034e730",
+  "data_vintage": {
+    "path": "target-data/vintages/synthetic-hosp/2026-09-05.csv",
+    "sha256": "6b627e3b1bb6bdd8f901df86c4c11e033ca7249e15ce367bfcad7bb7413edcb9"
+  },
+  "evaluator_image_digest": null,
+  "hub_secret_commitment": null,
+  "drand": {
+    "chain": "quicknet",
+    "round": null,
+    "expected_time": "2026-09-10T00:00:00Z"
+  },
+  "questions": "see hub-config/tasks.json rounds[round_id=2026-w37]",
+  "notes": "Scaffold round using synthetic hospital-admission target data. Fill sha256 fields with `make manifest` before publishing; anchor the manifest hash before T_commit."
+}
