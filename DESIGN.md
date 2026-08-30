@@ -670,19 +670,37 @@ None of these weaken the core guarantee: **for every scored item, the informatio
 
 ## Appendix A — Commitment record
 
+Hash and signature values are **bare lowercase hex**, with no `sha256:` /
+`ed25519:` prefix. Earlier drafts of this appendix showed prefixed values; that
+was typographic shorthand naming the algorithm in prose, never a wire format.
+The published bytes are what `fc/commit.py` emits and compares directly —
+`merkle_verify` calls `secrets.compare_digest(h.hex(), root_hex)` and
+`verify_sig` calls `bytes.fromhex(sig_hex)` — so no encoding layer sits between
+the artifacts and the cryptography, and there is nowhere for a prefix-stripping
+bug to silently weaken a comparison. The algorithm is fixed by `schema_version`.
+
+This shape is frozen: these exact bytes are what an OpenTimestamps proof and a
+Rekor entry attest to, so changing a field name or a value encoding after a root
+has been anchored invalidates every proof already published, with no recoverable
+migration. `schema_version` exists so a later reader detects such a change rather
+than silently misparsing it.
+
 ```json
 {
+  "schema_version": "2026.08",
   "round_id": "2026-w37",
   "model_id": "acme-llmcaster-v3",
-  "commit": "sha256:9f2c…",
-  "nonce_hash": "sha256:41ab…",
-  "team_signature": "ed25519:…",
+  "commit": "9f2c…",
+  "nonce_hash": "41ab…",
+  "team_signature": "…",
   "hub_receipt": {
     "server_time": "2026-09-09T21:14:03.118Z",
-    "merkle_root": "sha256:e1d0…",
+    "merkle_position": 0,
+    "merkle_root": "e1d0…",
     "merkle_path": ["…"],
-    "hub_signature": "ed25519:…",
-    "ots_proof": "base64:…",
+    "window_index": 0,
+    "hub_signature": "…",
+    "ots_proof": "rounds/2026-w37/roots/0.json.ots",
     "rekor_log_index": 184223991
   },
   "reveal": { "received": "2026-09-10T08:02:44Z", "verified": true }

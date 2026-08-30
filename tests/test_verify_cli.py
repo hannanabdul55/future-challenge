@@ -145,3 +145,23 @@ def test_verify_rejects_anchor_after_t_commit(fixture_round):
             ]
         )
     assert exc.value.code != 0
+
+
+def test_rekor_is_reported_but_not_load_bearing(fixture_round):
+    """Rekor must be surfaced, labelled operator-asserted, and never gate the verdict."""
+    from fc import verify_cli as V
+
+    sidecar = _submit_one(fixture_round)
+    roots = fixture_round.round_dir / "roots"
+    rep = V.verify(
+        sidecar, roots_dir=roots, headers_path=roots / "bitcoin-headers.json"
+    )
+
+    rekor = [c for c in rep.checks if c.name == "rekor entry"]
+    assert len(rekor) == 1
+    assert rekor[0].trust == "operator-asserted"
+    # It is read from the anchor record the anchoring job writes, not left unseen.
+    assert "184223991" in rekor[0].detail
+    # The verdict rests on the trustless checks alone.
+    assert rep.ok is True
+    assert all(c.trust == "trustless" for c in rep.checks if c.required)

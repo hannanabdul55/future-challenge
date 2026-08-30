@@ -24,6 +24,10 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import (
 
 DOMAIN_SEP = b"future-challenge/commit/v1"
 
+# Stamped on every published document so a later reader detects, rather than
+# silently misparses, a format change. Bump only with a migration note.
+SCHEMA_VERSION = "2026.08"
+
 
 # --------------------------------------------------------------------------- hashing
 
@@ -45,6 +49,16 @@ def file_bytes(path: str | Path) -> bytes:
 
 def new_nonce() -> bytes:
     return secrets.token_bytes(32)
+
+
+def nonce_hash(nonce: bytes) -> str:
+    """Hex digest binding a nonce without revealing it (published at commit time)."""
+    return sha256(DOMAIN_SEP, b"nonce", nonce).hex()
+
+
+def iso_z(now: datetime) -> str:
+    """The single timestamp formatter: RFC 3339 UTC with millisecond precision."""
+    return now.isoformat(timespec="milliseconds").replace("+00:00", "Z")
 
 
 def commitment(submission: bytes, rationale: bytes, nonce: bytes) -> str:
@@ -188,8 +202,7 @@ def issue_receipt(hub_sk: Ed25519PrivateKey, req: CommitRequest, team_pk: Ed2551
     if not verify_sig(team_pk, req.payload(), req.team_signature):
         raise ValueError("bad team signature")
     now = now or datetime.now(UTC)
-    r = Receipt(req.round_id, req.model_id, req.commit,
-                now.isoformat(timespec="milliseconds").replace("+00:00", "Z"), position, "")
+    r = Receipt(req.round_id, req.model_id, req.commit, iso_z(now), position, "")
     r.hub_signature = sign(hub_sk, r.payload())
     return r
 
@@ -199,20 +212,33 @@ def verify_receipt(hub_pk: Ed25519PublicKey, r: Receipt) -> bool:
 
 
 def write_sidecar(path: str | Path, receipt: Receipt, proof: list[tuple[str, str]] | None,
-                  root: str | None, extra: dict | None = None) -> None:
+                  root: str | None, extra: dict | None = None, *,
+                  team_signature: str = "", nonce_hash: str = "",
+                  window_index: int | None = None) -> None:
+    """Write the participant's commitment record (DESIGN.md Appendix A).
+
+    Hash and signature values are bare lowercase hex throughout — the same bytes
+    `commitment()` and `sign()` already produce, so no prefix is parsed or stripped
+    anywhere. `reveal` stays null until the reveal window closes.
+    """
     rec = {
+        "schema_version": SCHEMA_VERSION,
         "round_id": receipt.round_id,
         "model_id": receipt.model_id,
         "commit": receipt.commit,
+        "nonce_hash": nonce_hash,
+        "team_signature": team_signature,
         "hub_receipt": {
             "server_time": receipt.server_time,
             "merkle_position": receipt.merkle_position,
             "merkle_root": root,
             "merkle_path": proof,
+            "window_index": window_index,
             "hub_signature": receipt.hub_signature,
             "ots_proof": None,
             "rekor_log_index": None,
         },
+        "reveal": None,
     }
     if extra:
         rec.update(extra)

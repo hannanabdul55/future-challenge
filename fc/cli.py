@@ -8,6 +8,7 @@ fc entropy --round R --drand-round N [--secret HEX --hs HEX] --families f1=100,f
 fc validate FILE --tasks hub-config/tasks.json [--round R]
 fc score   --pred FILE... --truth FILE --baseline fc-baseline --out DIR
 fc leaderboard --scores DIR/scores.csv --out leaderboard/index.html
+fc verify   --sidecar FILE [--roots DIR --manifest FILE --hub-key FILE --bitcoin-headers FILE --allow-pending --json]
 """
 
 from __future__ import annotations
@@ -120,6 +121,15 @@ def _leaderboard(a):
     print(f"wrote {a.out}")
 
 
+def _verify(a):
+    from . import verify_cli
+    rep = verify_cli.verify(a.sidecar, roots_dir=a.roots, manifest_path=a.manifest,
+                            hub_key_path=a.hub_key, headers_path=a.bitcoin_headers,
+                            allow_pending=a.allow_pending, fetch=a.fetch)
+    print(json.dumps(rep.to_dict(), indent=2) if a.json else str(rep))
+    sys.exit(0 if rep.ok else 1)
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(prog="fc")
     sp = p.add_subparsers(dest="cmd", required=True)
@@ -153,6 +163,13 @@ def main(argv=None):
 
     s = sp.add_parser("leaderboard"); s.add_argument("--scores", required=True)
     s.add_argument("--out", default="leaderboard/index.html"); s.set_defaults(fn=_leaderboard)
+
+    s = sp.add_parser("verify"); s.add_argument("--sidecar", required=True)
+    s.add_argument("--roots"); s.add_argument("--manifest"); s.add_argument("--hub-key")
+    s.add_argument("--bitcoin-headers")
+    s.add_argument("--allow-pending", action="store_true")
+    s.add_argument("--fetch", action="store_true")
+    s.add_argument("--json", action="store_true"); s.set_defaults(fn=_verify)
 
     a = p.parse_args(argv)
     a.fn(a)
