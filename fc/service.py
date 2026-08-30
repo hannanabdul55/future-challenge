@@ -16,10 +16,13 @@ Two rules shape everything here:
 from __future__ import annotations
 
 import json
+import re
 import secrets
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
+
+import yaml
 
 from . import anchor as A
 from . import commit as C
@@ -32,6 +35,13 @@ ACCEPTED = "accepted"
 REJECTED = "rejected"
 BAD_SIGNATURE = "bad_signature"
 AFTER_T_COMMIT = "after_T_commit"
+
+# Transport-level input limits, applied before any cryptographic work so a
+# hostile artifact cannot make the hub do expensive things.
+MAX_SIDECAR_BYTES = 64 * 1024
+COMMIT_RE = re.compile(r"^[0-9a-f]{64}$")
+IDENT_RE = re.compile(r"^[A-Za-z0-9._-]+$")
+REQUIRED_REQUEST_KEYS = ("round_id", "model_id", "commit", "team_signature")
 
 
 @dataclass
@@ -239,3 +249,86 @@ def root_for(round_dir: str | Path, root_hex: str) -> dict | None:
         if secrets.compare_digest(doc["root"], root_hex):
             return doc
     return None
+
+
+# --------------------------------------------------------------- front ends
+#
+# COMMIT-06 says the PR path and the API path must produce the same receipt.
+# That holds here by construction rather than by discipline: both adapters are
+# transport parsers that delegate to `submit_commitment`. Neither contains a
+# deadline check, a signature check, a ledger write or a root publication, so
+# there is nothing that can drift between them.
+
+
+def load_team_key(model_id: str, metadata_dir: str | Path):
+    """Resolve a team's Ed25519 public key from its registered entry metadata.
+
+    The key comes from `model-metadata/<model_id>.yml` and nowhere else — never
+    from the submitted request — so a request cannot nominate the key that will
+    be used to validate it.
+    """
+    path = Path(metadata_dir) / f"{model_id}.yml"
+    if not path.exists():
+        raise ValueError(f"no registered entry metadata for model_id {model_id!r}")
+    meta = yaml.safe_load(path.read_text()) or {}
+    pem = meta.get("public_key_pem")
+    if not pem:
+        raise ValueError(f"entry {model_id!r} has no public_key_pem registered")
+    return C.load_public(pem.encode() if isinstance(pem, str) else pem)
+
+
+def _validated_request(payload: dict) -> C.CommitRequest:
+    """Shared input gate for both front ends. Raises ValueError naming the field."""
+    missing = [k for k in REQUIRED_REQUEST_KEYS if k not in payload]
+    if missing:
+        raise ValueError(f"missing required field(s): {', '.join(missing)}")
+    for field_name in ("round_id", "model_id"):
+        value = payload[field_name]
+        if not isinstance(value, str) or not IDENT_RE.match(value):
+            raise ValueError(f"invalid {field_name}: {value!r}")
+    if not isinstance(payload["commit"], str) or not COMMIT_RE.match(payload["commit"]):
+        raise ValueError("invalid commit: expected 64 lowercase hex characters")
+    try:
+        bytes.fromhex(payload["team_signature"])
+    except (TypeError, ValueError) as exc:
+        raise ValueError("invalid team_signature: not hex") from exc
+    return C.CommitRequest(
+        payload["round_id"], payload["model_id"], payload["commit"], payload["team_signature"]
+    )
+
+
+def submit_from_mapping(payload: dict, hub_sk, round_dir: str | Path, *,
+                        metadata_dir: str | Path, now: datetime | None = None,
+                        anchor: A.Anchor | None = None) -> tuple[C.Receipt | None, str]:
+    """API-shaped front end: parse a mapping, then delegate."""
+    req = _validated_request(payload)
+    team_pk = load_team_key(req.model_id, metadata_dir)
+    return submit_commitment(req, team_pk, hub_sk, round_dir, now=now, anchor=anchor)
+
+
+def submit_from_sidecar_file(path: str | Path, hub_sk, round_dir: str | Path, *,
+                             metadata_dir: str | Path, now: datetime | None = None,
+                             anchor: A.Anchor | None = None) -> tuple[C.Receipt | None, str]:
+    """PR-path front end: read the participant's sidecar file, then delegate."""
+    path = Path(path)
+    if not path.exists():
+        raise ValueError(f"sidecar not found: {path}")
+    size = path.stat().st_size
+    if size > MAX_SIDECAR_BYTES:
+        raise ValueError(f"sidecar exceeds {MAX_SIDECAR_BYTES} bytes: {size}")
+    payload = json.loads(path.read_text())
+    receipt, outcome = submit_from_mapping(
+        payload, hub_sk, round_dir, metadata_dir=metadata_dir, now=now, anchor=anchor
+    )
+    if receipt is not None:
+        # Write the hub receipt back into the participant's sidecar, preserving
+        # the fields they supplied. The newest root is the one that covers them.
+        accepted = [e["commit"] for e in read_ledger(round_dir) if e["outcome"] == ACCEPTED]
+        doc = read_roots(round_dir)[-1]
+        C.write_sidecar(
+            path, receipt, C.merkle_proof(accepted, receipt.merkle_position), doc["root"],
+            team_signature=payload["team_signature"],
+            nonce_hash=payload.get("nonce_hash", ""),
+            window_index=doc["window_index"],
+        )
+    return receipt, outcome

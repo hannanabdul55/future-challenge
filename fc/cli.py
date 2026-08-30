@@ -9,6 +9,7 @@ fc validate FILE --tasks hub-config/tasks.json [--round R]
 fc score   --pred FILE... --truth FILE --baseline fc-baseline --out DIR
 fc leaderboard --scores DIR/scores.csv --out leaderboard/index.html
 fc verify   --sidecar FILE [--roots DIR --manifest FILE --hub-key FILE --bitcoin-headers FILE --allow-pending --json]
+fc service submit --sidecar FILE --round-dir DIR --hub-key FILE [--metadata-dir DIR]
 """
 
 from __future__ import annotations
@@ -121,6 +122,17 @@ def _leaderboard(a):
     print(f"wrote {a.out}")
 
 
+def _service_submit(a):
+    from . import service
+    hub_sk = C.load_private(C.file_bytes(a.hub_key))
+    receipt, outcome = service.submit_from_sidecar_file(
+        a.sidecar, hub_sk, a.round_dir, metadata_dir=a.metadata_dir
+    )
+    # Print the outcome and the commitment only — never key material.
+    print(f"{outcome} {receipt.commit if receipt else ''}".strip())
+    sys.exit(0 if outcome == service.ACCEPTED else 1)
+
+
 def _verify(a):
     from . import verify_cli
     rep = verify_cli.verify(a.sidecar, roots_dir=a.roots, manifest_path=a.manifest,
@@ -163,6 +175,14 @@ def main(argv=None):
 
     s = sp.add_parser("leaderboard"); s.add_argument("--scores", required=True)
     s.add_argument("--out", default="leaderboard/index.html"); s.set_defaults(fn=_leaderboard)
+
+    s = sp.add_parser("service")
+    ss = s.add_subparsers(dest="service_cmd", required=True)
+    sub = ss.add_parser("submit")
+    for n in ("--sidecar", "--round-dir", "--hub-key"):
+        sub.add_argument(n, required=True)
+    sub.add_argument("--metadata-dir", default="model-metadata")
+    sub.set_defaults(fn=_service_submit)
 
     s = sp.add_parser("verify"); s.add_argument("--sidecar", required=True)
     s.add_argument("--roots"); s.add_argument("--manifest"); s.add_argument("--hub-key")

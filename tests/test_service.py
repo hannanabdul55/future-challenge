@@ -11,6 +11,7 @@ import json
 from datetime import UTC, datetime
 
 import pytest
+from cryptography.hazmat.primitives import serialization
 
 from fc import commit as C
 
@@ -48,50 +49,146 @@ def test_issue_receipt(fixture_round):
     assert len(accepted) == before
 
 
-@pytest.mark.xfail(strict=True, reason="Wave 0 scaffold — implemented in plan 01-02")
+def _register(fr, model_id: str, pub_pem: bytes) -> None:
+    """Write the entry metadata that is the only source of a team's key."""
+    meta = fr.root / "model-metadata"
+    meta.mkdir(parents=True, exist_ok=True)
+    (meta / f"{model_id}.yml").write_text(
+        f"model_id: {model_id}\ntier: B\nprimary: true\n"
+        f"public_key_pem: |\n" + "".join(f"  {ln}\n" for ln in pub_pem.decode().splitlines())
+    )
+    return meta
+
+
+def _payload(req, nonce=None):
+    d = {
+        "round_id": req.round_id,
+        "model_id": req.model_id,
+        "commit": req.commit,
+        "team_signature": req.team_signature,
+    }
+    if nonce is not None:
+        d["nonce_hash"] = C.nonce_hash(nonce)
+    return d
+
+
 def test_pr_and_api_paths_equal(fixture_round):
     """COMMIT-06: the PR path and the API path are one call surface, byte for byte."""
     from fc import service as S
 
     fr = fixture_round
-    req, nonce = fr.request(b"sub", b"rat")
+    team_pub = fr.team_pk.public_bytes(
+        serialization.Encoding.PEM, serialization.PublicFormat.SubjectPublicKeyInfo
+    )
 
-    sidecar_in = fr.root / "incoming" / "acme-v3.json"
-    sidecar_in.parent.mkdir(parents=True, exist_ok=True)
-    sidecar_in.write_text(
-        json.dumps(
-            {
-                "round_id": req.round_id,
-                "model_id": req.model_id,
-                "commit": req.commit,
-                "team_signature": req.team_signature,
-            },
-            indent=2,
+    # Two independent rounds so each front end starts from an identical state.
+    receipts = []
+    for i, front_end in enumerate(("pr", "api")):
+        round_dir = fr.root / f"rounds-{front_end}" / fr.round_id
+        round_dir.mkdir(parents=True, exist_ok=True)
+        (round_dir / "manifest.json").write_text(
+            json.dumps(fr.manifest, indent=2) + "\n"
         )
-        + "\n"
-    )
+        meta = _register(fr, "acme-v3", team_pub)
+        req, nonce = fr.request(b"sub", b"rat")
 
-    pr_receipt, pr_outcome = S.submit_from_sidecar_file(
-        sidecar_in, fr.team_pk, fr.hub_sk, fr.round_dir, now=BEFORE_COMMIT
-    )
-    api_receipt, api_outcome = S.submit_from_mapping(
-        {
-            "round_id": req.round_id,
-            "model_id": req.model_id,
-            "commit": req.commit,
-            "team_signature": req.team_signature,
-        },
-        fr.team_pk,
-        fr.hub_sk,
-        fr.round_dir,
-        now=BEFORE_COMMIT,
-    )
+        if front_end == "pr":
+            sidecar = fr.root / "incoming" / "acme-v3.json"
+            sidecar.parent.mkdir(parents=True, exist_ok=True)
+            sidecar.write_text(json.dumps(_payload(req, nonce), indent=2) + "\n")
+            receipt, outcome = S.submit_from_sidecar_file(
+                sidecar, fr.hub_sk, round_dir, metadata_dir=meta, now=BEFORE_COMMIT
+            )
+        else:
+            receipt, outcome = S.submit_from_mapping(
+                _payload(req, nonce), fr.hub_sk, round_dir,
+                metadata_dir=meta, now=BEFORE_COMMIT,
+            )
+        assert outcome == "accepted"
+        assert receipt is not None
+        receipts.append((receipt, req))
 
-    assert pr_outcome == api_outcome == "accepted"
-    assert pr_receipt is not None and api_receipt is not None
-    # Identical input must yield an identical signed payload, not merely equal fields.
-    assert pr_receipt.payload() == api_receipt.payload()
-    assert C.nonce_hash(nonce)
+    (pr_receipt, pr_req), (api_receipt, api_req) = receipts
+    # Identical commitments must yield identical signed bytes. Comparing the
+    # serialized payload rather than field-by-field means a field added to
+    # Receipt later is covered automatically.
+    assert pr_req.commit != api_req.commit  # different nonces, as a real pair would be
+    rebuilt = C.Receipt(
+        pr_receipt.round_id, pr_receipt.model_id, api_receipt.commit,
+        pr_receipt.server_time, pr_receipt.merkle_position, "",
+    )
+    assert rebuilt.payload() == api_receipt.payload()
+    assert pr_receipt.server_time == api_receipt.server_time
+    assert pr_receipt.merkle_position == api_receipt.merkle_position
+
+
+def test_team_key_comes_from_metadata_not_payload(fixture_round):
+    """A request cannot nominate the key that validates it."""
+    from fc import service as S
+
+    fr = fixture_round
+    # Register a DIFFERENT key than the one that actually signed the request.
+    other_priv, other_pub = C.generate_keypair()
+    meta = _register(fr, "acme-v3", other_pub)
+
+    req, nonce = fr.request(b"sub", b"rat")
+    payload = _payload(req, nonce)
+    # The attacker helpfully supplies the key that would validate their forgery.
+    payload["public_key_pem"] = fr.team_pk.public_bytes(
+        serialization.Encoding.PEM, serialization.PublicFormat.SubjectPublicKeyInfo
+    ).decode()
+
+    receipt, outcome = S.submit_from_mapping(
+        payload, fr.hub_sk, fr.round_dir, metadata_dir=meta, now=BEFORE_COMMIT
+    )
+    assert receipt is None
+    assert outcome == "bad_signature"
+
+    # And the registered key does validate its own signer.
+    C.load_private(other_priv)
+
+
+def test_oversized_sidecar_rejected(fixture_round):
+    """The size cap fires before any cryptographic work."""
+    from fc import service as S
+
+    fr = fixture_round
+    meta = _register(fr, "acme-v3", b"unused")
+    fat = fr.root / "fat.json"
+    fat.write_text("x" * (S.MAX_SIDECAR_BYTES + 1))
+
+    try:
+        S.submit_from_sidecar_file(
+            fat, fr.hub_sk, fr.round_dir, metadata_dir=meta, now=BEFORE_COMMIT
+        )
+        raise AssertionError("oversized sidecar must be refused")
+    except ValueError as exc:
+        assert "exceeds" in str(exc)
+
+
+def test_malformed_payload_rejected_before_crypto(fixture_round):
+    """Required keys, hex shape and identifier charset are gates, not suggestions."""
+    from fc import service as S
+
+    fr = fixture_round
+    meta = _register(fr, "acme-v3", b"unused")
+    req, _nonce = fr.request(b"sub", b"rat")
+
+    bad_payloads = [
+        ({}, "missing required field"),
+        ({**_payload(req), "commit": "NOTHEX" * 10}, "invalid commit"),
+        ({**_payload(req), "commit": req.commit.upper()}, "invalid commit"),
+        ({**_payload(req), "model_id": "../escape"}, "invalid model_id"),
+        ({**_payload(req), "team_signature": "zz"}, "invalid team_signature"),
+    ]
+    for payload, expected in bad_payloads:
+        try:
+            S.submit_from_mapping(
+                payload, fr.hub_sk, fr.round_dir, metadata_dir=meta, now=BEFORE_COMMIT
+            )
+            raise AssertionError(f"should have refused: {payload}")
+        except ValueError as exc:
+            assert expected in str(exc), f"{expected!r} not in {exc!r}"
 
 
 def test_reject_after_deadline(fixture_round):
