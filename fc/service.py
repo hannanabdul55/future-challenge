@@ -31,6 +31,7 @@ ROOT_DOMAIN_SEP = b"future-challenge/root/v1"
 ACCEPTED = "accepted"
 REJECTED = "rejected"
 BAD_SIGNATURE = "bad_signature"
+AFTER_T_COMMIT = "after_T_commit"
 
 
 @dataclass
@@ -172,24 +173,41 @@ def publish_root(round_dir: str | Path, commits: list[str], hub_sk, *,
 def submit_commitment(req: C.CommitRequest, team_pk, hub_sk, round_dir: str | Path, *,
                       now: datetime | None = None,
                       anchor: A.Anchor | None = None) -> tuple[C.Receipt | None, str]:
-    """Accept one commitment and return its hub-signed receipt.
+    """Accept or refuse one commitment, and publish the outcome either way.
 
-    Returns `(None, "bad_signature")` for a request that does not verify, and
-    writes no accepted ledger entry for it.
+    Returns `(Receipt, "accepted")`, `(None, "bad_signature")` or
+    `(None, "after_T_commit")`. Every one of those lands in the round's public
+    ledger — a refused commitment is published, never dropped, because success
+    criterion 2 is only observable if the refusal is visible.
+
+    The commit window closes *at* `T_commit`: a request whose recorded server
+    time equals the deadline is already late.
     """
     now = now or datetime.now(UTC)
     round_dir = Path(round_dir)
+    t_commit = deadline(load_manifest(round_dir), "T_commit")
+
+    receipt: C.Receipt | None = None
+    position: int | None = None
+    window_index: int | None = None
 
     if not C.verify_sig(team_pk, req.payload(), req.team_signature):
-        return None, BAD_SIGNATURE
+        # A forged request is a forged request whether or not it is also late;
+        # the more specific defect wins, so a forgery never enters the record
+        # as a merely late legitimate attempt.
+        outcome, reason, result = REJECTED, BAD_SIGNATURE, (None, BAD_SIGNATURE)
+    elif now >= t_commit:
+        outcome, reason, result = REJECTED, AFTER_T_COMMIT, (None, AFTER_T_COMMIT)
+    else:
+        accepted = [e["commit"] for e in read_ledger(round_dir) if e["outcome"] == ACCEPTED]
+        position = len(accepted)
+        receipt = C.issue_receipt(hub_sk, req, team_pk, position, now=now)
+        doc = publish_root(round_dir, [*accepted, req.commit], hub_sk, now=now, anchor=anchor)
+        window_index = doc.window_index
+        outcome, reason, result = ACCEPTED, None, (receipt, ACCEPTED)
 
-    accepted = [e["commit"] for e in read_ledger(round_dir) if e["outcome"] == ACCEPTED]
-    position = len(accepted)
-    receipt = C.issue_receipt(hub_sk, req, team_pk, position, now=now)
-
-    commits = [*accepted, req.commit]
-    doc = publish_root(round_dir, commits, hub_sk, now=now, anchor=anchor)
-
+    # One construction site for both outcomes, so accepted and rejected entries
+    # cannot drift apart in shape.
     append_ledger(
         round_dir,
         LedgerEntry(
@@ -199,13 +217,13 @@ def submit_commitment(req: C.CommitRequest, team_pk, hub_sk, round_dir: str | Pa
             commit=req.commit,
             team_signature=req.team_signature,
             received=C.iso_z(now),
-            outcome=ACCEPTED,
-            reason=None,
+            outcome=outcome,
+            reason=reason,
             merkle_position=position,
-            window_index=doc.window_index,
+            window_index=window_index,
         ),
     )
-    return receipt, ACCEPTED
+    return result
 
 
 def verify_root_signature(hub_pk, doc: dict) -> bool:

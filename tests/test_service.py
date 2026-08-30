@@ -94,7 +94,6 @@ def test_pr_and_api_paths_equal(fixture_round):
     assert C.nonce_hash(nonce)
 
 
-@pytest.mark.xfail(strict=True, reason="Wave 0 scaffold — implemented in plan 01-02")
 def test_reject_after_deadline(fixture_round):
     """ROUND-02: a late commitment is refused, and the refusal is public."""
     from fc import service as S
@@ -106,7 +105,7 @@ def test_reject_after_deadline(fixture_round):
         req, fr.team_pk, fr.hub_sk, fr.round_dir, now=AFTER_COMMIT
     )
     assert receipt is None
-    assert outcome == "rejected"
+    assert outcome == "after_T_commit"
 
     ledger = S.read_ledger(fr.round_dir)
     late = [e for e in ledger if e["commit"] == req.commit]
@@ -114,6 +113,65 @@ def test_reject_after_deadline(fixture_round):
     assert late[0]["outcome"] == "rejected"
     assert late[0]["reason"] == "after_T_commit"
     assert late[0]["received"] == C.iso_z(AFTER_COMMIT)
+
+
+def test_commit_window_closes_at_the_instant(fixture_round):
+    """The window closes *at* T_commit — the deadline instant is already late."""
+    from fc import service as S
+
+    fr = fixture_round
+    at_deadline = datetime.fromisoformat(fr.manifest["T_commit"])
+    req, _nonce = fr.request(b"exactly-on-time", b"")
+
+    receipt, outcome = S.submit_commitment(
+        req, fr.team_pk, fr.hub_sk, fr.round_dir, now=at_deadline
+    )
+    assert receipt is None
+    assert outcome == "after_T_commit"
+
+
+def test_rejected_commit_visible_in_ledger(fixture_round):
+    """A refused commitment is published, and advances no root."""
+    from fc import service as S
+
+    fr = fixture_round
+    roots_dir = fr.round_dir / "roots"
+
+    before = len(list(roots_dir.glob("*.json"))) if roots_dir.exists() else 0
+    req, _nonce = fr.request(b"late", b"")
+    S.submit_commitment(req, fr.team_pk, fr.hub_sk, fr.round_dir, now=AFTER_COMMIT)
+    after = len(list(roots_dir.glob("*.json"))) if roots_dir.exists() else 0
+
+    entry = S.read_ledger(fr.round_dir)[-1]
+    assert entry["outcome"] == "rejected"
+    assert entry["reason"] == "after_T_commit"
+    assert entry["received"] == C.iso_z(AFTER_COMMIT)
+    assert entry["merkle_position"] is None
+    assert entry["window_index"] is None
+    # The request is self-contained evidence of what was attempted.
+    assert entry["commit"] == req.commit
+    assert entry["team_signature"] == req.team_signature
+    # A rejected request never advances the root chain.
+    assert after == before
+
+
+def test_late_bad_signature_recorded_as_bad_signature(fixture_round):
+    """A forged late request is recorded as forged, not as a legitimate late attempt."""
+    from fc import service as S
+
+    fr = fixture_round
+    req, _nonce = fr.request(b"forged-and-late", b"")
+    wrong_pk = C.load_public(C.generate_keypair()[1])
+
+    receipt, outcome = S.submit_commitment(
+        req, wrong_pk, fr.hub_sk, fr.round_dir, now=AFTER_COMMIT
+    )
+    assert receipt is None
+    assert outcome == "bad_signature"
+
+    entry = S.read_ledger(fr.round_dir)[-1]
+    assert entry["outcome"] == "rejected"
+    assert entry["reason"] == "bad_signature"
 
 
 @pytest.mark.xfail(strict=True, reason="Wave 0 scaffold — implemented in plan 01-05")
