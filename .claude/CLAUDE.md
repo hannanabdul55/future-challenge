@@ -4,7 +4,7 @@
 
 **Future Challenge**
 
-An open, contamination-proof evaluation hub for AI models, built on the mechanism the CDC COVID-19 Forecast Hub proved: participants commit predictions (or frozen models) *before* the information that determines their score exists, and the truth is produced later by the world. It is for AI labs, academic forecasting teams, and independent modelers who want a benchmark that cannot be trained on, and for the community that wants to know which models actually reason about the world. Full rationale, threat model, and scoring design live in `DESIGN.md`.
+An open, contamination-proof evaluation hub for AI models, built on a mechanism proven in collaborative epidemiological forecasting: participants commit predictions (or frozen models) *before* the information that determines their score exists, and the truth is produced later by the world. It is for AI labs, academic forecasting teams, and independent modelers who want a benchmark that cannot be trained on, and for the community that wants to know which models actually reason about the world. Full rationale, threat model, and scoring design live in `DESIGN.md`.
 
 **Core Value:** For every scored item, the information that determines the score did not exist when the participant committed — and anyone can verify that from public artifacts alone.
 

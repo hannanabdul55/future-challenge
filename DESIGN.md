@@ -6,7 +6,7 @@
 
 ## 0. TL;DR
 
-Static benchmarks die by contamination: once a test set exists on the internet, every later model has plausibly trained on it. The COVID-19 / Flu Forecast Hubs solved this for one domain by construction: **participants commit predictions before the ground truth exists**, and the truth is produced later by the world, not by the organizers. Nothing that does not yet exist can leak.
+Static benchmarks die by contamination: once a test set exists on the internet, every later model has plausibly trained on it. Collaborative epidemiological forecasting solved this for one domain by construction: **participants commit predictions before the ground truth exists**, and the truth is produced later by the world, not by the organizers. Nothing that does not yet exist can leak.
 
 Future Challenge generalizes that mechanism to AI models across many capabilities. One invariant runs through every part of the design:
 
@@ -35,9 +35,9 @@ Everything else — commit/reveal with external timestamp anchoring, strictly pr
 4. **Goodhart.** Once a benchmark becomes a target, the ecosystem optimizes the number rather than the capability; static sets cannot refresh.
 5. **Self-reporting.** Most published scores are produced by the party being scored, with unpublished scaffolds, sampling settings, and retry counts.
 
-### 1.2 What the forecast hubs got right
+### 1.2 What contamination-free evaluation looks like in practice
 
-The CDC COVID-19 Forecast Hub (and its siblings under the hubverse) has been doing contamination-free evaluation since 2020:
+Collaborative epidemiological forecasting has run contamination-free evaluation continuously since 2020. The properties that make it work:
 
 - Deadline Wednesday 23:00 ET; reference date the following Saturday; horizons −1..3 weeks.
 - Submissions are PRs into a public repo; CI validates the schema; the merge commit is a public timestamp.
@@ -46,13 +46,13 @@ The CDC COVID-19 Forecast Hub (and its siblings under the hubverse) has been doi
 - A baseline model and an ensemble are always present, so "beat the trivial thing" and "add value to the crowd" are both measurable.
 - Missing submissions are not silently ignored; relative scoring is pairwise on shared targets and coverage is reported.
 
-Everything in that list transfers. What does *not* transfer directly is the scope: the hubs measure one skill (epidemiological forecasting). Future Challenge keeps the mechanism and widens the aperture.
+Everything in that list transfers. What does *not* transfer directly is the scope: that programme measures one skill (epidemiological forecasting). Future Challenge keeps the mechanism and widens the aperture.
 
 ### 1.3 Prior art and the gap
 
 | System | Freshness mechanism | Gap this design closes |
 |---|---|---|
-| CDC / hubverse forecast hubs | Truth postdates deadline | Single domain; git timestamps only; no model-identity verification |
+| Collaborative epidemiological forecasting | Truth postdates deadline | Single domain; git timestamps only; no model-identity verification |
 | CASP (protein structure) | Experimental structures released after prediction deadline | Biennial, single domain — but it is the proof that the pattern works for hard science |
 | Metaculus AI Benchmark, ForecastBench (FRI), FutureBench, Prophet Arena | Future questions, LLM forecasters | Forecasting only; largely self-run; no fresh-task or sealed tiers; limited cryptographic commitment |
 | M6, Numerai | Live financial rounds | Finance only; Numerai obfuscates features rather than using future entropy |
@@ -60,7 +60,7 @@ Everything in that list transfers. What does *not* transfer directly is the scop
 | Kaggle code competitions | Hidden test set, organizer runs code | Test set exists before submission; trust in organizer |
 | Dynabench | Adversarial human-in-the-loop data collection | Items exist before evaluation |
 
-The gap: no system combines (a) truth-postdates-commitment across *many* capabilities, (b) cryptographic, externally anchored commitments on both predictions and model identity, (c) verifiable randomness for task instantiation, (d) hub-executed sealed evaluation, and (e) the forecast hubs' statistical hygiene (proper scores, coverage, pairwise relative skill, ensemble contribution).
+The gap: no system combines (a) truth-postdates-commitment across *many* capabilities, (b) cryptographic, externally anchored commitments on both predictions and model identity, (c) verifiable randomness for task instantiation, (d) hub-executed sealed evaluation, and (e) the statistical hygiene of collaborative forecasting (proper scores, coverage, pairwise relative skill, ensemble contribution).
 
 ---
 
@@ -95,7 +95,7 @@ T_resolve   ground truth observed / verifier run
 T_final     revision window closed; scores frozen
 ```
 
-### 3.1 Forecast round (weekly cadence, mirrors the hubs)
+### 3.1 Forecast round (weekly cadence)
 
 | Step | When | What |
 |---|---|---|
@@ -420,7 +420,7 @@ Tier is a property of the *entry*, and the headline leaderboards are per tier. M
 
 No thresholded or improper metric (e.g., "within 10 %", accuracy on a median) is ever a primary metric. Proper rules make hedging, over-confidence, and hedging-against-the-metric all strictly worse than honesty. Log score is clipped at `p = 0.001` to bound one catastrophic miss.
 
-### 8.2 Relative skill (from the hubs)
+### 8.2 Relative skill
 
 Raw scores are not comparable across question sets with different scales and difficulties, and teams do not answer identical sets. Use the pairwise scaled relative skill (Cramer et al., 2022):
 
@@ -664,7 +664,7 @@ Council, external audits, Zenodo archiving, RFC process, first annual report. Co
 8. **Reflexivity** in AI-about-AI questions (predicting the board itself). Keep them few and off the headline score.
 9. **Cost.** Tier S requires compute the hub pays for; caps and sponsorship needed. Entry fees or stakes shift cost but raise the barrier to academic teams — prefer sponsorship + quotas.
 
-None of these weaken the core guarantee: **for every scored item, the information that determines the score did not exist when the participant committed.** That is the strongest anti-contamination property an evaluation can have, and it is what the forecast hubs proved workable for six years.
+None of these weaken the core guarantee: **for every scored item, the information that determines the score did not exist when the participant committed.** That is the strongest anti-contamination property an evaluation can have, and six years of continuous operation in epidemiological forecasting have shown it is workable at scale.
 
 ---
 
