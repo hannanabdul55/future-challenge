@@ -90,3 +90,64 @@ def score_quantile_frame(pred: pd.DataFrame, truth: pd.DataFrame) -> pd.DataFram
             }
         )
     return pd.DataFrame(rows, columns=["model_id", "question_id", "score"])
+
+
+def score_frame(pred: pd.DataFrame, truth: pd.DataFrame, *, clip: float = LOG_CLIP) -> pd.DataFrame:
+    """Score a mixed-type hubverse-style frame (rules 2026.10 §6).
+
+    pred columns : model_id, question_id, output_type, output_type_id, value
+                   (optionally round_id — carried through when present)
+    truth columns: question_id, y   where y is 0/1 for binary, the category label for
+                   categorical, and a number for quantile questions
+    returns      : [round_id,] model_id, question_id, output_type, score
+                   (log score for binary/categorical; WIS for quantile; lower is better)
+    """
+    t = truth.drop_duplicates("question_id").set_index("question_id")["y"]
+    keys = ["model_id", "question_id"]
+    has_round = "round_id" in pred.columns
+    if has_round:
+        keys = ["round_id", *keys]
+    rows = []
+    for key, g in pred.groupby(keys, sort=False):
+        qid = key[-1]
+        if qid not in t.index:
+            continue
+        y = t[qid]
+        otype = g["output_type"].iloc[0]
+        if otype == "quantile":
+            s = wis(g["output_type_id"].astype(float).to_numpy(),
+                    g["value"].astype(float).to_numpy(), float(y))
+        elif otype == "binary":
+            s = log_score(float(g["value"].iloc[0]), int(float(y)), clip)
+        elif otype == "categorical":
+            probs = dict(zip(g["output_type_id"].astype(str), g["value"].astype(float)))
+            p = probs.get(str(y), 0.0)
+            s = float(-np.log(min(max(p, clip), 1.0)))
+        else:
+            continue
+        row = dict(zip(keys, key))
+        row.update({"output_type": otype, "score": s})
+        rows.append(row)
+    cols = [*keys, "output_type", "score"]
+    return pd.DataFrame(rows, columns=cols)
+
+
+def ensemble_mean_probs(pred: pd.DataFrame, exclude: str | None = None,
+                        model_id: str = "hub-ensemble") -> pd.DataFrame:
+    """Hub ensemble for mixed types: mean of probabilities (binary/categorical, renormalised
+    per question) and quantile-wise median (quantile)."""
+    p = pred if exclude is None else pred[pred["model_id"] != exclude]
+    probs = p[p["output_type"].isin(["binary", "categorical"])]
+    quants = p[p["output_type"] == "quantile"]
+    keys = [c for c in ("round_id", "question_id", "output_type", "output_type_id") if c in p.columns]
+    parts = []
+    if len(probs):
+        m = probs.groupby(keys, as_index=False)["value"].mean()
+        gk = [k for k in keys if k != "output_type_id"]
+        m["value"] = m["value"] / m.groupby(gk)["value"].transform("sum")
+        parts.append(m)
+    if len(quants):
+        parts.append(quants.groupby(keys, as_index=False)["value"].median())
+    e = pd.concat(parts, ignore_index=True) if parts else pd.DataFrame(columns=[*keys, "value"])
+    e.insert(0, "model_id", model_id)
+    return e

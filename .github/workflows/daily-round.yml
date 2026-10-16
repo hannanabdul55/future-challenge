@@ -1,0 +1,68 @@
+name: daily-round
+# ROUND-02: at 00:00 UTC build the packet, open the daily round, commit. A backstop run at
+# 00:20 UTC does the same and is a no-op if the manifest already exists (GitHub documents
+# that scheduled workflows can be delayed under load).
+on:
+  schedule:
+    - cron: "0 0 * * *"
+    - cron: "20 0 * * *"
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Round day (YYYY-MM-DD, UTC). Defaults to today."
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-round
+  cancel-in-progress: false
+
+env:
+  SEASON: 2026-us-midterms
+
+jobs:
+  open:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --extra dev
+      - name: Resolve day
+        id: day
+        run: |
+          d="${{ github.event.inputs.date }}"
+          [ -z "$d" ] && d="$(date -u +%F)"
+          echo "day=$d" >> "$GITHUB_OUTPUT"
+      - name: Skip if the round is already open (backstop no-op)
+        id: check
+        run: |
+          if [ -f "rounds/$SEASON/${{ steps.day.outputs.day }}/manifest.json" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"; fi
+      - name: Skip if the day is outside the season
+        if: steps.check.outputs.skip != 'true'
+        run: |
+          first=$(python3 -c "import json;print(json.load(open('rounds/$SEASON/season.json'))['first_day'])")
+          last=$(python3 -c "import json;print(json.load(open('rounds/$SEASON/season.json'))['last_day'])")
+          d="${{ steps.day.outputs.day }}"
+          if [[ "$d" < "$first" || "$d" > "$last" ]]; then echo "outside season"; echo "SKIP=1" >> "$GITHUB_ENV"; fi
+      - name: Build packet
+        if: steps.check.outputs.skip != 'true' && env.SKIP != '1'
+        run: |
+          uv run fc packet build --date "${{ steps.day.outputs.day }}" \
+            --out "target-data/packets/$SEASON/${{ steps.day.outputs.day }}" \
+            --season "$SEASON" --markets questions/$SEASON/markets.json
+      - name: Open round
+        if: steps.check.outputs.skip != 'true' && env.SKIP != '1'
+        run: |
+          uv run fc round open --season "$SEASON" --date "${{ steps.day.outputs.day }}" \
+            --packet "target-data/packets/$SEASON/${{ steps.day.outputs.day }}"
+      - name: Commit and push
+        if: steps.check.outputs.skip != 'true' && env.SKIP != '1'
+        run: |
+          git config user.name "future-challenge-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add rounds target-data/packets
+          git commit -m "round($SEASON): open ${{ steps.day.outputs.day }}" || exit 0
+          git push

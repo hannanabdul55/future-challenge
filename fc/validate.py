@@ -5,9 +5,14 @@ The tasks.json here is a hubverse-shaped config reduced to what this scaffold ne
   "rounds": [{
     "round_id": "...",
     "quantile_levels": [...],
-    "questions": [{"question_id": "...", "output_type": "quantile"|"binary", "core": true}]
+    "questions": [{"question_id": "...", "output_type": "quantile"|"binary"|"categorical",
+                   "core": true, "quantile_levels": [...], "bounds": [lo, hi],
+                   "categories": ["D", "R", "Other"]}]
   }]
 }
+
+Per-question `quantile_levels` override the round default; `categorical` rows carry one
+category per `output_type_id` and must sum to 1 (rules 2026.10 §6).
 """
 
 from __future__ import annotations
@@ -71,7 +76,7 @@ def validate_frame(df: pd.DataFrame, rc: dict) -> Report:
     if df["value"].isna().any() or not np.isfinite(df["value"].astype(float)).all():
         rep.errors.append("non-finite values present")
 
-    levels = np.asarray(rc["quantile_levels"], dtype=float)
+    default_levels = np.asarray(rc.get("quantile_levels", []), dtype=float)
     for qid, g in df.groupby("question_id"):
         spec = qspec.get(qid)
         if spec is None:
@@ -81,6 +86,7 @@ def validate_frame(df: pd.DataFrame, rc: dict) -> Report:
             rep.errors.append(f"{qid}: output_type {types} != {spec['output_type']}")
             continue
         if spec["output_type"] == "quantile":
+            levels = np.asarray(spec.get("quantile_levels", default_levels), dtype=float)
             got = np.sort(g["output_type_id"].astype(float).to_numpy())
             if len(got) != len(levels) or not np.allclose(got, levels):
                 rep.errors.append(f"{qid}: quantile levels do not match config")
@@ -88,11 +94,25 @@ def validate_frame(df: pd.DataFrame, rc: dict) -> Report:
             vals = g.sort_values("output_type_id", key=lambda s: s.astype(float))["value"].to_numpy()
             if np.any(np.diff(vals) < 0):
                 rep.errors.append(f"{qid}: quantiles not non-decreasing")
+            b = spec.get("bounds")
+            if b is not None and (vals.min() < b[0] or vals.max() > b[1]):
+                rep.errors.append(f"{qid}: quantiles outside bounds {b}")
         elif spec["output_type"] == "binary":
             if len(g) != 1:
                 rep.errors.append(f"{qid}: binary needs exactly one row")
             elif not 0 <= float(g["value"].iloc[0]) <= 1:
                 rep.errors.append(f"{qid}: probability outside [0,1]")
+        elif spec["output_type"] == "categorical":
+            cats = list(spec["categories"])
+            got_ids = list(g["output_type_id"].astype(str))
+            if sorted(got_ids) != sorted(cats):
+                rep.errors.append(f"{qid}: categories {sorted(got_ids)} != {sorted(cats)}")
+                continue
+            p = g["value"].astype(float).to_numpy()
+            if (p < 0).any() or (p > 1).any():
+                rep.errors.append(f"{qid}: probability outside [0,1]")
+            elif not np.isclose(p.sum(), 1.0, atol=1e-6):
+                rep.errors.append(f"{qid}: categorical probabilities sum to {p.sum():.6f}, not 1")
     core = [q["question_id"] for q in rc["questions"] if q.get("core")]
     missing_core = sorted(set(core) - set(df["question_id"]))
     if missing_core:

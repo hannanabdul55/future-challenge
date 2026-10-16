@@ -1,0 +1,10 @@
+{
+  "round_id": "2026-us-midterms-season",
+  "kind": "freeze",
+  "rules_version": "2026.10",
+  "T_open": "2026-10-16T08:50:14Z",
+  "T_commit": "2026-11-03T12:00:00Z",
+  "T_reveal": "2026-11-03T12:00:00Z",
+  "season_manifest_sha256": "a1e605f51ba779c63c4a642794e383c74d14d93b372cfb5ebe9a791c0197084a",
+  "notes": "Entries commit model identities here (rules 2026.10 \u00a72). An entry is scored on a daily round only if its anchor precedes that round's T_open."
+}

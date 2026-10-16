@@ -14,6 +14,13 @@ fc leaderboard --scores DIR/scores.csv --out leaderboard/index.html
 fc verify   --sidecar FILE [--roots DIR --manifest FILE --hub-key FILE --bitcoin-headers FILE --allow-pending --json]
 fc verify   --entry model-metadata/ID.yml --season-dir rounds/SEASON [--before ISO | --round-manifest FILE] [--snapshot DIR]
 fc service submit --sidecar FILE --round-dir DIR --hub-key FILE [--metadata-dir DIR]
+fc questions generate --races FILE --out questions/SEASON/questions.json
+fc questions validate FILE [--event-date YYYY-MM-DD]
+fc season init --season ID --questions FILE --first-day D --last-day D --last-admission ISO [--root .]
+fc packet build --date D --out DIR [--season ID --markets FILE --budget N]
+fc round open --season ID --date D --packet DIR [--root .]
+fc run --entry model-metadata/ID.yml --season ID --date D [--snapshot DIR | --fetch] [--image IMG]
+       [--runner-key FILE --timeout S --dry-run --local --no-gpu --no-drand]
 """
 
 from __future__ import annotations
@@ -165,6 +172,66 @@ def _service_submit(a):
     sys.exit(0 if outcome == service.ACCEPTED else 1)
 
 
+def _questions(a):
+    from . import questions as Q
+    if a.questions_cmd == "generate":
+        qs = Q.generate_midterms(Path(a.races))
+        rep = Q.validate_questions(qs, event_date=Q.EVENT_DATE)
+        if not rep.ok:
+            print(rep); sys.exit(1)
+        h = Q.write_question_set(Path(a.out), qs, season=a.season)
+        print(f"{len(qs)} questions  hash {h}\nwrote {a.out}")
+    else:
+        rep = Q.validate_questions(Q.load_questions(a.file), event_date=a.event_date)
+        print(rep); sys.exit(0 if rep.ok else 1)
+
+
+def _season_init(a):
+    from datetime import date as _date
+
+    from . import season as S
+    m = S.init_season(Path(a.root), season=a.season, questions_path=Path(a.questions),
+                      first_day=_date.fromisoformat(a.first_day),
+                      last_day=_date.fromisoformat(a.last_day), last_admission=a.last_admission,
+                      runner_image_digest=a.runner_digest, evaluator_image_digest=a.evaluator_digest)
+    print(f"season {m['season']}  questions {m['question_count']}  hash {m['questions_hash'][:16]}…")
+
+
+def _packet_build(a):
+    from datetime import date as _date
+
+    from . import packet as P
+    from . import questions as Q
+    mapping = json.loads(Path(a.markets).read_text()) if a.markets and Path(a.markets).exists() else {}
+    qpath = Path(a.questions) if a.questions else Path("questions") / a.season / "questions.json"
+    qs = Q.load_questions(qpath) if qpath.exists() else None
+    idx = P.build(_date.fromisoformat(a.date), Path(a.out),
+                  sources=P.default_sources(mapping, qs), season=a.season, budget_chars=a.budget)
+    print(json.dumps({k: idx[k] for k in ("day", "sections", "packet.md")}, indent=2))
+
+
+def _round_open(a):
+    from datetime import date as _date
+
+    from . import season as S
+    m = S.open_round(Path(a.root), season=a.season, d=_date.fromisoformat(a.date),
+                     packet_dir=Path(a.packet))
+    print(f"opened {m['round_id']}  T_commit {m['T_commit']}  packet {m['packet']['packet_md_sha256'][:16]}…")
+
+
+def _run(a):
+    from . import run as R
+    b = R.run_entry(Path(a.entry), root=Path(a.root), season=a.season, day=a.date,
+                    snapshot=Path(a.snapshot) if a.snapshot else None, image=a.image,
+                    runner_key=Path(a.runner_key) if a.runner_key else None,
+                    timeout_s=a.timeout, dry_run=a.dry_run, local=a.local, fetch=a.fetch,
+                    gpus=not a.no_gpu, fetch_drand=not a.no_drand)
+    print(f"{b['model_id']} {b['round_id']} {b['status']}"
+          + (f" ({b['reason']})" if b.get("reason") else "")
+          + (f" parse_rate={b.get('parse_rate')}" if b["status"] == "ok" else ""))
+    sys.exit(0 if b["status"] in ("ok", "dry-run") else 1)
+
+
 def _verify(a):
     from . import verify_cli
     if a.entry:
@@ -237,6 +304,46 @@ def main(argv=None):
         sub.add_argument(n, required=True)
     sub.add_argument("--metadata-dir", default="model-metadata")
     sub.set_defaults(fn=_service_submit)
+
+    s = sp.add_parser("questions")
+    qs = s.add_subparsers(dest="questions_cmd", required=True)
+    g = qs.add_parser("generate"); g.add_argument("--races", required=True)
+    g.add_argument("--out", required=True); g.add_argument("--season", default="2026-us-midterms")
+    g.set_defaults(fn=_questions)
+    v = qs.add_parser("validate"); v.add_argument("file"); v.add_argument("--event-date")
+    v.set_defaults(fn=_questions)
+
+    s = sp.add_parser("season")
+    ss = s.add_subparsers(dest="season_cmd", required=True)
+    si = ss.add_parser("init")
+    for n in ("--season", "--questions", "--first-day", "--last-day", "--last-admission"):
+        si.add_argument(n, required=True)
+    si.add_argument("--root", default="."); si.add_argument("--runner-digest")
+    si.add_argument("--evaluator-digest"); si.set_defaults(fn=_season_init)
+
+    s = sp.add_parser("packet")
+    ps = s.add_subparsers(dest="packet_cmd", required=True)
+    pb = ps.add_parser("build"); pb.add_argument("--date", required=True)
+    pb.add_argument("--out", required=True); pb.add_argument("--season", default="2026-us-midterms")
+    pb.add_argument("--markets"); pb.add_argument("--questions")
+    pb.add_argument("--budget", type=int, default=60_000)
+    pb.set_defaults(fn=_packet_build)
+
+    s = sp.add_parser("round")
+    rs = s.add_subparsers(dest="round_cmd", required=True)
+    ro = rs.add_parser("open")
+    for n in ("--season", "--date", "--packet"):
+        ro.add_argument(n, required=True)
+    ro.add_argument("--root", default="."); ro.set_defaults(fn=_round_open)
+
+    s = sp.add_parser("run")
+    for n in ("--entry", "--season", "--date"):
+        s.add_argument(n, required=True)
+    s.add_argument("--root", default="."); s.add_argument("--snapshot"); s.add_argument("--fetch", action="store_true")
+    s.add_argument("--image", default="fc-forecaster:2026.10"); s.add_argument("--runner-key")
+    s.add_argument("--timeout", type=int, default=3600); s.add_argument("--dry-run", action="store_true")
+    s.add_argument("--local", action="store_true"); s.add_argument("--no-gpu", action="store_true")
+    s.add_argument("--no-drand", action="store_true"); s.set_defaults(fn=_run)
 
     s = sp.add_parser("verify"); s.add_argument("--sidecar")
     s.add_argument("--entry"); s.add_argument("--season-dir"); s.add_argument("--before")

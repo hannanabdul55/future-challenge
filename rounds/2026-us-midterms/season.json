@@ -1,0 +1,28 @@
+{
+  "schema": "fc-season/2026.10",
+  "season": "2026-us-midterms",
+  "rules_version": "2026.10",
+  "questions_path": "questions/2026-us-midterms/questions.json",
+  "questions_sha256": "7393a46b875cff5925701c17f38c3c82c07677592479a671271cc245fcef805c",
+  "questions_hash": "4a4647cbc2581cb5b23ddc31b90a4c4bf810eef639002c915c71a84b086d2906",
+  "question_count": 75,
+  "schedule": {
+    "open_utc": "00:00",
+    "commit_utc": "12:00",
+    "reveal_utc": "18:00"
+  },
+  "first_day": "2026-10-26",
+  "last_day": "2026-11-03",
+  "last_admission": "2026-11-03T12:00:00Z",
+  "T_final": {
+    "control": "2027-01-06",
+    "governor": "2026-12-15",
+    "seats": "2027-01-06",
+    "senate": "2026-12-15"
+  },
+  "runner_image_digest": null,
+  "evaluator_image_digest": null,
+  "min_scored_days_for_headline": 7,
+  "tier_s_sandbox": "docker --network none, read-only mounts, wall-clock quota; no gVisor (DESIGN.md \u00a73.4)",
+  "notes": ""
+}

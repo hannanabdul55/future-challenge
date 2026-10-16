@@ -1,0 +1,2699 @@
+{
+ "schema": "fc-question/2026.10",
+ "season": "2026-us-midterms",
+ "questions_hash": "4a4647cbc2581cb5b23ddc31b90a4c4bf810eef639002c915c71a84b086d2906",
+ "questions": [
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "control-house",
+   "family": "control",
+   "statement": "Will the Democratic Party hold a majority of seats (at least 218 of 435) in the U.S. House of Representatives when the 120th Congress is seated?",
+   "output_type": "binary",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_House_of_Representatives_elections",
+    "provisional_rule": "seats_by_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "membership_at_seating_of_the_120th_congress_2027-01-03",
+    "fallback_sources": [
+     "house.gov / senate.gov official rosters",
+     "council"
+    ],
+    "void_if": [
+     "seating of the 120th Congress delayed beyond T_final"
+    ],
+    "T_final": "2027-01-06",
+    "resolver": "automated",
+    "notes": "Independents who caucus with the Democratic conference count toward the Democratic caucus for seat-count and control questions; vacancies at seating count for neither party."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "control-senate",
+   "family": "control",
+   "statement": "Will the Democratic caucus (Democrats plus independents who caucus with them) hold at least 51 of 100 seats in the U.S. Senate when the 120th Congress is seated?",
+   "output_type": "binary",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "seats_by_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "membership_at_seating_of_the_120th_congress_2027-01-03",
+    "fallback_sources": [
+     "house.gov / senate.gov official rosters",
+     "council"
+    ],
+    "void_if": [
+     "seating of the 120th Congress delayed beyond T_final"
+    ],
+    "T_final": "2027-01-06",
+    "resolver": "automated",
+    "notes": "Independents who caucus with the Democratic conference count toward the Democratic caucus for seat-count and control questions; vacancies at seating count for neither party."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-ak",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Alaska?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "AK",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-al",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Alabama?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "AL",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-ar",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Arkansas?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "AR",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-az",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Arizona?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "AZ",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-ca",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in California?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "CA",
+   "incumbent_party": "D",
+   "open_seat": true,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-co",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Colorado?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "CO",
+   "incumbent_party": "D",
+   "open_seat": true,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-ct",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Connecticut?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "CT",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-fl",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Florida?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "FL",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-ga",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Georgia?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "GA",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-hi",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Hawaii?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "HI",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-ia",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Iowa?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "IA",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-id",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Idaho?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "ID",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-il",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Illinois?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "IL",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-ks",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Kansas?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "KS",
+   "incumbent_party": "D",
+   "open_seat": true,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-ma",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Massachusetts?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "MA",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-md",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Maryland?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "MD",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-me",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Maine?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "ME",
+   "incumbent_party": "D",
+   "open_seat": true,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-mi",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Michigan?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "MI",
+   "incumbent_party": "D",
+   "open_seat": true,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-mn",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Minnesota?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "MN",
+   "incumbent_party": "D",
+   "open_seat": true,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-ne",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Nebraska?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "NE",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-nh",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in New Hampshire?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "NH",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-nm",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in New Mexico?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "NM",
+   "incumbent_party": "D",
+   "open_seat": true,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-nv",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Nevada?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "NV",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-ny",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in New York?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "NY",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-oh",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Ohio?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "OH",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-ok",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Oklahoma?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "OK",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-or",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Oregon?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "OR",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-pa",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Pennsylvania?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "PA",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-ri",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Rhode Island?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "RI",
+   "incumbent_party": "D",
+   "open_seat": true,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-sc",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in South Carolina?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "SC",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-sd",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in South Dakota?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "SD",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-tn",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Tennessee?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "TN",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-tx",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Texas?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "TX",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-vt",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Vermont?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "VT",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-wi",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Wisconsin?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "WI",
+   "incumbent_party": "D",
+   "open_seat": true,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-wy",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 3, 2026 election for Governor in Wyoming?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "WY",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "seats-house-d",
+   "family": "seats",
+   "statement": "How many seats will the Democratic Party hold in the U.S. House of Representatives when the 120th Congress is seated (excluding independents)?",
+   "output_type": "quantile",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "quantile_levels": [
+    0.025,
+    0.1,
+    0.25,
+    0.4,
+    0.5,
+    0.6,
+    0.75,
+    0.9,
+    0.975
+   ],
+   "bounds": [
+    0,
+    435
+   ],
+   "unit": "seats",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_House_of_Representatives_elections",
+    "provisional_rule": "seats_by_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "membership_at_seating_of_the_120th_congress_2027-01-03",
+    "fallback_sources": [
+     "house.gov / senate.gov official rosters",
+     "council"
+    ],
+    "void_if": [
+     "seating of the 120th Congress delayed beyond T_final"
+    ],
+    "T_final": "2027-01-06",
+    "resolver": "automated",
+    "notes": "Independents who caucus with the Democratic conference count toward the Democratic caucus for seat-count and control questions; vacancies at seating count for neither party."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "seats-senate-dcaucus",
+   "family": "seats",
+   "statement": "How many of the 100 U.S. Senate seats will the Democratic caucus (Democrats plus independents who caucus with them) hold when the 120th Congress is seated?",
+   "output_type": "quantile",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "quantile_levels": [
+    0.025,
+    0.1,
+    0.25,
+    0.4,
+    0.5,
+    0.6,
+    0.75,
+    0.9,
+    0.975
+   ],
+   "bounds": [
+    0,
+    100
+   ],
+   "unit": "seats",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "seats_by_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "membership_at_seating_of_the_120th_congress_2027-01-03",
+    "fallback_sources": [
+     "house.gov / senate.gov official rosters",
+     "council"
+    ],
+    "void_if": [
+     "seating of the 120th Congress delayed beyond T_final"
+    ],
+    "T_final": "2027-01-06",
+    "resolver": "automated",
+    "notes": "Independents who caucus with the Democratic conference count toward the Democratic caucus for seat-count and control questions; vacancies at seating count for neither party."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-ak",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Alaska (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "AK",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-al",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Alabama (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "AL",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-ar",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Arkansas (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "AR",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-co",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Colorado (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "CO",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-de",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Delaware (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "DE",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-fl",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 special election for U.S. Senate in Florida (special seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "FL",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-ga",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Georgia (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "GA",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-ia",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Iowa (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "IA",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-id",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Idaho (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "ID",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-il",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Illinois (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "IL",
+   "incumbent_party": "D",
+   "open_seat": true,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-ks",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Kansas (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "KS",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-ky",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Kentucky (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "KY",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-la",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Louisiana (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "LA",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-ma",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Massachusetts (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "MA",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-me",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Maine (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "ME",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-mi",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Michigan (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "MI",
+   "incumbent_party": "D",
+   "open_seat": true,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-mn",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Minnesota (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "MN",
+   "incumbent_party": "D",
+   "open_seat": true,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-ms",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Mississippi (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "MS",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-mt",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Montana (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "MT",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-nc",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in North Carolina (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "NC",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-ne",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Nebraska (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "NE",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-nh",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in New Hampshire (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "NH",
+   "incumbent_party": "D",
+   "open_seat": true,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-nj",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in New Jersey (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "NJ",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-nm",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in New Mexico (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "NM",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-oh",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 special election for U.S. Senate in Ohio (special seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "OH",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-ok",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Oklahoma (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "OK",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-or",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Oregon (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "OR",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-ri",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Rhode Island (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "RI",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-sc",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in South Carolina (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "SC",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-sd",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in South Dakota (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "SD",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-tn",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Tennessee (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "TN",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-tx",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Texas (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "TX",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-va",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Virginia (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "VA",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2024": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-wv",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in West Virginia (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "WV",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-wy",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 3, 2026 election for U.S. Senate in Wyoming (class2 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-11-03",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "WY",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2024": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2026-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  }
+ ]
+}
