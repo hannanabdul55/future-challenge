@@ -95,11 +95,19 @@ def _read_json(path: Path, what: str) -> dict:
 
 def verify(sidecar_path: str | Path, *, roots_dir=None, manifest_path=None,
            hub_key_path=None, headers_path=None, allow_pending: bool = False,
-           ots_parser=None, fetch: bool = False) -> VerifyReport:
-    """Build the verification report for one commitment record."""
+           ots_parser=None, fetch: bool = False,
+           before: datetime | None = None, before_label: str = "T_commit") -> VerifyReport:
+    """Build the verification report for one commitment record.
+
+    `before` overrides the instant the anchor must precede (default: the round
+    manifest's `T_commit`). A frozen-model entry passes a daily round's `T_open`
+    here (rules 2026.10 §3) and `before_label` names it in the report.
+    """
     rep = VerifyReport()
     sidecar_path = Path(sidecar_path)
     ots_parser = ots_parser or A.parse_detached_timestamp
+    anchor_check = f"anchor precedes {before_label}"
+    receipt_check = f"receipt server_time precedes {before_label}"
 
     # ---------------------------------------------------------- sidecar shape
     try:
@@ -149,7 +157,7 @@ def verify(sidecar_path: str | Path, *, roots_dir=None, manifest_path=None,
 
     if root_doc is None:
         rep.add("anchor attests to root", False, "not attempted — no root document", TRUSTLESS)
-        rep.add("anchor precedes T_commit", False, "not attempted — no root document", TRUSTLESS)
+        rep.add(anchor_check, False, "not attempted — no root document", TRUSTLESS)
         return rep
 
     window = root_doc["window_index"]
@@ -195,23 +203,23 @@ def verify(sidecar_path: str | Path, *, roots_dir=None, manifest_path=None,
         rep.add("anchor attests to root", False, str(exc), TRUSTLESS)
         height, status = None, A.NOT_ANCHORED
 
-    # --------------------------------------------- anchor time precedes T_commit
+    # --------------------------------------------- anchor time precedes the deadline
     try:
-        manifest = _read_json(manifest_path, "manifest")
-        t_commit = datetime.fromisoformat(manifest["T_commit"])
+        t_commit = before or datetime.fromisoformat(
+            _read_json(manifest_path, "manifest")["T_commit"])
         headers = A.FileHeaderSource(headers_path or roots_dir / "bitcoin-headers.json")
         block_time = headers.block_time(height) if height is not None else None
         if block_time is None:
-            rep.add("anchor precedes T_commit", False,
+            rep.add(anchor_check, False,
                     "no block time available for the anchoring block — cannot place the "
                     "commitment in time", TRUSTLESS, state=PENDING)
         else:
             precedes = block_time < t_commit
-            rep.add("anchor precedes T_commit", precedes,
-                    f"anchored {block_time.isoformat()} vs T_commit {t_commit.isoformat()}",
-                    TRUSTLESS)
+            rep.add(anchor_check, precedes,
+                    f"anchored {block_time.isoformat()} vs {before_label} "
+                    f"{t_commit.isoformat()}", TRUSTLESS)
     except (ArtifactError, ValueError, OSError, KeyError, json.JSONDecodeError) as exc:
-        rep.add("anchor precedes T_commit", False, str(exc), TRUSTLESS)
+        rep.add(anchor_check, False, str(exc), TRUSTLESS)
 
     # ------------------------------------------------------------------ Rekor
     # The anchoring job records Rekor beside the root, and may do so after the
@@ -236,12 +244,12 @@ def verify(sidecar_path: str | Path, *, roots_dir=None, manifest_path=None,
             rep.add("hub signature on root", False, str(exc), HUB_ASSERTED)
 
     try:
-        manifest = _read_json(manifest_path, "manifest")
-        t_commit = datetime.fromisoformat(manifest["T_commit"])
+        t_commit = before or datetime.fromisoformat(
+            _read_json(manifest_path, "manifest")["T_commit"])
         server_time = datetime.fromisoformat(receipt["server_time"])
-        rep.add("receipt server_time precedes T_commit", server_time < t_commit,
+        rep.add(receipt_check, server_time < t_commit,
                 f"hub recorded {receipt['server_time']}", HUB_ASSERTED)
     except (ArtifactError, ValueError, KeyError, json.JSONDecodeError) as exc:
-        rep.add("receipt server_time precedes T_commit", False, str(exc), HUB_ASSERTED)
+        rep.add(receipt_check, False, str(exc), HUB_ASSERTED)
 
     return rep

@@ -1,7 +1,10 @@
 """`fc` command line.
 
 fc keygen  --out DIR
+fc freeze  --repo ORG/MODEL [--revision REF] --model-id ID --team NAME --tier S|A --out model-metadata/ID.yml
+           [--prompt-template FILE --weights-file NAME --public-key FILE --budget-gib N]
 fc commit  --round R --model M --submission FILE --rationale FILE --key team.pem --out sidecar.json
+fc commit  --round SEASON --entry model-metadata/ID.yml --key team.pem --out sidecar.json
 fc reveal  --sidecar sidecar.json --submission FILE --rationale FILE --nonce HEX
 fc merkle  --commits a,b,c [--prove i]
 fc entropy --round R --drand-round N [--secret HEX --hs HEX] --families f1=100,f2=50 --out entropy.json
@@ -9,6 +12,7 @@ fc validate FILE --tasks hub-config/tasks.json [--round R]
 fc score   --pred FILE... --truth FILE --baseline fc-baseline --out DIR
 fc leaderboard --scores DIR/scores.csv --out leaderboard/index.html
 fc verify   --sidecar FILE [--roots DIR --manifest FILE --hub-key FILE --bitcoin-headers FILE --allow-pending --json]
+fc verify   --entry model-metadata/ID.yml --season-dir rounds/SEASON [--before ISO | --round-manifest FILE] [--snapshot DIR]
 fc service submit --sidecar FILE --round-dir DIR --hub-key FILE [--metadata-dir DIR]
 """
 
@@ -35,7 +39,35 @@ def _keygen(a):
     print(f"wrote {out/'private.pem'} and {out/'public.pem'}")
 
 
+def _freeze(a):
+    from huggingface_hub import HfApi
+
+    from . import freeze as F
+    from . import model_identity as M
+    template = Path(a.prompt_template).read_bytes() if a.prompt_template else b""
+    inf = M.Inference(weights_file=a.weights_file)
+    ident = M.resolve(a.repo, a.revision, api=HfApi(), inference=inf, prompt_template=template)
+    gate = M.check_entry(ident, a.tier, budget_bytes=int(a.budget_gib * 1024**3))
+    for w in gate.warnings:
+        print(f"WARNING {w}")
+    for e in gate.errors:
+        print(f"ERROR   {e}")
+    pem = Path(a.public_key).read_text() if a.public_key else None
+    F.write_entry_yaml(Path(a.out), model_id=a.model_id, team=a.team, tier=a.tier,
+                       identity=ident, public_key_pem=pem)
+    print(f"identity {ident.hash()}\nrevision {ident.revision}\nwrote    {a.out}")
+    sys.exit(0 if gate.ok else 1)
+
+
 def _commit(a):
+    if a.entry:
+        from . import freeze as F
+        sk = C.load_private(C.file_bytes(a.key))
+        req, nonce = F.commit_identity(Path(a.entry), season_round_id=a.round, team_sk=sk,
+                                       sidecar_path=Path(a.out))
+        print(f"commit {req.commit}\nnonce  {nonce.hex()}   (published in {a.entry})\n"
+              f"wrote  {a.out}")
+        return
     sub = C.file_bytes(a.submission)
     rat = C.file_bytes(a.rationale) if a.rationale else b""
     nonce = C.new_nonce()
@@ -135,6 +167,20 @@ def _service_submit(a):
 
 def _verify(a):
     from . import verify_cli
+    if a.entry:
+        from . import freeze as F
+        before = None
+        if a.before:
+            before = datetime.fromisoformat(a.before)
+        elif a.round_manifest:
+            m = json.loads(Path(a.round_manifest).read_text())
+            before = datetime.fromisoformat(m["T_open"])
+        rep = F.verify_entry(Path(a.entry), season_round_dir=Path(a.season_dir), before=before,
+                             snapshot=Path(a.snapshot) if a.snapshot else None,
+                             hub_key_path=a.hub_key, headers_path=a.bitcoin_headers,
+                             allow_pending=a.allow_pending)
+        print(json.dumps(rep.to_dict(), indent=2) if a.json else str(rep))
+        sys.exit(0 if rep.ok else 1)
     rep = verify_cli.verify(a.sidecar, roots_dir=a.roots, manifest_path=a.manifest,
                             hub_key_path=a.hub_key, headers_path=a.bitcoin_headers,
                             allow_pending=a.allow_pending, fetch=a.fetch)
@@ -148,9 +194,17 @@ def main(argv=None):
 
     s = sp.add_parser("keygen"); s.add_argument("--out", required=True); s.set_defaults(fn=_keygen)
 
-    s = sp.add_parser("commit")
-    for n in ("--round", "--model", "--submission", "--key", "--out"):
+    s = sp.add_parser("freeze")
+    for n in ("--repo", "--model-id", "--team", "--tier", "--out"):
         s.add_argument(n, required=True)
+    s.add_argument("--revision", default="main"); s.add_argument("--prompt-template")
+    s.add_argument("--weights-file"); s.add_argument("--public-key")
+    s.add_argument("--budget-gib", type=float, default=11.0); s.set_defaults(fn=_freeze)
+
+    s = sp.add_parser("commit")
+    for n in ("--round", "--key", "--out"):
+        s.add_argument(n, required=True)
+    s.add_argument("--model"); s.add_argument("--submission"); s.add_argument("--entry")
     s.add_argument("--rationale"); s.set_defaults(fn=_commit)
 
     s = sp.add_parser("reveal")
@@ -184,7 +238,9 @@ def main(argv=None):
     sub.add_argument("--metadata-dir", default="model-metadata")
     sub.set_defaults(fn=_service_submit)
 
-    s = sp.add_parser("verify"); s.add_argument("--sidecar", required=True)
+    s = sp.add_parser("verify"); s.add_argument("--sidecar")
+    s.add_argument("--entry"); s.add_argument("--season-dir"); s.add_argument("--before")
+    s.add_argument("--round-manifest"); s.add_argument("--snapshot")
     s.add_argument("--roots"); s.add_argument("--manifest"); s.add_argument("--hub-key")
     s.add_argument("--bitcoin-headers")
     s.add_argument("--allow-pending", action="store_true")
