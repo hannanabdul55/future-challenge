@@ -1,0 +1,21 @@
+name: register
+# ENTRY-02 / FREEZE-04: a PR touching model-metadata/ is admitted only if every entry file
+# passes the registration gate — identity hash consistent, revision resolves on the Hub with
+# the same file hashes, licence on the allowlist, safe weight format, Tier S within budget,
+# team limits respected.
+on:
+  pull_request:
+    paths: ["model-metadata/**", "sidecar/**"]
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --extra dev --extra hf
+      - name: Check changed entries
+        run: |
+          set -e
+          files=$(git diff --name-only origin/${{ github.base_ref }}...HEAD -- 'model-metadata/*.yml' || true)
+          [ -z "$files" ] && { echo "no entry files changed"; exit 0; }
+          uv run fc entry check $files --resolve

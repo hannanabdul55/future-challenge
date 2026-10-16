@@ -14,9 +14,12 @@ fc leaderboard --scores DIR/scores.csv --out leaderboard/index.html
 fc verify   --sidecar FILE [--roots DIR --manifest FILE --hub-key FILE --bitcoin-headers FILE --allow-pending --json]
 fc verify   --entry model-metadata/ID.yml --season-dir rounds/SEASON [--before ISO | --round-manifest FILE] [--snapshot DIR]
 fc service submit --sidecar FILE --round-dir DIR --hub-key FILE [--metadata-dir DIR]
+fc entry check FILE... [--resolve] [--metadata-dir model-metadata]
 fc questions generate --races FILE --out questions/SEASON/questions.json
 fc questions validate FILE [--event-date YYYY-MM-DD]
 fc season init --season ID --questions FILE --first-day D --last-day D --last-admission ISO [--root .]
+fc season score --season ID [--root . --truth FILE --out DIR --n-boot N --min-days 7]
+fc season board --season ID [--root . --out leaderboard/ID.html]
 fc packet build --date D --out DIR [--season ID --markets FILE --budget N]
 fc round open --season ID --date D --packet DIR [--root .]
 fc run --entry model-metadata/ID.yml --season ID --date D [--snapshot DIR | --fetch] [--image IMG]
@@ -172,6 +175,22 @@ def _service_submit(a):
     sys.exit(0 if outcome == service.ACCEPTED else 1)
 
 
+def _entry_check(a):
+    from . import freeze as F
+    ok = True
+    for f in a.files:
+        g = F.check_entry_file(Path(f), resolve=a.resolve)
+        for w in g.warnings:
+            print(f"WARNING {f}: {w}")
+        for e in g.errors:
+            print(f"ERROR   {f}: {e}")
+        ok &= g.ok
+        print(f"{'OK     ' if g.ok else 'FAIL   '} {f}")
+    for e in F.check_team_limits(Path(a.metadata_dir)):
+        print(f"ERROR   {e}"); ok = False
+    sys.exit(0 if ok else 1)
+
+
 def _questions(a):
     from . import questions as Q
     if a.questions_cmd == "generate":
@@ -195,6 +214,22 @@ def _season_init(a):
                       last_day=_date.fromisoformat(a.last_day), last_admission=a.last_admission,
                       runner_image_digest=a.runner_digest, evaluator_image_digest=a.evaluator_digest)
     print(f"season {m['season']}  questions {m['question_count']}  hash {m['questions_hash'][:16]}…")
+
+
+def _season_score(a):
+    from . import season_eval
+    b = season_eval.run(Path(a.root), a.season, truth_path=Path(a.truth) if a.truth else None,
+                        out_dir=Path(a.out) if a.out else None, n_boot=a.n_boot,
+                        min_days=a.min_days)
+    rs = pd.DataFrame(b["relative_skill"])
+    print(rs.to_string(index=False) if len(rs) else "no rankable entries yet")
+
+
+def _season_board(a):
+    from . import season_board
+    out = Path(a.out) if a.out else Path("leaderboard") / f"{a.season}.html"
+    season_board.build(Path(a.root) / "eval" / "out" / a.season / "board.json", out)
+    print(f"wrote {out}")
 
 
 def _packet_build(a):
@@ -305,6 +340,12 @@ def main(argv=None):
     sub.add_argument("--metadata-dir", default="model-metadata")
     sub.set_defaults(fn=_service_submit)
 
+    s = sp.add_parser("entry")
+    es = s.add_subparsers(dest="entry_cmd", required=True)
+    ec = es.add_parser("check"); ec.add_argument("files", nargs="+")
+    ec.add_argument("--resolve", action="store_true"); ec.add_argument("--metadata-dir", default="model-metadata")
+    ec.set_defaults(fn=_entry_check)
+
     s = sp.add_parser("questions")
     qs = s.add_subparsers(dest="questions_cmd", required=True)
     g = qs.add_parser("generate"); g.add_argument("--races", required=True)
@@ -320,6 +361,12 @@ def main(argv=None):
         si.add_argument(n, required=True)
     si.add_argument("--root", default="."); si.add_argument("--runner-digest")
     si.add_argument("--evaluator-digest"); si.set_defaults(fn=_season_init)
+    sc = ss.add_parser("score"); sc.add_argument("--season", required=True)
+    sc.add_argument("--root", default="."); sc.add_argument("--truth"); sc.add_argument("--out")
+    sc.add_argument("--n-boot", type=int, default=200); sc.add_argument("--min-days", type=int, default=7)
+    sc.set_defaults(fn=_season_score)
+    sb = ss.add_parser("board"); sb.add_argument("--season", required=True)
+    sb.add_argument("--root", default="."); sb.add_argument("--out"); sb.set_defaults(fn=_season_board)
 
     s = sp.add_parser("packet")
     ps = s.add_subparsers(dest="packet_cmd", required=True)

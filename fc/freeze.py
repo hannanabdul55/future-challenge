@@ -119,3 +119,77 @@ def verify_entry(metadata_path: Path, *, season_round_dir: Path, before: datetim
                 "; ".join(problems) if problems else f"{len(rec['files'])} file(s) checked",
                 V.TRUSTLESS)
     return rep
+
+
+def check_entry_file(metadata_path: Path, *, resolve: bool = False, api=None,
+                     budget_bytes: int = M.DEFAULT_TIER_S_BUDGET_BYTES) -> M.Gate:
+    """Registration gate for CI (ENTRY-02, FREEZE-04): the embedded identity hash is
+    consistent, the tier/licence/budget/format rules hold, the team key parses, and — with
+    `resolve` — the Hub still reports the same commit sha and file hashes."""
+    g = M.Gate()
+    doc = yaml.safe_load(metadata_path.read_text()) or {}
+    for k in ("model_id", "tier", "model_identity", "public_key_pem"):
+        if k not in doc:
+            g.errors.append(f"missing {k}")
+    if g.errors:
+        return g
+    if doc["tier"] not in ("S", "A", "B", "H"):
+        g.errors.append(f"tier {doc['tier']!r} unknown")
+    if metadata_path.stem != doc["model_id"]:
+        g.errors.append(f"file name {metadata_path.name} != model_id {doc['model_id']}")
+    try:
+        C.load_public(str(doc["public_key_pem"]).encode())
+    except Exception as exc:  # noqa: BLE001
+        g.errors.append(f"public_key_pem does not parse: {exc}")
+    rec = doc["model_identity"]
+    if rec.get("type") == "api":
+        if doc["tier"] == "S":
+            g.errors.append("API identities are capped at tier A (rules §9)")
+        if not rec.get("fingerprint"):
+            g.errors.append("API identity needs a fingerprint captured at freeze")
+        return g
+    try:
+        rec = M.load_identity_record(metadata_path)
+    except ValueError as exc:
+        g.errors.append(str(exc))
+        return g
+    files = [M.FileEntry(f["path"], f.get("size"), f.get("sha256"), f.get("blob_id"))
+             for f in rec["files"]]
+    inf = M.Inference(**{k: v for k, v in rec["inference"].items() if k != "decoding"})
+    ident = M.Identity(rec["repo_id"], rec["revision"], rec.get("hf_commit_time"), files, inf,
+                       rec["prompt_template_sha256"], rec.get("licence"), rec.get("gated"),
+                       rec.get("extra", {}))
+    gate = M.check_entry(ident, doc["tier"], budget_bytes=budget_bytes)
+    g.errors += gate.errors
+    g.warnings += gate.warnings
+    if resolve:
+        api = api or __import__("huggingface_hub").HfApi()
+        try:
+            fresh = M.resolve(rec["repo_id"], rec["revision"], api=api)
+        except Exception as exc:  # noqa: BLE001
+            g.errors.append(f"revision does not resolve on the Hub: {exc}")
+            return g
+        want = {f["path"]: f.get("sha256") for f in rec["files"]}
+        got = {f.path: f.sha256 for f in fresh.files}
+        if fresh.revision != rec["revision"]:
+            g.errors.append("Hub resolved a different commit sha")
+        if want != got:
+            g.errors.append("Hub file hashes differ from the frozen record")
+    return g
+
+
+def check_team_limits(metadata_dir: Path, *, max_entries: int = 5) -> list[str]:
+    """ENTRY-03: ≤ max_entries per team, exactly one primary per team."""
+    teams: dict[str, list[dict]] = {}
+    for p in sorted(metadata_dir.glob("*.yml")):
+        doc = yaml.safe_load(p.read_text()) or {}
+        if "model_id" in doc:
+            teams.setdefault(str(doc.get("team_abbr") or doc["model_id"].split("-")[0]), []).append(doc)
+    errs = []
+    for team, docs in teams.items():
+        if len(docs) > max_entries:
+            errs.append(f"team {team}: {len(docs)} entries > {max_entries}")
+        n_primary = sum(1 for d in docs if d.get("primary"))
+        if n_primary != 1:
+            errs.append(f"team {team}: {n_primary} primary entries (need exactly 1)")
+    return errs
