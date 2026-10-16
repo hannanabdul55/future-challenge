@@ -4,9 +4,9 @@
 
 **Future Challenge**
 
-An open, contamination-proof evaluation hub for AI models, built on a mechanism proven in collaborative epidemiological forecasting: participants commit predictions (or frozen models) *before* the information that determines their score exists, and the truth is produced later by the world. It is for AI labs, academic forecasting teams, and independent modelers who want a benchmark that cannot be trained on, and for the community that wants to know which models actually reason about the world. Full rationale, threat model, and scoring design live in `DESIGN.md`.
+An open, contamination-proof forecasting challenge for frozen AI models. Participants freeze a model (a Hugging Face revision whose files are hashed and externally timestamped, or an API model fingerprinted at freeze) *before* the events it will forecast have happened; the hub runs each frozen model daily on the same curated information packet, publishes the forecasts, and scores them when the world produces the answer. Season 1 is the 2026 US midterm elections (2026-11-03): daily forecasts of chamber control, seat counts, and every Senate and gubernatorial race by party. Full rationale, threat model, and scoring design live in `DESIGN.md` (see §3.4 for the daily season). Planning lives in `.planning/` (PROJECT, REQUIREMENTS, ROADMAP, STATE).
 
-**Core Value:** For every scored item, the information that determines the score did not exist when the participant committed — and anyone can verify that from public artifacts alone.
+**Core Value:** For every scored forecast, the model that produced it was provably frozen before the information that determines the score existed — and anyone can verify that chain (weights hash → anchored timestamp → daily packet hash → forecast → outcome) from public artifacts alone.
 
 ### Constraints
 

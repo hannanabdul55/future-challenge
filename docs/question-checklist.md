@@ -8,7 +8,7 @@ Every question ships with a machine-readable spec (see `docs/question-spec.examp
 - [ ] Vintage rule and fallback hierarchy written.
 - [ ] Void conditions enumerated.
 - [ ] Manipulation cost estimated and recorded; target labelled if below "high".
-- [ ] Not about an identifiable individual; not retail-tradable.
+- [ ] Not about an identifiable individual (carve-out: party outcome of a public election, statement names office and parties only); not retail-tradable; no payout attached.
 - [ ] Baseline defined and computable at `T_open`.
 - [ ] Stranger test: two editors resolved a synthetic past instance independently and agreed.
 - [ ] Author is not participating in the round.

@@ -1,15 +1,17 @@
-# Rules — version 2026.08
+# Rules — version 2026.10
 
-Normative summary. DESIGN.md is the rationale; this file is what a round manifest pins.
+Normative summary. DESIGN.md is the rationale; this file is what a season manifest pins. Supersedes 2026.08 for seasons opening after 2026-10-16; the 2026.08 text is preserved in git history.
 
-1. **Rounds.** A round manifest is published at `T_open`. Commitments close at `T_commit`; reveals close at `T_reveal`. Times are UTC. Late is late.
-2. **Commitment.** `commit = SHA-256(submission || rationale || nonce)`, signed with the team's registered Ed25519 key. The hub returns a signed receipt. Merkle roots of all commits are published every 10 minutes and anchored to OpenTimestamps and Sigstore Rekor.
-3. **Reveal.** Plaintext plus nonce must reproduce the commitment. Mismatch = invalid (public). Unrevealed = missing.
-4. **Coverage.** Core questions are mandatory. A missing core question is scored as the worse of the baseline score and the 75th percentile of submitted scores on that question. Voided questions are removed for everyone.
-5. **Scoring.** Quantiles: WIS. Samples: CRPS. Binary/categorical: log score (clipped at 0.001), Brier secondary. Rankings use pairwise relative skill vs `fc-baseline` over shared questions (≥ 20 shared per pair); 95 % bootstrap intervals; ≥ 50 questions across ≥ 3 rounds for the headline board.
-6. **Entries.** ≤ 5 entries per team per round; exactly one designated `primary` before `T_commit`. All entries are permanent and public.
-7. **Identity.** Teams register a verified identity (organizational email, ORCID, or a GitHub account older than one year) and an Ed25519 public key. New teams appear on boards after three rounds.
-8. **Tiers.** S sealed (hub-executed), A attested (self-run, transcripts, ≥ 10 % re-execution audits), B self-reported, H human/hybrid. Boards are per tier. API identities are capped at A.
-9. **Ground truth.** Resolved per the question's `resolution` block. Provisional scores are updated as data arrives; final scores freeze at `T_final` (target date + 28 days unless the question says otherwise). Disputes: 7 days after provisional resolution, public, decided by the council within 7 days.
-10. **Conduct.** No outcome manipulation, sybil teams, or contact with resolvers. Violations void the entry and suspend the team; decisions are public.
-11. **Changes.** Rules are versioned `YYYY.MM`. A change applies only to rounds that open after it is published, following a public RFC of at least 14 days.
+1. **Seasons and daily rounds.** A season manifest is published at `T_season_open` and pins the question set, this rules version, the daily schedule, `T_final` per question family, the reference runner image digest and the evaluator digest. Every day a round manifest is published at 00:00 UTC with the hash of that day's information packet. Commitments for the day close at 12:00 UTC; reveals close at 18:00 UTC. Times are UTC. Late is late.
+2. **Freeze.** An entry commits a model identity: for open weights, the Hugging Face commit SHA and the SHA-256 of every file in that revision plus the inference configuration and prompt-template hash; for API models, provider, model id and a behavioural fingerprint captured at freeze. `commit = SHA-256(identity_record ‖ nonce)`, signed with the team's registered Ed25519 key. The hub returns a signed receipt. Merkle roots are anchored to OpenTimestamps and Sigstore Rekor. The entry's freeze time is the anchor time.
+3. **Admission.** An entry is scored on a daily round only if its freeze time precedes that round's `T_open`. Admission is rolling until the season's last-admission time.
+4. **Daily forecasts.** Tier S entries are run by the hub on the day's packet, with no network, greedy decoding and the day's seed; outputs are signed by the runner and included in the day's Merkle root before 12:00 UTC. Tier A entries run their own frozen model on the same packet and commit `SHA-256(forecast ‖ transcript ‖ nonce)` before 12:00 UTC, revealing by 18:00 UTC. Mismatch = invalid (public). Unrevealed = missing.
+5. **Coverage.** Core questions are mandatory. A missing or unparseable core question is scored as the worse of the baseline score and the 75th percentile of submitted scores on that question for that day. Voided questions are removed for everyone.
+6. **Scoring.** Binary and categorical: log score (clipped at 0.001), Brier secondary. Quantile: WIS. Rankings use pairwise relative skill vs `fc-baseline` over shared (day, question) pairs with 95 % block-bootstrap intervals by day. Headline board requires ≥ 7 scored days; fewer is provisional. Provisional and final scores are both stored; the final ranks.
+7. **Entries.** ≤ 5 entries per team per season; exactly one designated `primary`. All entries, receipts, outputs and transcripts are permanent and public.
+8. **Identity.** Teams register a verified identity (organizational email, ORCID, or a GitHub account older than one year) and an Ed25519 public key.
+9. **Tiers.** S hub-executed (Docker, network disabled, read-only mounts, quotas; reference image only), A self-run with transcripts and cost fields, B self-reported, H human/hybrid and reference baselines. Boards are per tier. API identities are capped at A.
+10. **Ground truth.** Resolved per the question's `resolution` block. Provisional resolution uses the declared public race-call source once stable for 72 h; final resolution uses certified results or official seating at `T_final`. Disputes: 7 days after provisional resolution, public, decided within 7 days.
+11. **Targets.** No question is about an identifiable individual except the party outcome of a public election for a public office; see DESIGN.md §4.6 carve-out. No prizes, fees or stakes are attached to any board.
+12. **Conduct.** No manipulation of packet sources or truth sources, no sybil teams, no contact with resolvers. Violations void the entry and suspend the team; decisions are public.
+13. **Changes.** Rules are versioned `YYYY.MM`. A change applies only to seasons that open after it is published, following a public RFC of at least 14 days (waived for this first version).

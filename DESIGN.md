@@ -124,6 +124,29 @@ Why both `β_R` and `S`: the beacon alone could in principle be biased by a beac
 
 Same as 3.2 with one change: the committed object *is* the executable, and the hub runs it under a declared network policy (§7.4). Tier S is the only tier that can carry the "no human in the loop" badge.
 
+### 3.4 Frozen-model daily season (added 2026-10-16)
+
+The forecast round (3.1) commits *predictions*. The season commits *models* once and lets the hub produce the predictions every day. It is paradigm F's questions with paradigm S's identity guarantee, exercised at a daily cadence against one salient event. The invariant is unchanged: commitment precedes entropy. Here there are two entropy sources, and the committed model must predate both.
+
+| Step | When (UTC) | What |
+|---|---|---|
+| `T_season_open` | once | Season manifest: question set hash, rules version, schedule, `T_final` per family, reference runner image digest, evaluator digest |
+| `T_freeze(e)` | rolling, per entry | Entry `e` commits its model identity (§7.1a): Hugging Face commit SHA, per-file SHA-256, inference config, prompt-template hash. The hub receipts it; the Merkle root is anchored. `T_freeze(e)` is the **anchor time**, not the HF commit time. |
+| `T_open(d)` | 00:00 daily | Daily manifest: hash of the **information packet** for day `d` (polls, market prices, headlines, all snapshotted on `d−1`), drand round for the day's seed |
+| `T_run(d)` | 00:00–12:00 | Tier S: hub runs every admitted entry on the packet in a network-disabled container; signs outputs; includes them in the day's Merkle root. Tier A: team runs its own frozen model on the same packet and commits output hashes. |
+| `T_commit(d)` | 12:00 | Commitment close for day `d`. Nothing after this counts. |
+| `T_reveal(d)` | 18:00 | Tier S outputs and Tier A reveals published together with transcripts. |
+| `T_resolve` | after the event | Truth from public record; provisional on stable race calls, final on certified results / seating. |
+| `T_final` | per family | Scores frozen. |
+
+An entry is scored on day `d` only if `T_freeze(e) < T_open(d)`. Admission is therefore rolling: a model frozen mid-season is scored from the next day on and its N is smaller. The season's last admission is `T_commit` of the season round.
+
+**Why the packet.** Without it, "the model's understanding of the world" is confounded with whatever retrieval each team bolted on. With it, every entry reads byte-identical inputs whose hash was anchored before any model ran; the comparison isolates reasoning over the same evidence. A tier with open-logged retrieval (§7.4) can be added later as a separate board.
+
+**Why daily.** A single forecast of an election is one draw. Daily forecasts produce a trajectory: calibration can be measured as the evidence accumulates, skill can be measured per day block, and the headline gate (≥ 7 scored days) has teeth. Each day's packet is new entropy, so each day is a fresh test of the same frozen weights.
+
+**What the hub can and cannot guarantee.** Tier S on consumer hardware is Docker with `--network none`, read-only mounts and quotas, not gVisor; the board says so. Greedy decoding with a fixed seed is reproducible on a fixed hardware/software stack, not bit-identical across GPUs; the runner image digest and the hardware are recorded so a reproduction is well-defined. Weights are hashed, so "the model changed" is detectable for open weights; API entries remain fingerprint-bounded (§7.3) and capped at Tier A.
+
 ---
 
 ## 4. What to forecast (paradigm F)
@@ -270,6 +293,8 @@ Event-triggered rounds (5, 8) open within 6 hours of the trigger with a 12-hour 
 
 **Explicitly excluded**: anything about identifiable private individuals; deaths of named persons; individual crimes or attacks (aggregate counts only); anything tradable enough that a hub leaderboard could move a market or create an insider-trading incentive at retail granularity (broad macro prints and freight indices are fine; single-stock prices are not).
 
+**Carve-out (rules 2026.10)**: the *party outcome of a public election* for a public office is a permitted target even though candidates are identifiable. Question statements name the office and the parties, never a person. Still excluded: anything about a candidate's conduct, health, legal exposure, withdrawal, or personal attributes; vote totals at a granularity that identifies individual voters; and anything that pays out (prediction-market contracts are read as a baseline, never traded).
+
 **Adjacent hubs to borrow from**: CSEP (earthquakes; prospective testing since 2007), the Scenario Modeling Hub (conditional / scenario forecasts — the right template for chain targets), NOAA SWPC verification (space weather), M6 (finance). None cover vulnerability exploitation, animal disease, migration, conflict, adoption, or cultural waves — open ground.
 
 Every question is a machine-readable record. Nothing resolves without one.
@@ -370,6 +395,29 @@ The forecast paradigm does not need to know what produced a prediction — the p
 
 ### 7.1 Open weights
 `model_identity = { type: weights, sha256: <weights>, inference_image: <OCI digest>, sampling: {...} }`. Strongest. Hub can run it, anyone can reproduce.
+
+#### 7.1a Hugging Face revision (the season form)
+
+```yaml
+model_identity:
+  type: hf
+  repo_id: org/model
+  revision: <40-hex commit sha>          # resolved from the ref at freeze time
+  hf_commit_time: 2026-10-18T09:12:44Z   # HF-reported; informational only
+  files:                                  # every file in the revision, from the Hub's LFS metadata
+    - {path: model-Q4_K_M.gguf, sha256: ..., size: 7340032000}
+    - {path: config.json, sha256: ..., size: 912}
+  inference:
+    engine: llama.cpp
+    engine_image: sha256:<reference runner image digest>
+    weights_file: model-Q4_K_M.gguf
+    context_length: 16384
+    decoding: {temperature: 0, seed: from_daily_entropy, max_tokens: 4096}
+  prompt_template_sha256: ...
+identity_hash: sha256(canonical_json(model_identity))
+```
+
+The identity hash is the committed object. The HF commit time is recorded but not trusted: the freeze time is the external anchor of the Merkle root that contains the identity hash. Before every run the hub re-hashes the local snapshot against `files`; a mismatch is a hard stop. Weight formats are restricted to `safetensors` and GGUF (no pickled checkpoints).
 
 ### 7.2 Sealed container
 `model_identity = { type: container, oci_digest: sha256:..., entrypoint, network_policy }`. Model may be closed inside the image, but the image is frozen and hub-executed. Strong, if paired with a network policy that prevents phoning home to a mutable service (§7.4).
