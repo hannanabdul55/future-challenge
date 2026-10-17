@@ -1,1 +1,11 @@
 year,office,state,special,winner_party,caucus,reason
+2018,senate,ME,false,Other,D,Angus King won as an Independent: resolves Other for race questions; he caucuses with the Democrats so counts toward the D caucus for chamber questions
+2018,senate,VT,false,Other,D,Bernie Sanders won as an Independent: resolves Other for race questions; he caucuses with the Democrats so counts toward the D caucus for chamber questions
+2020,senate,GA,false,D,D,"MEDSL has only the first round (Perdue led Ossoff on 2020-11-03); the 2021-01-05 runoff, absent from the file, was won by Jon Ossoff (D); live rule: resolves on the runoff winner"
+2020,senate,GA,true,D,D,"MEDSL has only the 2020-11-03 jungle first round (Warnock led); the 2021-01-05 runoff, absent from the file, was won by Raphael Warnock (D); live rule: resolves on the runoff winner"
+2020,senate,WY,false,R,R,"MEDSL party_detailed is empty for the winner Cynthia Lummis, so party_simplified is OTHER; she ran as a Republican"
+2022,senate,AK,false,R,R,"MEDSL party_detailed is empty for the winner Lisa Murkowski, so party_simplified is OTHER; she ran as a Republican and sits in the Republican conference"
+2022,senate,IL,false,D,D,"MEDSL party_detailed is DEMOCRATIC (not DEMOCRAT) for the winner Tammy Duckworth, so party_simplified is OTHER; she is a Democrat"
+2022,senate,MD,false,D,D,"MEDSL party_detailed is DEMOCRATIC (not DEMOCRAT) for the winner Chris Van Hollen, so party_simplified is OTHER; he is a Democrat"
+2024,senate,ME,false,Other,D,Angus King won as an Independent: resolves Other for race questions; he caucuses with the Democrats so counts toward the D caucus for chamber questions
+2024,senate,VT,false,Other,D,Bernie Sanders won as an Independent: resolves Other for race questions; he caucuses with the Democrats so counts toward the D caucus for chamber questions

@@ -1,0 +1,13 @@
+{
+ "medsl_senate": {
+  "bytes": 530501,
+  "doi": "doi:10.7910/DVN/PEJ5QU",
+  "downloaded": "2026-10-17",
+  "file": "1976-2024-senate-state.csv",
+  "licence": "CC0 1.0",
+  "local_dir": "/mnt/d/fc-train/data/medsl/senate",
+  "name": "MIT Election Data and Science Lab, U.S. Senate statewide 1976-2024",
+  "sha256": "6f745db1b4a0026ad837e74428f9ed6f3f77fa51eb6f858b58ebdbc186fdb3bd",
+  "url": "https://dataverse.harvard.edu/api/access/datafile/13887039?format=original"
+ }
+}

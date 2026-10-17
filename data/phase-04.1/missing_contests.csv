@@ -1,1 +1,2 @@
 year,office,state,special,winner_party,winner_name,caucus,reason
+2022,senate,CT,false,D,Richard Blumenthal,,The MEDSL file has no 2022 Connecticut Senate rows (checked: zero rows for state_po CT in year 2022; 33 other class 3 states present); winner cross-checked against the Wikipedia results table in truth_audit.csv

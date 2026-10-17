@@ -130,22 +130,22 @@ def _write(path, rows):
 
 
 def test_override_for_absent_contest_raises(raw, tmp_path):
-    p = _write(tmp_path / "o.csv", [dict(year=2018, office="senate", state="ZZ", special="false",
-                                         winner_party="D", caucus="D", reason="x")])
+    p = _write(tmp_path / "o.csv", [{"year": 2018, "office": "senate", "state": "ZZ", "special": "false",
+                                         "winner_party": "D", "caucus": "D", "reason": "x"}])
     with pytest.raises(ValueError, match="matches no contest"):
         truth.apply_overrides(list(raw.values()), p)
 
 
 def test_override_without_reason_raises(raw, tmp_path):
-    p = _write(tmp_path / "o.csv", [dict(year=2020, office="senate", state="WY", special="false",
-                                         winner_party="R", caucus="R", reason="  ")])
+    p = _write(tmp_path / "o.csv", [{"year": 2020, "office": "senate", "state": "WY", "special": "false",
+                                         "winner_party": "R", "caucus": "R", "reason": "  "}])
     with pytest.raises(ValueError, match="reason"):
         truth.apply_overrides(list(raw.values()), p)
 
 
 def test_override_wins_and_records_provenance(raw, tmp_path):
-    p = _write(tmp_path / "o.csv", [dict(year=2020, office="senate", state="WY", special="false",
-                                         winner_party="R", caucus="", reason="certified")])
+    p = _write(tmp_path / "o.csv", [{"year": 2020, "office": "senate", "state": "WY", "special": "false",
+                                         "winner_party": "R", "caucus": "", "reason": "certified"}])
     out = {key(c): c for c in truth.apply_overrides(list(raw.values()), p)}
     assert out[(2020, "WY", False)].winner_party == "R"
     assert out[(2020, "WY", False)].caucus == "R"       # blank caucus follows a D or R party
@@ -169,9 +169,9 @@ def test_add_missing_contest_and_refuse_duplicates(raw, tmp_path):
     with p.open("w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=cols, lineterminator="\n")
         w.writeheader()
-        w.writerow(dict(year=2022, office="senate", state="CT", special="false",
-                        winner_party="D", winner_name="Richard Blumenthal", caucus="",
-                        reason="absent from MEDSL"))
+        w.writerow({"year": 2022, "office": "senate", "state": "CT", "special": "false",
+                        "winner_party": "D", "winner_name": "Richard Blumenthal", "caucus": "",
+                        "reason": "absent from MEDSL"})
     out = {key(c): c for c in truth.add_missing(list(raw.values()), p)}
     ct = out[(2022, "CT", False)]
     assert ct.winner_party == "D" and ct.seat_key == "CT-class3" and ct.source == "addition"
@@ -189,8 +189,8 @@ def test_full_file_counts_and_overrides_apply():
     contests = truth.load_medsl_senate(FULL, YEARS)
     per = {y: sum(c.year == y for c in contests) for y in YEARS}
     assert per == {2018: 35, 2020: 35, 2022: 35, 2024: 35}   # CT 2022 is absent from MEDSL
-    fixed = truth.apply_overrides(contests, OVERRIDES)
-    fixed = truth.add_missing(fixed, MISSING)
+    fixed = truth.add_missing(contests, MISSING)
+    fixed = truth.apply_overrides(fixed, OVERRIDES, offices=("senate",))
     per = {y: sum(c.year == y for c in fixed) for y in YEARS}
     assert per == {2018: 35, 2020: 35, 2022: 36, 2024: 35}
     seats = {y: len({c.seat_key for c in fixed if c.year == y}) for y in YEARS}
