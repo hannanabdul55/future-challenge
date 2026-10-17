@@ -1,7 +1,7 @@
 """`fc` command line.
 
 fc keygen  --out DIR
-fc freeze  --repo ORG/MODEL [--revision REF] --model-id ID --team NAME --tier S|A --out model-metadata/ID.yml
+fc freeze  --repo ORG/MODEL [--revision REF] --model-id ID --team NAME --tier S|A --out model-metadata/ID.yml [--thinking]
            [--prompt-template FILE --weights-file NAME --public-key FILE --budget-gib N]
 fc commit  --round R --model M --submission FILE --rationale FILE --key team.pem --out sidecar.json
 fc commit  --round SEASON --entry model-metadata/ID.yml --key team.pem --out sidecar.json
@@ -12,7 +12,7 @@ fc validate FILE --tasks hub-config/tasks.json [--round R]
 fc score   --pred FILE... --truth FILE --baseline fc-baseline --out DIR
 fc leaderboard --scores DIR/scores.csv --out leaderboard/index.html
 fc verify   --sidecar FILE [--roots DIR --manifest FILE --hub-key FILE --bitcoin-headers FILE --allow-pending --json]
-fc verify   --entry model-metadata/ID.yml --season-dir rounds/SEASON [--before ISO | --round-manifest FILE] [--snapshot DIR]
+fc verify   --entry model-metadata/ID.yml --season-dir rounds/SEASON/season [--before ISO | --round-manifest FILE] [--snapshot DIR]
 fc service submit --sidecar FILE --round-dir DIR --hub-key FILE [--metadata-dir DIR]
 fc entry check FILE... [--resolve] [--metadata-dir model-metadata]
 fc questions generate --races FILE --out questions/SEASON/questions.json
@@ -55,7 +55,7 @@ def _freeze(a):
     from . import freeze as F
     from . import model_identity as M
     template = Path(a.prompt_template).read_bytes() if a.prompt_template else b""
-    inf = M.Inference(weights_file=a.weights_file)
+    inf = M.Inference(weights_file=a.weights_file, thinking=a.thinking)
     ident = M.resolve(a.repo, a.revision, api=HfApi(), inference=inf, prompt_template=template)
     gate = M.check_entry(ident, a.tier, budget_bytes=int(a.budget_gib * 1024**3))
     for w in gate.warnings:
@@ -263,7 +263,7 @@ def _run(a):
                     gpus=not a.no_gpu, fetch_drand=not a.no_drand)
     print(f"{b['model_id']} {b['round_id']} {b['status']}"
           + (f" ({b['reason']})" if b.get("reason") else "")
-          + (f" parse_rate={b.get('parse_rate')}" if b["status"] == "ok" else ""))
+          + (f" parse_rate={b.get('parse_rate')}" if b["status"] in ("ok", "empty") else ""))
     sys.exit(0 if b["status"] in ("ok", "dry-run") else 1)
 
 
@@ -301,6 +301,8 @@ def main(argv=None):
         s.add_argument(n, required=True)
     s.add_argument("--revision", default="main"); s.add_argument("--prompt-template")
     s.add_argument("--weights-file"); s.add_argument("--public-key")
+    s.add_argument("--thinking", action="store_true",
+                   help="run the model with its thinking/reasoning mode ON; default OFF (rules 2026.10)")
     s.add_argument("--budget-gib", type=float, default=11.0); s.set_defaults(fn=_freeze)
 
     s = sp.add_parser("commit")
@@ -373,7 +375,9 @@ def main(argv=None):
     pb = ps.add_parser("build"); pb.add_argument("--date", required=True)
     pb.add_argument("--out", required=True); pb.add_argument("--season", default="2026-us-midterms")
     pb.add_argument("--markets"); pb.add_argument("--questions")
-    pb.add_argument("--budget", type=int, default=60_000)
+    from . import packet as _packet
+    pb.add_argument("--budget", type=int, default=_packet.DEFAULT_BUDGET_CHARS,
+                    help="packet size budget in characters (season constant; default %(default)s)")
     pb.set_defaults(fn=_packet_build)
 
     s = sp.add_parser("round")
@@ -393,7 +397,7 @@ def main(argv=None):
     s.add_argument("--no-drand", action="store_true"); s.set_defaults(fn=_run)
 
     s = sp.add_parser("verify"); s.add_argument("--sidecar")
-    s.add_argument("--entry"); s.add_argument("--season-dir"); s.add_argument("--before")
+    s.add_argument("--entry"); s.add_argument("--season-dir", help="season round dir, e.g. rounds/2026-us-midterms/season"); s.add_argument("--before")
     s.add_argument("--round-manifest"); s.add_argument("--snapshot")
     s.add_argument("--roots"); s.add_argument("--manifest"); s.add_argument("--hub-key")
     s.add_argument("--bitcoin-headers")

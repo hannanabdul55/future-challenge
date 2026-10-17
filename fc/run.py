@@ -12,7 +12,8 @@ Steps:
      quota; or `--local` to run forecast.py in-process for development
   5. parse `/out/forecast.csv` through the validator, write the signed result bundle to
      model-output/<id>/<round_id>.csv and runs/<season>/<date>/<id>/ (transcript, status,
-     bundle.json); a failure yields a signed "missing" bundle rather than nothing
+     bundle.json); a failure yields a signed "missing" bundle rather than nothing, and a
+     run that parses zero rows yields a signed "empty" bundle (nothing is published)
 """
 
 from __future__ import annotations
@@ -158,7 +159,9 @@ def run_entry(entry_yaml: Path, *, root: Path, season: str, day: str, snapshot: 
     inf = rec["inference"]
     env = {"FC_ROUND_ID": round_id, "FC_DAY": day, "FC_SEED": str(seed), "FC_WEIGHTS_FILE": wf,
            "FC_CTX": str(inf.get("context_length", 16384)),
-           "FC_MAX_TOKENS": str(inf.get("decoding", {}).get("max_tokens", 4096))}
+           "FC_MAX_TOKENS": str(inf.get("decoding", {}).get("max_tokens", 4096)),
+           "FC_THINKING": "1" if inf.get("thinking", False) else "0"}
+    bundle["thinking"] = bool(inf.get("thinking", False))
     cmd = docker_cmd(image, snapshot=snapshot, paths=paths, prompt=prompt, out=out, env=env,
                      gpus=gpus)
     bundle["command"] = cmd
@@ -190,6 +193,15 @@ def run_entry(entry_yaml: Path, *, root: Path, season: str, day: str, snapshot: 
         return _finish(bundle, paths, runner_key)
     import pandas as pd
     df = pd.read_csv(fcsv)
+    status = json.loads((out / "status.json").read_text()) if (out / "status.json").exists() else {}
+    if len(df) == 0:
+        # Nothing parsed: record it (signed) but publish no forecast for this entry/day.
+        bundle.update(status="empty", parse_rate=status.get("parse_rate"),
+                      n_missing=status.get("n_missing"), n_rows=0,
+                      reason=f"model produced no parseable answers "
+                             f"(parse_rate {status.get('parse_rate')})")
+        _copy_evidence(bundle, out, paths)
+        return _finish(bundle, paths, runner_key)
     rc_cfg = Q.to_tasks_round(qs, round_id=round_id, T_open=manifest["T_open"],
                               T_commit=manifest["T_commit"], T_reveal=manifest["T_reveal"])
     rep = validate_frame(df, rc_cfg)
@@ -197,17 +209,20 @@ def run_entry(entry_yaml: Path, *, root: Path, season: str, day: str, snapshot: 
     if not rep.ok:
         bundle.update(reason=f"invalid output: {rep.errors[:3]}")
         return _finish(bundle, paths, runner_key)
-    status = json.loads((out / "status.json").read_text()) if (out / "status.json").exists() else {}
     bundle.update(status="ok", parse_rate=status.get("parse_rate"),
                   n_missing=status.get("n_missing"), n_rows=len(df))
     paths.output_csv.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(paths.output_csv, index=False)
     bundle["forecast_sha256"] = hashlib.sha256(paths.output_csv.read_bytes()).hexdigest()
+    _copy_evidence(bundle, out, paths)
+    return _finish(bundle, paths, runner_key)
+
+
+def _copy_evidence(bundle: dict[str, Any], out: Path, paths: RunPaths) -> None:
     for name in ("transcript.jsonl", "status.json"):
         if (out / name).exists():
             shutil.copy(out / name, paths.run_dir / name)
             bundle[f"{name}_sha256"] = hashlib.sha256((out / name).read_bytes()).hexdigest()
-    return _finish(bundle, paths, runner_key)
 
 
 def _run_local(snapshot: Path, paths: RunPaths, prompt: Path, out: Path, env: dict[str, str],

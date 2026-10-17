@@ -105,3 +105,14 @@ def test_verify_entry_checks_snapshot(fixture_round, tmp_path):
                          before=datetime(2026, 9, 10, tzinfo=UTC), snapshot=snap)
     c = {c.name: c for c in rep.checks}["snapshot matches pinned hashes"]
     assert not c.ok and "size mismatch" in c.detail
+
+
+def test_verify_entry_snapshot_requires_the_weights_file(fixture_round, tmp_path):
+    meta, _ = _frozen_entry(fixture_round)
+    snap = tmp_path / "snap"
+    snap.mkdir()
+    (snap / "config.json").write_bytes(b"0123456789")
+    rep = F.verify_entry(meta, season_round_dir=fixture_round.round_dir,
+                         before=datetime(2026, 9, 10, tzinfo=UTC), snapshot=snap)
+    c = {c.name: c for c in rep.checks}["snapshot matches pinned hashes"]
+    assert not c.ok and "missing m-Q4_K_M.gguf" in c.detail

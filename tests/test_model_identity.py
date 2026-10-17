@@ -135,3 +135,69 @@ def test_metadata_roundtrip_and_tamper_detection(tmp_path: Path):
     p.write_text(yaml.safe_dump({"model_id": "acme-v1", "tier": "S", "model_identity": tampered}))
     with pytest.raises(ValueError, match="identity_hash"):
         M.load_identity_record(p)
+
+
+def test_thinking_is_a_hashed_inference_field_defaulting_off():
+    assert M.Inference().to_dict()["thinking"] is False
+    base = M.resolve("org/model", "main", api=FakeApi([CFG, GGUF]))
+    on = M.resolve("org/model", "main", api=FakeApi([CFG, GGUF]),
+                   inference=M.Inference(thinking=True))
+    assert base.to_dict()["inference"]["thinking"] is False
+    assert on.to_dict()["inference"]["thinking"] is True
+    assert base.hash() != on.hash()
+
+
+def test_legacy_record_without_thinking_still_loads(tmp_path: Path):
+    rec = M.resolve("org/model", "main", api=FakeApi([CFG, GGUF])).to_dict()
+    del rec["inference"]["thinking"]
+    rec["identity_hash"] = M.identity_hash(rec)
+    p = tmp_path / "acme-v1.yml"
+    p.write_text(yaml.safe_dump({"model_id": "acme-v1", "tier": "S", "model_identity": rec}))
+    assert M.load_identity_record(p)["identity_hash"] == rec["identity_hash"]
+
+
+def _multi_quant_record():
+    files = [_sib("m-Q4_K_M.gguf", size=11, sha=hashlib.sha256(b"q4-weights").hexdigest()),
+             _sib("m-Q8_0.gguf", size=8_000_000_000, sha="e" * 64),
+             _sib("m-F16.gguf", size=16_000_000_000, sha="f" * 64),
+             _sib("config.json", size=10), _sib("README.md", size=5)]
+    rec = M.resolve("org/model", "main", api=FakeApi(files),
+                    inference=M.Inference(weights_file="m-Q4_K_M.gguf")).to_dict()
+    return rec
+
+
+def test_entry_snapshot_paths_scopes_to_the_chosen_weights(tmp_path: Path):
+    rec = _multi_quant_record()
+    snap = tmp_path / "snap"
+    snap.mkdir()
+    (snap / "m-Q4_K_M.gguf").write_bytes(b"q4-weights\x00"[:11])
+    (snap / "config.json").write_bytes(b"0123456789")
+    assert M.entry_snapshot_paths(rec, snap) == ["m-Q4_K_M.gguf", "config.json"]
+    # The weights file is listed even when it is absent, so verification reports it missing.
+    (snap / "m-Q4_K_M.gguf").unlink()
+    assert M.entry_snapshot_paths(rec, snap) == ["m-Q4_K_M.gguf", "config.json"]
+
+
+def test_verify_snapshot_scoped_ignores_absent_quants(tmp_path: Path):
+    data = b"q4-weights"
+    sha = hashlib.sha256(data).hexdigest()
+    files = [_sib("m-Q4_K_M.gguf", size=len(data), sha=sha),
+             _sib("m-Q8_0.gguf", size=8_000_000_000, sha="e" * 64),
+             _sib("config.json", size=10)]
+    rec = M.resolve("org/model", "main", api=FakeApi(files),
+                    inference=M.Inference(weights_file="m-Q4_K_M.gguf")).to_dict()
+    snap = tmp_path / "snap"
+    snap.mkdir()
+    (snap / "m-Q4_K_M.gguf").write_bytes(data)
+    (snap / "config.json").write_bytes(b"0123456789")
+    assert M.verify_snapshot(rec, snap) == ["missing m-Q8_0.gguf"]  # unscoped: strict
+    assert M.verify_snapshot(rec, snap, only=M.entry_snapshot_paths(rec, snap)) == []
+    (snap / "config.json").write_bytes(b"x")  # a present non-weight file is still checked
+    assert M.verify_snapshot(rec, snap, only=M.entry_snapshot_paths(rec, snap)) \
+        == ["size mismatch config.json: 1 != 10"]
+
+
+def test_entry_snapshot_paths_without_a_weights_file_returns_everything(tmp_path: Path):
+    rec = M.resolve("org/model", "main", api=FakeApi([CFG, GGUF])).to_dict()
+    rec["inference"]["weights_file"] = None
+    assert M.entry_snapshot_paths(rec, tmp_path) == ["config.json", "model-Q4_K_M.gguf"]

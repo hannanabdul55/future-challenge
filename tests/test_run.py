@@ -123,3 +123,59 @@ def test_tier_a_entries_are_not_hub_run(tmp_path):
         assert "tier A" in str(exc)
     else:
         raise AssertionError("tier A entry was accepted for hub execution")
+
+
+def _snap(tmp_path):
+    snap = tmp_path / "snap"
+    snap.mkdir()
+    (snap / "m.gguf").write_bytes(WEIGHTS)
+    return snap
+
+
+def _env_value(cmd, name):
+    return next(cmd[i + 1].split("=", 1)[1] for i, v in enumerate(cmd)
+                if v == "-e" and cmd[i + 1].startswith(name + "="))
+
+
+def test_fc_thinking_follows_the_frozen_identity(tmp_path):
+    meta, root = _season(tmp_path)
+    snap = _snap(tmp_path)
+    b = R.run_entry(meta, root=root, season=Q.SEASON, day="2026-10-26", snapshot=snap,
+                    dry_run=True, fetch_drand=False)
+    assert _env_value(b["command"], "FC_THINKING") == "0" and b["thinking"] is False
+
+    template = Path(__file__).resolve().parents[1] / "fc" / "prompts" / "forecaster-v1.md"
+    ident = M.resolve("org/m", "main", api=FakeApi(), prompt_template=template.read_bytes(),
+                      inference=M.Inference(weights_file="m.gguf", thinking=True))
+    F.write_entry_yaml(meta, model_id="acme-m", team="Acme", tier="S", identity=ident,
+                       public_key_pem=None)
+    b = R.run_entry(meta, root=root, season=Q.SEASON, day="2026-10-26", snapshot=snap,
+                    dry_run=True, fetch_drand=False)
+    assert _env_value(b["command"], "FC_THINKING") == "1" and b["thinking"] is True
+
+
+def test_zero_parsed_rows_is_an_empty_signed_bundle(tmp_path, monkeypatch):
+    meta, root = _season(tmp_path)
+    snap = _snap(tmp_path)
+
+    def fake_local(snapshot, paths, prompt, out, env, timeout_s):
+        import pandas as pd
+
+        from fc import forecast_io as FIO
+        pd.DataFrame(columns=FIO.OUTPUT_COLS).to_csv(out / "forecast.csv", index=False)
+        (out / "status.json").write_text(json.dumps({"parse_rate": 0.0, "n_missing": 75}))
+        (out / "transcript.jsonl").write_text("{}\n")
+        return 0
+
+    monkeypatch.setattr(R, "_run_local", fake_local)
+    priv, _ = C.generate_keypair()
+    key = tmp_path / "runner.pem"
+    key.write_bytes(priv)
+    b = R.run_entry(meta, root=root, season=Q.SEASON, day="2026-10-26", snapshot=snap,
+                    runner_key=key, local=True, fetch_drand=False)
+    assert b["status"] == "empty" and "no parseable answers" in b["reason"]
+    assert b["runner_signature"]
+    run_dir = root / "runs" / Q.SEASON / "2026-10-26" / "acme-m"
+    assert (run_dir / "bundle.json").is_file() and (run_dir / "status.json").is_file()
+    assert (run_dir / "transcript.jsonl").is_file()
+    assert not (root / "model-output" / "acme-m").exists()

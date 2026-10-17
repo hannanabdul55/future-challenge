@@ -8,7 +8,7 @@ third party needs to check that what ran is what was committed:
   that contains the identity hash);
 - every file in that revision with its SHA-256 and size, taken from the Hub's LFS
   metadata (regular, non-LFS files carry a git blob id only; see `_file_entry`);
-- the inference configuration (engine, weights file, context, decoding) and the hash of
+- the inference configuration (engine, weights file, context, decoding, thinking mode) and the hash of
   the prompt template the hub will use;
 - a canonical identity hash over all of the above, which is the committed object.
 
@@ -79,6 +79,7 @@ class Inference:
     temperature: float = 0.0
     seed: str = "from_daily_entropy"
     engine_image: str | None = None  # reference runner image digest, filled from season manifest
+    thinking: bool = False           # reasoning mode; frozen, default OFF (rules 2026.10)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -88,6 +89,7 @@ class Inference:
             "decoding": {"temperature": self.temperature, "max_tokens": self.max_tokens,
                          "seed": self.seed},
             "engine_image": self.engine_image,
+            "thinking": self.thinking,
         }
 
 
@@ -259,6 +261,23 @@ def sha256_file(path: Path, chunk: int = 1 << 20) -> str:
         for block in iter(lambda: f.read(chunk), b""):
             h.update(block)
     return h.hexdigest()
+
+
+def entry_snapshot_paths(record: dict[str, Any], snapshot: Path) -> list[str]:
+    """The pinned files a snapshot must match for a Tier S entry: the chosen weights file
+    (always required, so listed first even if absent) plus every other recorded non-weight
+    file that exists in the snapshot. Other quants in the repo are not required. The runner
+    downloads only the weights file plus ``*.json`` (fc/run.py allow_patterns), and the GGUF
+    embeds its tokenizer and chat template, so the weights hash covers what actually runs.
+    Without a chosen weights file every recorded path is returned."""
+    wf = record["inference"].get("weights_file")
+    paths = [f["path"] for f in record["files"]]
+    if not wf:
+        return paths
+    weight_suffixes = SAFE_WEIGHT_SUFFIXES + UNSAFE_WEIGHT_SUFFIXES
+    rest = [p for p in paths if p != wf and not p.lower().endswith(weight_suffixes)
+            and (snapshot / p).is_file()]
+    return [wf, *rest]
 
 
 def verify_snapshot(record: dict[str, Any], snapshot: Path, *,

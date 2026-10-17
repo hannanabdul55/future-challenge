@@ -14,6 +14,10 @@ Output contract: the model answers with one JSON object per question batch:
 The parser is forgiving (code fences, prose around the JSON, trailing commas, numbers as
 strings, percentages) and strict where it matters: an unparseable or incomplete answer to a
 question is *missing*, never guessed.
+
+Which JSON is read: only the text after the last ``</think>`` (thinking models draft inside
+the think block), and of the objects there the last one that contains an expected question
+id. A binary answer may be a bare number or percent string instead of ``{"p": ...}``.
 """
 
 from __future__ import annotations
@@ -77,7 +81,6 @@ def batches(questions: list[dict[str, Any]], *, max_per_batch: int = 20) -> list
 
 # --------------------------------------------------------------------------- parse
 
-_FENCE = re.compile(r"```(?:json)?\s*(.*?)```", re.DOTALL)
 _NUM = re.compile(r"^\s*([-+]?\d+(?:\.\d+)?)\s*(%?)\s*$")
 
 
@@ -94,27 +97,64 @@ def _num(v: Any) -> float | None:
     return None
 
 
-def extract_json(text: str) -> dict[str, Any] | None:
-    """Find the first JSON object in free text; tolerate fences and trailing commas."""
-    candidates = _FENCE.findall(text) + [text]
-    for c in candidates:
-        start = c.find("{")
-        if start < 0:
-            continue
-        depth = 0
-        for i in range(start, len(c)):
-            if c[i] == "{":
-                depth += 1
-            elif c[i] == "}":
-                depth -= 1
-                if depth == 0:
-                    blob = re.sub(r",\s*([}\]])", r"\1", c[start:i + 1])
-                    try:
-                        obj = json.loads(blob)
-                    except json.JSONDecodeError:
-                        break
-                    return obj if isinstance(obj, dict) else None
+def _balanced_end(text: str, start: int) -> int | None:
+    """Index of the brace closing the object that opens at ``start`` (string-aware)."""
+    depth, in_str, esc = 0, False, False
+    for i in range(start, len(text)):
+        ch = text[i]
+        if in_str:
+            if esc:
+                esc = False
+            elif ch == "\\":
+                esc = True
+            elif ch == '"':
+                in_str = False
+        elif ch == '"':
+            in_str = True
+        elif ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0:
+                return i
     return None
+
+
+def extract_json(text: str, expected_ids: list[str] | None = None) -> dict[str, Any] | None:
+    """The model's final JSON answer. Only the text after the last ``</think>`` is read (a
+    thinking model drafts answers inside the think block). Top-level objects are scanned left
+    to right, tolerating fences, prose and trailing commas; the last one containing an
+    expected question id wins, else the last object of any kind. Fences need no separate pass
+    because the scan finds objects inside them too."""
+    if "</think>" in text:
+        text = text.rsplit("</think>", 1)[1]
+    found: list[dict[str, Any]] = []
+    i = 0
+    while True:
+        start = text.find("{", i)
+        if start < 0:
+            break
+        end = _balanced_end(text, start)
+        obj = None
+        if end is not None:
+            blob = re.sub(r",\s*([}\]])", r"\1", text[start:end + 1])
+            try:
+                obj = json.loads(blob)
+            except json.JSONDecodeError:
+                obj = None
+        if isinstance(obj, dict):
+            found.append(obj)
+            i = end + 1  # type: ignore[operator]
+        else:
+            i = start + 1
+    if not found:
+        return None
+    if expected_ids:
+        wanted = set(expected_ids)
+        for obj in reversed(found):
+            if wanted & obj.keys():
+                return obj
+    return found[-1]
 
 
 @dataclass
@@ -133,10 +173,12 @@ class Parsed:
 
 def parse_answer(text: str, questions: list[dict[str, Any]], *, round_id: str) -> Parsed:
     out = Parsed()
-    obj = extract_json(text) or {}
+    obj = extract_json(text, [q["question_id"] for q in questions]) or {}
     for q in questions:
         qid, t = q["question_id"], q["output_type"]
         ans = obj.get(qid)
+        if t == "binary" and not isinstance(ans, dict) and _num(ans) is not None:
+            ans = {"p": ans}  # a bare number (or "68%") is the probability
         if not isinstance(ans, dict):
             out.missing[qid] = "no JSON object for question"
             continue

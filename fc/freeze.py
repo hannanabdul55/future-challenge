@@ -90,7 +90,8 @@ def verify_entry(metadata_path: Path, *, season_round_dir: Path, before: datetim
                  allow_pending: bool = False, ots_parser=None) -> V.VerifyReport:
     """FREEZE-03: the entry's identity hash is in an anchored root whose anchor precedes
     `before` (a daily round's `T_open`), the commitment opens to the identity record, and
-    (optionally) a local snapshot matches the pinned file hashes."""
+    (optionally) a local snapshot matches the pinned hashes of the weights file and of any
+    pinned non-weight file present in it (other quants in the repo are not required)."""
     doc = yaml.safe_load(metadata_path.read_text())
     freeze = doc.get("freeze") or {}
     sidecar = Path(freeze.get("sidecar", ""))
@@ -114,9 +115,10 @@ def verify_entry(metadata_path: Path, *, season_round_dir: Path, before: datetim
         rec = None
 
     if snapshot is not None and rec is not None:
-        problems = M.verify_snapshot(rec, Path(snapshot))
+        only = M.entry_snapshot_paths(rec, Path(snapshot))
+        problems = M.verify_snapshot(rec, Path(snapshot), only=only)
         rep.add("snapshot matches pinned hashes", not problems,
-                "; ".join(problems) if problems else f"{len(rec['files'])} file(s) checked",
+                "; ".join(problems) if problems else f"{len(only)} file(s) checked",
                 V.TRUSTLESS)
     return rep
 
