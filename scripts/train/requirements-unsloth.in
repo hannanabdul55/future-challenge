@@ -1,0 +1,3 @@
+# Lock input for the pre-approved fallback venv (installed only if the TRL stack OOMs).
+# The resolver brings its own transformers / trl / xformers.
+unsloth==2026.10.6

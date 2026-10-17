@@ -1,0 +1,23 @@
+{
+  "llama_cpp_tarball": {
+    "url": "https://codeload.github.com/ggml-org/llama.cpp/tar.gz/4df29be4f4c3673f428170fda944a5b19f743bb8",
+    "commit": "4df29be4f4c3673f428170fda944a5b19f743bb8",
+    "sha256": "b5e5787cb648e400c75ecfc36fdf348a6320de72b5dbee3e0e6181715666fd6f",
+    "tarball_path": "/mnt/d/fc-train/src/dl/llama.cpp-4df29be.tar.gz",
+    "extracted_to": "/mnt/d/fc-train/src/llama.cpp-4df29be/"
+  },
+  "uv_version": "uv 0.12.17 (x86_64-unknown-linux-gnu)",
+  "compiled_utc": "2026-10-17T22:41:11Z",
+  "platform_flags": "--python-version 3.12 --python-platform x86_64-manylinux_2_28 --generate-hashes",
+  "convert_lock_notes": [
+    "compiled from requirements/requirements-convert_hf_to_gguf.txt (includes requirements-convert_legacy_llama.txt) with --index-strategy unsafe-best-match",
+    "the file declares --extra-index-url https://download.pytorch.org/whl/cpu; torch resolves to 2.11.0+cpu, which the lock does not record as an index: install with --extra-index-url https://download.pytorch.org/whl/cpu",
+    "no local path or editable entry in the converter requirements; gguf resolves to PyPI gguf==0.19.0 and the extracted tree's gguf-py is not used as a package"
+  ],
+  "lock_sha256": {
+    "train.lock": "fc42966f07b25df02edb6bfe3fa49b091bdfa486606ec6eb92d86c7fce648e98",
+    "unsloth.lock": "7ea5412757ab59b0671339c68ee0a9bb78670f8b8a27c1cf26a8459557068ed4",
+    "convert.lock": "5aff1f8c0325c69ced7fdd7134a120f81421a7a8e1390720cc7abb4818640396",
+    "eval.lock": "a9e18c26157366abbbdcbb4280e96d14ecb7759a2183228a129eed41b53dc2c4"
+  }
+}
