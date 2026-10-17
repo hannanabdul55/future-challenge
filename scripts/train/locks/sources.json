@@ -19,5 +19,190 @@
     "unsloth.lock": "7ea5412757ab59b0671339c68ee0a9bb78670f8b8a27c1cf26a8459557068ed4",
     "convert.lock": "5aff1f8c0325c69ced7fdd7134a120f81421a7a8e1390720cc7abb4818640396",
     "eval.lock": "a9e18c26157366abbbdcbb4280e96d14ecb7759a2183228a129eed41b53dc2c4"
+  },
+  "llama_cpp_copy": {
+    "source": "/home/hannanabdul/rent-my-gpu/.venv/lib/python3.12/site-packages",
+    "version": "0.3.35",
+    "so_files": [
+      {
+        "path": "llama_cpp/lib/libggml-base.so",
+        "sha256": "2f621244ae56347d2f234f70f745b6523032f8f31f88fae95ac705ce4dd4e92a"
+      },
+      {
+        "path": "llama_cpp/lib/libggml-base.so.0",
+        "sha256": "2f621244ae56347d2f234f70f745b6523032f8f31f88fae95ac705ce4dd4e92a"
+      },
+      {
+        "path": "llama_cpp/lib/libggml-base.so.0.20.0",
+        "sha256": "2f621244ae56347d2f234f70f745b6523032f8f31f88fae95ac705ce4dd4e92a"
+      },
+      {
+        "path": "llama_cpp/lib/libggml-cpu.so",
+        "sha256": "12b065ab06d4f7972c395b111384e577ab965cc4c2e15e91038edddb963bf6a3"
+      },
+      {
+        "path": "llama_cpp/lib/libggml-cpu.so.0",
+        "sha256": "12b065ab06d4f7972c395b111384e577ab965cc4c2e15e91038edddb963bf6a3"
+      },
+      {
+        "path": "llama_cpp/lib/libggml-cpu.so.0.20.0",
+        "sha256": "12b065ab06d4f7972c395b111384e577ab965cc4c2e15e91038edddb963bf6a3"
+      },
+      {
+        "path": "llama_cpp/lib/libggml-cuda.so",
+        "sha256": "fbeff00739425b858ec452b7d34466b6d751732c0d6abf6ca3d2c2ec6f4b134e"
+      },
+      {
+        "path": "llama_cpp/lib/libggml-cuda.so.0",
+        "sha256": "fbeff00739425b858ec452b7d34466b6d751732c0d6abf6ca3d2c2ec6f4b134e"
+      },
+      {
+        "path": "llama_cpp/lib/libggml-cuda.so.0.20.0",
+        "sha256": "fbeff00739425b858ec452b7d34466b6d751732c0d6abf6ca3d2c2ec6f4b134e"
+      },
+      {
+        "path": "llama_cpp/lib/libggml.so",
+        "sha256": "5b96dc1dc5c9b867678c3074f69483d29d62726455db73710de76c9dcb5f24db"
+      },
+      {
+        "path": "llama_cpp/lib/libggml.so.0",
+        "sha256": "5b96dc1dc5c9b867678c3074f69483d29d62726455db73710de76c9dcb5f24db"
+      },
+      {
+        "path": "llama_cpp/lib/libggml.so.0.20.0",
+        "sha256": "5b96dc1dc5c9b867678c3074f69483d29d62726455db73710de76c9dcb5f24db"
+      },
+      {
+        "path": "llama_cpp/lib/libllama.so",
+        "sha256": "05650f280690a2f3a0c67fe3a6c54ce66da2fc626c881d13fdc6f7b519183427"
+      },
+      {
+        "path": "llama_cpp/lib/libllama.so.0",
+        "sha256": "05650f280690a2f3a0c67fe3a6c54ce66da2fc626c881d13fdc6f7b519183427"
+      },
+      {
+        "path": "llama_cpp/lib/libllama.so.0.1.0",
+        "sha256": "05650f280690a2f3a0c67fe3a6c54ce66da2fc626c881d13fdc6f7b519183427"
+      },
+      {
+        "path": "llama_cpp/lib/libmtmd.so",
+        "sha256": "2ec507c0e9137f021381282ebb4b4bd4a9558a3fd86cb078473efdabc9584845"
+      },
+      {
+        "path": "llama_cpp/lib/libmtmd.so.SOVERSION",
+        "sha256": "2ec507c0e9137f021381282ebb4b4bd4a9558a3fd86cb078473efdabc9584845"
+      },
+      {
+        "path": "llama_cpp_python.libs/libcrypto-511eb575.so.3",
+        "sha256": "9e4e43cb35c9d9ca8c3cb1d277eaea6e00e396555352fd90ebdfafb464f5cf88"
+      },
+      {
+        "path": "llama_cpp_python.libs/libggml-5b96dc1d.so.0.20.0",
+        "sha256": "6302bb08a83cce99bded012866b6318147215bd2a8e77ce9e7382bedb69da2b3"
+      },
+      {
+        "path": "llama_cpp_python.libs/libggml-base-2f621244.so.0.20.0",
+        "sha256": "14e00262785c14b5b3ee62b8c3cce9d6302a0b5053c84fb61826c270035eb523"
+      },
+      {
+        "path": "llama_cpp_python.libs/libggml-cpu-eb7c3ac8.so.0.20.0",
+        "sha256": "7bf5ce3fa4390e6d79f7fae6b822455392a9a12a5ffbf8fb70e9364c74971b3e"
+      },
+      {
+        "path": "llama_cpp_python.libs/libggml-cuda-fbeff007.so.0.20.0",
+        "sha256": "1d2718a807ad5b22d1258e2ccd004e72efeee58fa6b4db04153e2f58ef9002f0"
+      },
+      {
+        "path": "llama_cpp_python.libs/libgomp-a34b3233.so.1.0.0",
+        "sha256": "3a7eaece7231911be2fbb1b3e7cb4cb5c2e0f84e0c2bb73739472b5a1feec8c1"
+      },
+      {
+        "path": "llama_cpp_python.libs/libllama-05650f28.so.0.1.0",
+        "sha256": "eef555a555a5550d500acb78b5c845d2837725d2765fa601a99628782957ea87"
+      },
+      {
+        "path": "llama_cpp_python.libs/libssl-79e16a1b.so.3",
+        "sha256": "cc18d4e64e6a84a9a15eea71d01d96dd6ae5afc00634f8fc3cf44d76f1627126"
+      },
+      {
+        "path": "nvidia/cuda_runtime/lib/libcudart.so.12",
+        "sha256": "256e6409e4f06f618e1fb53d4844a6b81cdded1013afa8ade40c22f99eb133b7"
+      },
+      {
+        "path": "nvidia/cublas/lib/libcublas.so.12",
+        "sha256": "5757ab5839fb4f203ca47ecb336110d10f4a5606b1e097f195fbca89774569e2"
+      },
+      {
+        "path": "nvidia/cublas/lib/libcublasLt.so.12",
+        "sha256": "2c9006a75c74b3bea2dc7ae2ec38ab038b0e45ea02cb4b717a915e8a5796acb1"
+      },
+      {
+        "path": "nvidia/cublas/lib/libnvblas.so.12",
+        "sha256": "188c9ff9a2814220ef99ae8d2ebc2b77614c1e5fb527f93bae66d011ad518fc8"
+      },
+      {
+        "path": "_cuda_preload.py",
+        "sha256": "390b34a3d6286bcc297c9ea9c0e6924a01eaa9b83c30cb489ab72b726a31cfb1"
+      },
+      {
+        "path": "zzz_cuda_preload.pth",
+        "sha256": "ee2494f67257b53205ae900d412d1cd429dcd320b356166fbe6f60f4c88656b3"
+      }
+    ]
+  },
+  "base_snapshot": {
+    "repo": "allenai/Olmo-3-7B-Instruct",
+    "revision": "6e5971d9eba42665f5bd5a0fcf047f299ce1dccc",
+    "path": "/mnt/d/hf-cache/hub/models--allenai--Olmo-3-7B-Instruct/snapshots/6e5971d9eba42665f5bd5a0fcf047f299ce1dccc",
+    "files": [
+      {
+        "name": "chat_template.jinja",
+        "bytes": 2613
+      },
+      {
+        "name": "config.json",
+        "bytes": 1625
+      },
+      {
+        "name": "generation_config.json",
+        "bytes": 204
+      },
+      {
+        "name": "merges.txt",
+        "bytes": 916646
+      },
+      {
+        "name": "model-00001-of-00003.safetensors",
+        "bytes": 4969984976
+      },
+      {
+        "name": "model-00002-of-00003.safetensors",
+        "bytes": 4981161496
+      },
+      {
+        "name": "model-00003-of-00003.safetensors",
+        "bytes": 4644917240
+      },
+      {
+        "name": "model.safetensors.index.json",
+        "bytes": 29630
+      },
+      {
+        "name": "special_tokens_map.json",
+        "bytes": 581
+      },
+      {
+        "name": "tokenizer.json",
+        "bytes": 7137175
+      },
+      {
+        "name": "tokenizer_config.json",
+        "bytes": 4318
+      },
+      {
+        "name": "vocab.json",
+        "bytes": 1611055
+      }
+    ]
   }
 }
