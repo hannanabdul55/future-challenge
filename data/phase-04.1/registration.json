@@ -1,0 +1,250 @@
+{
+  "schema": "fc-train-registration/2026.10",
+  "phase": "04.1-trained-olmo-3-entry",
+  "registered_at": "2026-10-17T22:45:00Z",
+  "registered_by": "plan 04.1-15, before any model output exists and before any 2024 outcome is scored",
+  "amendments": [],
+  "base": {
+    "repo": "allenai/Olmo-3-7B-Instruct",
+    "revision": "6e5971d9eba42665f5bd5a0fcf047f299ce1dccc",
+    "decision": "D-01"
+  },
+  "inference": {
+    "engine": "llama-cpp-python 0.3.35",
+    "runner": "runner/forecast/forecast.py",
+    "n_ctx": 16384,
+    "max_tokens": 4096,
+    "temperature": 0,
+    "FC_SEED": 0,
+    "FC_BATCH": 20,
+    "thinking": false,
+    "decision": "D-02",
+    "template": "fc/prompts/forecaster-v1.md",
+    "template_sha256": "0afc4e91e619fafd03501c3cdb10b7bb31656536c3813e7cc2f6c9e5d050abf0"
+  },
+  "windows": {
+    "rule": "E-8..E (D-16)",
+    "cycles": {
+      "2018": {
+        "election": "2018-11-06",
+        "days": [
+          "2018-10-29", "2018-10-30", "2018-10-31", "2018-11-01", "2018-11-02",
+          "2018-11-03", "2018-11-04", "2018-11-05", "2018-11-06"
+        ]
+      },
+      "2020": {
+        "election": "2020-11-03",
+        "days": [
+          "2020-10-26", "2020-10-27", "2020-10-28", "2020-10-29", "2020-10-30",
+          "2020-10-31", "2020-11-01", "2020-11-02", "2020-11-03"
+        ]
+      },
+      "2022": {
+        "election": "2022-11-08",
+        "days": [
+          "2022-10-31", "2022-11-01", "2022-11-02", "2022-11-03", "2022-11-04",
+          "2022-11-05", "2022-11-06", "2022-11-07", "2022-11-08"
+        ]
+      },
+      "2024": {
+        "election": "2024-11-05",
+        "days": [
+          "2024-10-28", "2024-10-29", "2024-10-30", "2024-10-31", "2024-11-01",
+          "2024-11-02", "2024-11-03", "2024-11-04", "2024-11-05"
+        ]
+      }
+    }
+  },
+  "training": {
+    "cycles": [2018, 2020, 2022],
+    "example_unit": "one example per (cycle, day, batch) from F.batches (D-19)",
+    "lora": {
+      "r": 16,
+      "alpha": 32,
+      "dropout": 0.05,
+      "target_modules": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+    },
+    "optimizer": {
+      "name": "paged_adamw_8bit",
+      "lr": 0.0001,
+      "schedule": "cosine",
+      "warmup_ratio": 0.05,
+      "per_device_batch": 1,
+      "grad_accumulation": 8,
+      "seed": 0
+    },
+    "quantisation": {"compute_dtype": "bf16", "weights": "NF4", "double_quant": true},
+    "masked_question_ids": ["control-house", "seats-house-d"],
+    "masked_question_ids_decision": "D-13",
+    "masked_unpolled_race_ids_when_prior_mode": "mask",
+    "run_a": {
+      "train_cycles": [2018, 2020],
+      "validate_cycle": 2022,
+      "select_epoch_from": [1, 2, 3],
+      "select_epoch_rule": "lowest mean completion-token validation loss",
+      "start_by_utc": "2026-10-20T19:00:00Z",
+      "if_not_started": "skipped; Run B uses 2 epochs with 2022 in-sample (rule S1)",
+      "deadline_utc": "2026-10-21T17:00:00Z",
+      "if_deadline": "stopped by its own --deadline-utc; Run B uses 2 epochs (rule S2)"
+    },
+    "run_b": {
+      "train_cycles": [2018, 2020, 2022],
+      "epochs": "the Run A selected epoch, or 2 when Run A was skipped, hit its deadline or failed",
+      "evaluated_on_2024": true
+    },
+    "never_used_for_selection": 2024,
+    "retry": "one pre-registered retry on OOM or NaN (activation_offloading on, then the approved Unsloth stack), otherwise the fallback"
+  },
+  "eval": {
+    "held_out": 2024,
+    "day_order": [
+      "2024-10-28", "2024-11-01", "2024-11-05",
+      "2024-10-29", "2024-10-30", "2024-10-31", "2024-11-02", "2024-11-03", "2024-11-04"
+    ],
+    "day_order_rule": "2024-10-28, 2024-11-01, 2024-11-05, then the remaining six ascending",
+    "systems": {
+      "base-q4km": "un-tuned OLMo 3 converted and quantised by the same recipe",
+      "tuned-q4km": "the trained model, Q4_K_M",
+      "fc-baseline": "previous presidential winner by state (2020 for 2024) at p 0.85; chambers persist the 2022 seating result",
+      "fc-uniform": "uniform reference",
+      "pollmodel-oracle": "reference only"
+    },
+    "metrics": {
+      "parse_rate": "mean over compared days of status.json parse_rate (all questions)",
+      "primary": {
+        "name": "mean log score over race questions (families senate and governor)",
+        "clip": 0.001,
+        "clip_source": "fc.eval.scores.LOG_CLIP",
+        "direction": "lower is better"
+      },
+      "secondary": [
+        "multi-class Brier over race categories",
+        "WIS for seats-senate-dcaucus",
+        "log score for control-senate"
+      ],
+      "imputation": "a question a system did not parse is imputed by fc.season_eval.impute_missing (the worse of fc-baseline's score and the 75th percentile of the systems' scores for that question and day), so skipping a hard race never improves the primary metric",
+      "reported_separately_excluded_from_gate": ["control-house", "seats-house-d"],
+      "reported_separately_decision": "D-13"
+    },
+    "assertions": {
+      "batch_mode": "chat",
+      "think_prefill": false,
+      "decision": "D-02, thinking-mode-evaluation-confound"
+    },
+    "gate": {
+      "rule": "ship tuned if and only if parse_rate(tuned) >= parse_rate(base) and primary(tuned) <= primary(base) on the compared days",
+      "parse": "tuned >= base",
+      "primary": "tuned <= base",
+      "compared_days": "days finished by both systems; the three first-ordered days must all be compared",
+      "min_first_ordered_days": 3,
+      "success_criterion": "SC-3",
+      "fc_baseline_comparison": "descriptive only, no pass/fail"
+    },
+    "caveats": [
+      "OLMo 3's data cutoff (Dec 2024) is after the 2024 election, so 2024 is a relative sanity check, not a clean test (D-06)",
+      "one cycle and nine correlated days, so differences are descriptive, not significant",
+      "base 2024 scores computed before training may not change any training setting; any change is a dated amendment"
+    ]
+  },
+  "schedule": {
+    "train_cutoff_utc": "2026-10-22T05:00:00Z",
+    "train_cutoff_note": "Wed 22:00 PDT; no training process runs after it",
+    "run_a_start_by_utc": "2026-10-20T19:00:00Z",
+    "run_a_deadline_utc": "2026-10-21T17:00:00Z",
+    "run_a_deadline_note": "Wed 10:00 PDT; Run A stops itself here so Run B and its one registered retry, 2-6 h each, fit before the train cutoff",
+    "fallback_decision_utc": "2026-10-23T05:00:00Z",
+    "fallback_decision_note": "Thu 22:00 PDT (D-19)",
+    "freeze_deadline_utc": "2026-10-26T00:00:00Z",
+    "target_freeze_date": "2026-10-24",
+    "sft_build_hours_before_run_a": 1,
+    "budget_source": "RESEARCH 'Timeline and Fallback' (confidence LOW/MEDIUM)",
+    "waves": [
+      {
+        "wave": 1,
+        "plans": ["04.1-01", "04.1-02", "04.1-15"],
+        "work": "lock compile and author gates; tracer A (about 150 MediaWiki calls); registration",
+        "expected_hours": [2, 3],
+        "latest_done_utc": "2026-10-20T02:30:00Z",
+        "on_overrun": ["S0"]
+      },
+      {
+        "wave": 2,
+        "plans": ["04.1-03", "04.1-04"],
+        "work": "three venv installs on /mnt/d, base snapshot, template parity; MEDSL, governor and presidential truth with the two-source audit",
+        "expected_hours": [2, 3],
+        "latest_done_utc": "2026-10-20T05:30:00Z",
+        "on_overrun": ["S0"]
+      },
+      {
+        "wave": 3,
+        "plans": ["04.1-05", "04.1-13"],
+        "work": "tracer B on the GPU (10-step smoke train, merge, convert, quantise, base Q4_K_M by the same recipe, runner day); race lists and question sets",
+        "expected_hours": [2, 4],
+        "latest_done_utc": "2026-10-20T09:30:00Z",
+        "on_overrun": ["S0"]
+      },
+      {
+        "wave": 4,
+        "plans": ["04.1-06", "04.1-14"],
+        "work": "live packet and 36 historical packets (about 2.2k uncached parse calls at 0.5 s, 25-50 min, plus the replay); chambers and truth CSVs",
+        "expected_hours": [1.5, 2.5],
+        "latest_done_utc": "2026-10-20T12:00:00Z",
+        "on_overrun": ["S0"]
+      },
+      {
+        "wave": 5,
+        "plans": ["04.1-07", "04.1-08"],
+        "work": "poll model, swing simulation, LOCO fit and targets; eval harness and the base 2024 run (35-90 min GPU)",
+        "expected_hours": [3, 6],
+        "latest_done_utc": "2026-10-20T18:00:00Z",
+        "on_overrun": ["S1"]
+      },
+      {
+        "wave": 6,
+        "plans": ["04.1-09"],
+        "work": "SFT build and tokenisation (about 1 h), then Run A (3 epochs, 2-6 h); Run A starts by 2026-10-20T19:00:00Z",
+        "expected_hours": [3, 7],
+        "latest_done_utc": "2026-10-21T17:00:00Z",
+        "on_overrun": ["S1", "S2"]
+      },
+      {
+        "wave": 7,
+        "plans": ["04.1-10"],
+        "work": "Run B (2-6 h; training ends by 2026-10-22T05:00:00Z), merge, convert, quantise (about 1 h), probe and live-packet runs (about 0.5 h)",
+        "expected_hours": [3.5, 7.5],
+        "latest_done_utc": "2026-10-23T02:00:00Z",
+        "on_overrun": ["S3"]
+      },
+      {
+        "wave": 8,
+        "plans": ["04.1-11"],
+        "work": "tuned 2024 eval (35-90 min), report, gate, model card and launch copy",
+        "expected_hours": [2, 4],
+        "latest_done_utc": "2026-10-23T05:00:00Z",
+        "on_overrun": ["S4"]
+      },
+      {
+        "wave": 9,
+        "plans": ["04.1-12"],
+        "work": "author login and go-ahead, HF upload, freeze, commit, submit, verify",
+        "expected_hours": [2, 3],
+        "latest_done_utc": "2026-10-26T00:00:00Z",
+        "on_overrun": ["S5"]
+      }
+    ],
+    "slippage_rules": {
+      "S0": "A wave among 1-4 finishes after its latest_done_utc: record the overrun and the projected Run A start (now plus the high estimates of the remaining waves before Run A, plus 1 h) in that plan's SUMMARY and continue; nothing is cut, because S1 applies on its own at plan 04.1-09 if the projection holds.",
+      "S1": "Run A cannot start by run_a_start_by_utc, including a wave 5 that finishes after its latest_done_utc: skip Run A (runA.json status \"skipped\"); Run B trains 2018+2020+2022 for 2 epochs with 2022 in-sample (the Run-B-only path).",
+      "S2": "Run A reaches run_a_deadline_utc, or fails after its one registered retry: stop Run A (status \"deadline\" or \"failed\"); Run B uses 2 epochs, with activation offloading if Run A needed it.",
+      "S3": "Run B cannot finish by train_cutoff_utc: Run B runs with --deadline-utc train_cutoff_utc and stops itself; a Run B that is cut short, not started before the cutoff, or failed after its retry is not shipped, and plan 04.1-11 goes straight to the fallback decision with the tuned model unavailable (the base ships) without waiting for fallback_decision_utc.",
+      "S4": "The tuned 2024 eval has not finished the three first-ordered days by fallback_decision_utc: the eval stops at fallback_decision_utc and ship_decision returns \"base\" (\"deadline\" or \"insufficient_days\").",
+      "S5": "Freeze: the hub receipt must exist before freeze_deadline_utc; plan 04.1-12 halts at its precondition after it. No extension."
+    },
+    "achievable_at_registration": true
+  },
+  "fallback": {
+    "rule": "if by fallback_decision_utc there is no tuned Q4_K_M that passed gguf_check and the gate, ship base-q4km",
+    "base_conversion_failed": "if our base conversion also failed its load check, ship base-public: the public bartowski Olmo-3-7B-Instruct Q4_K_M GGUF that passed the orchestrator probe, frozen with --weights-file",
+    "disclosure": "un-tuned OLMo 3"
+  }
+}
