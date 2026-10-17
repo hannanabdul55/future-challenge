@@ -197,3 +197,219 @@ def test_full_file_counts_and_overrides_apply():
     assert seats == {2018: 35, 2020: 35, 2022: 35, 2024: 34}
     assert all(c.winner_party in {"D", "R", "Other"} for c in fixed)
     assert all(c.winner_party != "Other" or c.caucus in {"D", "R", ""} for c in fixed)
+
+
+# =================================================================== Task 2: Wikipedia, pres, audit
+
+PLAIN = """
+==General election==
+{| class="wikitable"
+! Party !! Candidate !! Votes !! %
+|-
+| Democratic || Jane Roe || 1,000 || 55.6%
+|-
+| Republican || John Doe || 800 || 44.4%
+|-
+| Total || || 1,800 || 100%
+|}
+"""
+
+BOX = """
+==Democratic primary==
+{{Election box begin |title=Democratic primary}}
+{{Election box winning candidate with party link|party=Democratic Party (United States)|candidate=Primary Winner|votes=9|percentage=90%}}
+{{Election box candidate with party link|party=Democratic Party (United States)|candidate=Primary Loser|votes=1|percentage=10%}}
+{{Election box end}}
+==General election==
+===Results===
+{{Election box begin |title=General<ref>{{cite web |url=https://example.org/a|b}}</ref>}}
+{{Election box candidate with party link|party=Democratic Party (United States)|candidate=''Pat Fusion''|votes=700|percentage=50.0%}}
+{{Election box candidate with party link|party=Working Families Party|candidate=''Pat Fusion''|votes=100|percentage=7.1%}}
+{{Election box winning candidate|party=Total| candidate = [[Pat Fusion]] (incumbent)
+| votes = 800
+| percentage = 57.1%
+}}
+{{Election box candidate with party link|party=Republican Party (United States)|candidate=[[Lee Other]]|votes=600|percentage=42.9%}}
+{{Election box write-in with party link|votes=5|percentage=0.0%}}
+{{Election box total
+  |votes      =1,405
+  |percentage =100.00%
+}}
+{{Election box end}}
+"""
+
+RUNOFF = BOX + """
+==Runoff==
+{{Election box begin |title=Runoff}}
+{{Election box candidate with party link|party=Republican Party (United States)|candidate=Lee Other|votes=900|percentage=55%}}
+{{Election box candidate with party link|party=Democratic Party (United States)|candidate=Pat Fusion|votes=700|percentage=45%}}
+{{Election box end}}
+"""
+
+COMBINED = """
+==Regular election==
+{{Election box begin |title=Regular}}
+{{Election box candidate|party=Democratic Party (United States)|candidate=A|votes=60|percentage=60%}}
+{{Election box candidate|party=Republican Party (United States)|candidate=B|votes=40|percentage=40%}}
+{{Election box end}}
+==Special election==
+{{Election box begin |title=Special}}
+{{Election box candidate|party=Democratic Party (United States)|candidate=A|votes=30|percentage=30%}}
+{{Election box candidate|party=Republican Party (United States)|candidate=B|votes=70|percentage=70%}}
+{{Election box end}}
+"""
+
+
+def test_results_table_winner_plain_wikitable():
+    w = truth.results_table_winner(PLAIN)
+    assert w["party"] == "D" and w["name"] == "Jane Roe"
+    assert w["d_pct"] == pytest.approx(1000 / 1800) and w["r_pct"] == pytest.approx(800 / 1800)
+
+
+def test_results_table_winner_election_box_fusion_and_primary():
+    w = truth.results_table_winner(BOX)
+    assert w["name"] == "Pat Fusion" and w["party"] == "D"   # the primary block is ignored
+    assert w["votes"] == 800                                  # the Total line, not 700 or 100
+    assert w["d_pct"] == pytest.approx(800 / 1400)            # write-ins are not candidates
+    assert w["section"].endswith("Results")
+
+
+def test_results_table_winner_runoff_replaces_and_special_hint():
+    w = truth.results_table_winner(RUNOFF)
+    assert w["party"] == "R" and w["name"] == "Lee Other"
+    assert truth.results_table_winner(COMBINED)["party"] == "D"
+    assert truth.results_table_winner(COMBINED, contest="special")["party"] == "R"
+    assert truth.results_table_winner("no results here") is None
+
+
+SUMMARY = """
+==Race summary==
+===States===
+{| class="wikitable"
+! State !! Incumbent !! Party !! First elected !! Result !! Candidates
+|-
+| Alpha || {{sortname|Al|Fa}} || Republican || 2014 || Incumbent re-elected. || x
+|-
+| Beta || {{sortname|Be|Ta}} || {{party shading/Text/Democratic}} || 2018 || Incumbent term-limited.Republican gain. || x
+|-
+| Gamma || x || DFL || 2018 || Incumbent re-elected. || x
+|-
+| Delta || x || garbled party note || 2018 || Incumbent re-elected. || x
+|}
+"""
+
+
+def test_governor_summary_reads_gain_hold_and_incumbent_party(monkeypatch):
+    monkeypatch.setattr(truth, "_NAME_TO_PO", {"Alpha": "AA", "Beta": "BB", "Gamma": "GG",
+                                               "Delta": "DD"})
+    g = truth.governor_truth(SUMMARY)
+    assert g["AA"]["party"] == "R" and g["BB"]["party"] == "R" and g["GG"]["party"] == "D"
+    assert g["DD"]["party"] is None                       # unreadable: flagged, never guessed
+
+
+def _contest(state, party, year=2022, office="senate", special=False):
+    return truth.Contest(year, office, state, special, f"{state}-x", party, "N", party, None,
+                         None, "medsl")
+
+
+def test_disagreement_between_sources_is_one_audit_row_with_both_values(tmp_path):
+    a = {(2022, "senate", "XX", False): "D", (2022, "senate", "YY", False): "D"}
+    b = {(2022, "senate", "XX", False): {"party": "R", "d_pct": 0.4, "r_pct": 0.6},
+         (2022, "senate", "YY", False): {"party": "D", "d_pct": 0.6, "r_pct": 0.4}}
+    contests = [_contest("XX", "D"), _contest("YY", "D")]
+    rows = truth.audit_rows(contests, a, b)
+    xx = next(r for r in rows if r["state"] == "XX")
+    assert (xx["source_a"], xx["source_b"]) == ("D", "R")
+    assert xx["final"] == "" and "UNRESOLVED" in xx["note"]   # no override yet
+    assert len(rows) == 2 and len({(r["year"], r["state"]) for r in rows}) == 2
+    fixed = [_contest("XX", "R"), _contest("YY", "D")]
+    fixed[0] = truth.Contest(2022, "senate", "XX", False, "XX-x", "R", "N", "R", None, None,
+                             "medsl+override")
+    ov = tmp_path / "o.csv"
+    _write(ov, [{"year": 2022, "office": "senate", "state": "XX", "special": "false",
+                 "winner_party": "R", "caucus": "R", "reason": "certified R, see URL"}])
+    rows = truth.audit_rows(fixed, a, b, overrides_csv=ov)
+    xx = next(r for r in rows if r["state"] == "XX")
+    assert xx["final"] == "R" and "certified R, see URL" in xx["note"]
+
+
+def test_agreeing_sources_have_empty_note():
+    a = {(2022, "senate", "YY", False): "D"}
+    b = {(2022, "senate", "YY", False): {"party": "D", "d_pct": 0.6, "r_pct": 0.4}}
+    row = truth.audit_rows([_contest("YY", "D")], a, b)[0]
+    assert row["note"] == "" and row["final"] == "D" and row["d_pct"] == pytest.approx(0.6)
+
+
+def test_missing_second_source_is_unresolved_without_override():
+    a = {(2022, "senate", "YY", False): "D"}
+    row = truth.audit_rows([_contest("YY", "D")], a, {})[0]
+    assert row["source_b"] == "?" and "UNRESOLVED" in row["note"] and row["final"] == ""
+
+
+PRES_HEAD = ("year,state,state_po,state_fips,state_cen,state_ic,office,candidate,party_detailed,"
+             "writein,candidatevotes,totalvotes,version,notes,party_simplified\n")
+
+
+def test_pres_margins_statewide_fusion_and_dc(tmp_path):
+    rows = [
+        # NY-like: the Democrat is on two lines whose sum beats the Republican
+        "2016,NEW YORK,NY,36,13,11,US PRESIDENT,\"CLINTON, HILLARY\",DEMOCRAT,False,4000,10000,1,,DEMOCRAT",
+        "2016,NEW YORK,NY,36,13,11,US PRESIDENT,\"CLINTON, HILLARY\",WORKING FAMILIES,False,500,10000,1,,OTHER",
+        "2016,NEW YORK,NY,36,13,11,US PRESIDENT,\"TRUMP, DONALD J.\",REPUBLICAN,False,4200,10000,1,,REPUBLICAN",
+        "2016,NEW YORK,NY,36,13,11,US PRESIDENT,,,False,1300,10000,1,,OTHER",
+        "2016,DISTRICT OF COLUMBIA,DC,11,53,55,US PRESIDENT,\"CLINTON, HILLARY\",DEMOCRAT,False,90,100,1,,DEMOCRAT",
+        "2020,TEXAS,TX,48,74,49,US PRESIDENT,\"TRUMP, DONALD J.\",REPUBLICAN,False,520,1000,1,,REPUBLICAN",
+        "2020,TEXAS,TX,48,74,49,US PRESIDENT,\"BIDEN, JOSEPH R. JR\",DEMOCRAT,False,460,1000,1,,DEMOCRAT",
+    ]
+    p = tmp_path / "pres.csv"
+    p.write_text(PRES_HEAD + "\n".join(rows) + "\n")
+    out = {(r["year"], r["state"]): r for r in truth.pres_margins(p, (2016, 2020))}
+    assert (2016, "DC") not in out                                # fifty states only
+    ny = out[(2016, "NY")]
+    assert ny["winner"] == "D" and ny["d_pct"] == pytest.approx(0.45)
+    assert ny["margin"] == pytest.approx(0.45 - 0.42)
+    tx = out[(2020, "TX")]
+    assert tx["winner"] == "R" and tx["margin"] == pytest.approx(0.46 - 0.52)
+
+
+PRES = paths.MEDSL / "president"
+
+
+@pytest.mark.skipif(not (PRES / "1976-2024-president.csv").is_file(),
+                    reason="MEDSL president file not downloaded on this machine")
+def test_pres_margins_full_file_has_fifty_states_per_year():
+    rows = truth.pres_margins(PRES, (2016, 2020))
+    for y, (d_states, r_states) in {2016: (20, 30), 2020: (25, 25)}.items():
+        yr = [r for r in rows if r["year"] == y]
+        assert len(yr) == 50 and {r["winner"] for r in yr} <= {"D", "R"}
+        assert sum(r["winner"] == "D" for r in yr) == d_states
+        assert sum(r["winner"] == "R" for r in yr) == r_states
+        assert all(r["margin"] == pytest.approx(r["d_pct"] - r["r_pct"]) for r in yr)
+    assert next(r for r in rows if (r["year"], r["state"]) == (2020, "ME"))["winner"] == "D"
+    assert next(r for r in rows if (r["year"], r["state"]) == (2020, "NE"))["winner"] == "R"
+
+
+AUDIT = paths.REPO_DATA / "truth_audit.csv"
+
+
+@pytest.mark.skipif(not AUDIT.is_file(), reason="truth_audit.csv not built yet")
+def test_real_audit_is_complete_and_every_difference_has_an_override():
+    rows = list(csv.DictReader(AUDIT.open(newline="")))
+    assert list(rows[0])[:8] == ["year", "office", "state", "special", "source_a", "source_b",
+                                 "final", "note"]
+    keys = [(r["year"], r["office"], r["state"], r["special"]) for r in rows]
+    assert len(keys) == len(set(keys))                        # each contest exactly once
+    per = {}
+    for r in rows:
+        per[(r["year"], r["office"])] = per.get((r["year"], r["office"]), 0) + 1
+    assert per == {("2018", "senate"): 35, ("2020", "senate"): 35, ("2022", "senate"): 36,
+                   ("2024", "senate"): 35, ("2018", "governor"): 36, ("2020", "governor"): 11,
+                   ("2022", "governor"): 36, ("2024", "governor"): 11}
+    ov = {(r["year"], r["office"], r["state"], r["special"])
+          for r in csv.DictReader(OVERRIDES.open(newline=""))}
+    for r in rows:
+        assert r["final"] in {"D", "R", "Other"}
+        if r["source_a"] != r["final"] or r["source_b"] != r["final"]:
+            assert r["note"].strip(), r
+        if r["source_a"] != r["source_b"]:
+            assert (r["year"], r["office"], r["state"], r["special"]) in ov, r

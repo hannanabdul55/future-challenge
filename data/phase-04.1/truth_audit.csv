@@ -1,0 +1,236 @@
+year,office,state,special,source_a,source_b,final,note,caucus,winner_name,seat_key,d_pct,r_pct
+2018,governor,AK,false,R,R,R,,,Mike Dunleavy,AK-gov,0.445,0.5155
+2018,governor,AL,false,R,R,R,,,Kay Ivey,AL-gov,0.4045,0.5955
+2018,governor,AR,false,R,R,R,,,Asa Hutchinson,AR-gov,0.3177,0.6533
+2018,governor,AZ,false,R,R,R,,,Doug Ducey,AZ-gov,0.4185,0.5601
+2018,governor,CA,false,D,D,D,,,Gavin Newsom,CA-gov,0.6195,0.3805
+2018,governor,CO,false,D,D,D,,,Jared Polis,CO-gov,0.5342,0.428
+2018,governor,CT,false,D,D,D,,,Ned Lamont,CT-gov,0.4937,0.4621
+2018,governor,FL,false,R,R,R,,,Ron DeSantis,FL-gov,0.4919,0.4959
+2018,governor,GA,false,R,R,R,,,Brian Kemp,GA-gov,0.4883,0.5022
+2018,governor,HI,false,D,D,D,,,David Ige,HI-gov,0.6267,0.337
+2018,governor,IA,false,R,R,R,,,Kim Reynolds,IA-gov,0.4754,0.5028
+2018,governor,ID,false,R,R,R,,,Brad Little,ID-gov,0.3819,0.5977
+2018,governor,IL,false,D,D,D,,,JB Pritzker,IL-gov,0.5453,0.3883
+2018,governor,KS,false,D,D,D,,,Laura Kelly,KS-gov,0.4801,0.4298
+2018,governor,MA,false,R,R,R,,,Charlie Baker,MA-gov,0.3321,0.6679
+2018,governor,MD,false,R,R,R,,,Larry Hogan,MD-gov,0.4354,0.554
+2018,governor,ME,false,D,D,D,,,Janet Mills,ME-gov,0.509,0.4319
+2018,governor,MI,false,D,D,D,,,Gretchen Whitmer,MI-gov,0.5332,0.4375
+2018,governor,MN,false,D,D,D,,,Tim Walz,MN-gov,0.5387,0.4244
+2018,governor,NE,false,R,R,R,,,Pete Ricketts,NE-gov,0.41,0.59
+2018,governor,NH,false,R,R,R,,,Chris Sununu,NH-gov,0.4576,0.5281
+2018,governor,NM,false,D,D,D,,,Michelle Lujan Grisham,NM-gov,0.572,0.428
+2018,governor,NV,false,D,D,D,,,Steve Sisolak,NV-gov,0.4939,0.4531
+2018,governor,NY,false,D,D,D,,,Andrew Cuomo,NY-gov,0.5955,0.3616
+2018,governor,OH,false,R,R,R,,,Mike DeWine,OH-gov,0.4667,0.5041
+2018,governor,OK,false,R,R,R,,,Kevin Stitt,OK-gov,0.4223,0.5433
+2018,governor,OR,false,D,D,D,,,Kate Brown,OR-gov,0.5014,0.4372
+2018,governor,PA,false,D,D,D,,,Tom Wolf John Fetterman,PA-gov,0.5777,0.407
+2018,governor,RI,false,D,D,D,,,Gina Raimondo,RI-gov,0.5281,0.373
+2018,governor,SC,false,R,R,R,,,Henry McMaster,SC-gov,0.4598,0.5402
+2018,governor,SD,false,R,R,R,,,Kristi Noem,SD-gov,0.476,0.5097
+2018,governor,TN,false,R,R,R,,,Bill Lee,TN-gov,0.3855,0.5956
+2018,governor,TX,false,R,R,R,,,Greg Abbott,TX-gov,0.4251,0.5581
+2018,governor,VT,false,R,R,R,,,Phil Scott,VT-gov,0.4042,0.5541
+2018,governor,WI,false,D,D,D,,,Tony Evers,WI-gov,0.4956,0.4846
+2018,governor,WY,false,R,R,R,,,Mark Gordon,WY-gov,0.2769,0.6748
+2018,senate,AZ,false,D,D,D,,D,KYRSTEN SINEMA,AZ-class1,0.4997,0.4762
+2018,senate,CA,false,D,D,D,,D,DIANNE FEINSTEIN,CA-class1,0.5416,
+2018,senate,CT,false,D,D,D,,D,CHRISTOPHER S MURPHY,CT-class1,0.5953,0.3935
+2018,senate,DE,false,D,D,D,,D,THOMAS R CARPER,DE-class1,0.5995,0.3782
+2018,senate,FL,false,R,R,R,,R,RICK SCOTT,FL-class1,0.4994,0.5006
+2018,senate,HI,false,D,D,D,,D,MAZIE K. HIRONO,HI-class1,0.7115,0.2885
+2018,senate,IN,false,R,R,R,,R,MIKE BRAUN,IN-class1,0.4484,0.5073
+2018,senate,MA,false,D,D,D,,D,ELIZABETH A. WARREN,MA-class1,0.604,0.3621
+2018,senate,MD,false,D,D,D,,D,BEN CARDIN,MD-class1,0.6492,0.3034
+2018,senate,ME,false,Other,Other,Other,override: Angus King won as an Independent: resolves Other for race questions; he caucuses with the Democrats so counts toward the D caucus for chamber questions,D,"ANGUS S. KING, JR.",ME-class1,0.1045,0.3523
+2018,senate,MI,false,D,D,D,,D,DEBBIE STABENOW,MI-class1,0.5226,0.4576
+2018,senate,MN,false,D,D,D,,D,AMY KLOBUCHAR,MN-class1,0.6033,0.3623
+2018,senate,MN,true,D,D,D,,D,TINA SMITH,MN-class2,0.5299,0.4237
+2018,senate,MO,false,R,R,R,,R,JOSH HAWLEY,MO-class1,0.4557,0.5138
+2018,senate,MS,false,R,R,R,,R,ROGER F. WICKER,MS-class1,0.3947,0.5849
+2018,senate,MS,true,R,R,R,,R,CINDY HYDE-SMITH,MS-class2,0.4637,0.5363
+2018,senate,MT,false,D,D,D,,D,JON TESTER,MT-class1,0.5033,0.4678
+2018,senate,ND,false,R,R,R,,R,KEVIN CRAMER,ND-class1,0.4455,0.5545
+2018,senate,NE,false,R,R,R,,R,DEB FISCHER,NE-class1,0.3865,0.5772
+2018,senate,NJ,false,D,D,D,,D,ROBERT MENENDEZ,NJ-class1,0.5401,0.4283
+2018,senate,NM,false,D,D,D,,D,MARTIN T HEINRICH,NM-class1,0.5409,0.3053
+2018,senate,NV,false,D,D,D,,D,JACKY ROSEN,NV-class1,0.5122,0.4611
+2018,senate,NY,false,D,D,D,,D,KIRSTEN E. GILLIBRAND,NY-class1,0.6696,0.3298
+2018,senate,OH,false,D,D,D,,D,SHERROD BROWN,OH-class1,0.5341,0.4659
+2018,senate,PA,false,D,D,D,,D,ROBERT P CASEY JR,PA-class1,0.5574,0.4262
+2018,senate,RI,false,D,D,D,,D,SHELDON WHITEHOUSE,RI-class1,0.6158,0.3842
+2018,senate,TN,false,R,R,R,,R,MARSHA BLACKBURN,TN-class1,0.4392,0.5471
+2018,senate,TX,false,R,R,R,,R,TED CRUZ,TX-class1,0.4833,0.5089
+2018,senate,UT,false,R,R,R,,R,MITT ROMNEY,UT-class1,0.3091,0.6259
+2018,senate,VA,false,D,D,D,,D,TIMOTHY M. KAINE,VA-class1,0.5709,0.4107
+2018,senate,VT,false,Other,Other,Other,override: Bernie Sanders won as an Independent: resolves Other for race questions; he caucuses with the Democrats so counts toward the D caucus for chamber questions,D,BERNIE SANDERS,VT-class1,,0.2747
+2018,senate,WA,false,D,D,D,,D,MARIA CANTWELL,WA-class1,0.5843,0.4157
+2018,senate,WI,false,D,D,D,,D,TAMMY BALDWIN,WI-class1,0.5542,0.4458
+2018,senate,WV,false,D,D,D,,D,JOE MANCHIN,WV-class1,0.4957,0.4626
+2018,senate,WY,false,R,R,R,,R,JOHN BARRASSO,WY-class1,0.3015,0.6707
+2020,governor,DE,false,D,D,D,,,John Carney,DE-gov,0.5946,0.3863
+2020,governor,IN,false,R,R,R,,,Eric Holcomb,IN-gov,0.3205,0.5651
+2020,governor,MO,false,R,R,R,,,Mike Parson,MO-gov,0.4069,0.5711
+2020,governor,MT,false,R,R,R,,,Greg Gianforte,MT-gov,0.4156,0.5443
+2020,governor,NC,false,D,D,D,,,Roy Cooper,NC-gov,0.5152,0.4701
+2020,governor,ND,false,R,R,R,,,Doug Burgum,ND-gov,0.2669,0.6923
+2020,governor,NH,false,R,R,R,,,Chris Sununu,NH-gov,0.3339,0.6518
+2020,governor,UT,false,R,R,R,,,Spencer Cox,UT-gov,0.3077,0.6386
+2020,governor,VT,false,R,R,R,,,Phil Scott,VT-gov,,0.6879
+2020,governor,WA,false,D,D,D,,,Jay Inslee,WA-gov,0.5674,0.4326
+2020,governor,WV,false,?,R,R,"override: Source A (the 2020 gubernatorial summary table) cannot be read for this row: its Party column holds a footnote about Jim Justice's party change (elected as a Democrat in 2016, switched to Republican in 2017). Source B, the per-race results block, gives Jim Justice (R) 497,944 votes, the top vote-getter; authority cited by that page (HTTP 200, not machine-read): https://results.enr.clarityelections.com/WV/106210/web.264614/#/summary",,Jim Justice,WV-gov,0.3024,0.6352
+2020,senate,AK,false,R,R,R,,R,DAN SULLIVAN,AK-class2,0.4119,0.5399
+2020,senate,AL,false,R,R,R,,R,TOMMY TUBERVILLE,AL-class2,0.398,0.602
+2020,senate,AR,false,R,R,R,,R,TOM COTTON,AR-class2,,0.6653
+2020,senate,AZ,true,D,D,D,,D,MARK KELLY,AZ-class3,0.5117,0.4883
+2020,senate,CO,false,D,D,D,,D,JOHN W. HICKENLOOPER,CO-class2,0.535,0.4418
+2020,senate,DE,false,D,D,D,,D,CHRISTOPHER A. COONS,DE-class2,0.5944,0.379
+2020,senate,GA,false,R,D,D,"override: MEDSL has only the first round (Perdue led Ossoff on 2020-11-03); the 2021-01-05 runoff, absent from the file, was won by Jon Ossoff (D); live rule: resolves on the runoff winner; Wikipedia runoff block agrees (Ossoff 2,269,923); archived Georgia SOS results: https://web.archive.org/web/20210106102028/https://results.enr.clarityelections.com/GA/105369/web.264614/#/detail/10000",D,DAVID A. PERDUE,GA-class2,0.5061,0.4939
+2020,senate,GA,true,D,D,D,"override: MEDSL has only the 2020-11-03 jungle first round (Warnock led); the 2021-01-05 runoff, absent from the file, was won by Raphael Warnock (D); live rule: resolves on the runoff winner",D,RAPHAEL WARNOCK,GA-class3,0.329,0.2591
+2020,senate,IA,false,R,R,R,,R,JONI ERNST,IA-class2,0.4518,0.5178
+2020,senate,ID,false,R,R,R,,R,JIM RISCH,ID-class2,0.3325,0.6262
+2020,senate,IL,false,D,D,D,,D,RICHARD J. DURBIN,IL-class2,0.5493,0.3887
+2020,senate,KS,false,R,R,R,,R,ROGER MARSHALL,KS-class2,0.4179,0.5322
+2020,senate,KY,false,R,R,R,,R,MITCH MCCONNELL,KY-class2,0.3823,0.5777
+2020,senate,LA,false,R,R,R,,R,"""BILL"" CASSIDY",LA-class2,0.1902,0.5932
+2020,senate,MA,false,D,D,D,,D,EDWARD J. MARKEY,MA-class2,0.6629,0.3311
+2020,senate,ME,false,R,R,R,,R,SUSAN MARGARET COLLINS,ME-class2,0.424,0.51
+2020,senate,MI,false,D,D,D,,D,GARY PETERS,MI-class2,0.499,0.4822
+2020,senate,MN,false,D,D,D,,D,TINA SMITH,MN-class2,0.4877,0.4353
+2020,senate,MS,false,R,R,R,,R,CINDY HYDE-SMITH,MS-class2,0.4413,0.5411
+2020,senate,MT,false,R,R,R,,R,STEVE DAINES,MT-class2,0.4499,0.5501
+2020,senate,NC,false,R,R,R,,R,THOM TILLIS,NC-class2,0.4694,0.4869
+2020,senate,NE,false,R,R,R,,R,BEN SASSE,NE-class2,0.2458,0.6313
+2020,senate,NH,false,D,D,D,,D,JEANNE SHAHEEN,NH-class2,0.5667,0.4101
+2020,senate,NJ,false,D,D,D,,D,CORY BOOKER,NJ-class2,0.5723,0.4092
+2020,senate,NM,false,D,D,D,,D,BEN R. LUJAN,NM-class2,0.5173,0.4562
+2020,senate,OK,false,R,R,R,,R,JIM INHOFE,OK-class2,0.3275,0.6291
+2020,senate,OR,false,D,D,D,,D,JEFF MERKLEY,OR-class2,0.5697,0.3936
+2020,senate,RI,false,D,D,D,,D,JOHN F. REED,RI-class2,0.6659,0.3341
+2020,senate,SC,false,R,R,R,,R,LINDSEY GRAHAM,SC-class2,0.4421,0.5449
+2020,senate,SD,false,R,R,R,,R,MIKE ROUNDS,SD-class2,0.3426,0.6574
+2020,senate,TN,false,R,R,R,,R,BILL HAGERTY,TN-class2,0.3516,0.622
+2020,senate,TX,false,R,R,R,,R,JOHN CORNYN,TX-class2,0.4387,0.5351
+2020,senate,VA,false,D,D,D,,D,MARK R. WARNER,VA-class2,0.5605,0.4395
+2020,senate,WV,false,R,R,R,,R,SHELLEY MOORE CAPITO,WV-class2,0.27,0.7028
+2020,senate,WY,false,Other,R,R,"override: MEDSL party_detailed is empty for the winner Cynthia Lummis, so party_simplified is OTHER; she ran as a Republican; Wikipedia results table agrees (R); authority cited there (HTTP 200, not machine-read): https://sos.wyo.gov/Elections/Docs/2020/Results/General/2020_General_Statewide_Candidates_Summary.pdf",R,CYNTHIA M. LUMMIS,WY-class2,0.2686,0.7314
+2022,governor,AK,false,R,R,R,,,Mike Dunleavy,AK-gov,0.2428,0.5044
+2022,governor,AL,false,R,R,R,,,Kay Ivey,AL-gov,0.2937,0.6736
+2022,governor,AR,false,R,R,R,,,Sarah Huckabee Sanders,AR-gov,0.352,0.6296
+2022,governor,AZ,false,D,D,D,,,Katie Hobbs,AZ-gov,0.5033,0.4967
+2022,governor,CA,false,D,D,D,,,Gavin Newsom,CA-gov,0.5918,0.4082
+2022,governor,CO,false,D,D,D,,,Jared Polis,CO-gov,0.5853,0.3918
+2022,governor,CT,false,D,D,D,,,Ned Lamont,CT-gov,0.5597,0.4305
+2022,governor,FL,false,R,R,R,,,Ron DeSantis Jeanette Nuñez,FL-gov,0.3997,0.5937
+2022,governor,GA,false,R,R,R,,,Brian Kemp,GA-gov,0.4588,0.5341
+2022,governor,HI,false,D,D,D,,,Josh Green,HI-gov,0.6316,0.3684
+2022,governor,IA,false,R,R,R,,,Kim Reynolds,IA-gov,0.3955,0.5808
+2022,governor,ID,false,R,R,R,,,Brad Little,ID-gov,0.2028,0.6051
+2022,governor,IL,false,D,D,D,,,JB Pritzker,IL-gov,0.5491,0.4237
+2022,governor,KS,false,D,D,D,,,Laura Kelly,KS-gov,0.4954,0.4733
+2022,governor,MA,false,D,D,D,,,Maura Healey,MA-gov,0.6381,0.3461
+2022,governor,MD,false,D,D,D,,,Wes Moore,MD-gov,0.647,0.322
+2022,governor,ME,false,D,D,D,,,Janet Mills,ME-gov,0.5569,0.4245
+2022,governor,MI,false,D,D,D,,,Gretchen Whitmer,MI-gov,0.5447,0.4394
+2022,governor,MN,false,D,D,D,,,Tim Walz,MN-gov,0.5229,0.4463
+2022,governor,NE,false,R,R,R,,,Jim Pillen,NE-gov,0.3629,0.5974
+2022,governor,NH,false,R,R,R,,,Chris Sununu,NH-gov,0.4159,0.5714
+2022,governor,NM,false,D,D,D,,,Michelle Lujan Grisham,NM-gov,0.5197,0.4559
+2022,governor,NV,false,R,R,R,,,Joe Lombardo,NV-gov,0.48,0.4953
+2022,governor,NY,false,D,D,D,,,Kathy Hochul,NY-gov,0.532,0.468
+2022,governor,OH,false,R,R,R,,,Mike DeWine,OH-gov,0.3746,0.6254
+2022,governor,OK,false,R,R,R,,,Kevin Stitt,OK-gov,0.4179,0.5545
+2022,governor,OR,false,D,D,D,,,Tina Kotek,OR-gov,0.4701,0.4359
+2022,governor,PA,false,D,D,D,,,Josh Shapiro,PA-gov,0.5649,0.4171
+2022,governor,RI,false,D,D,D,,,Dan McKee,RI-gov,0.5809,0.3898
+2022,governor,SC,false,R,R,R,,,Henry McMaster,SC-gov,0.407,0.5808
+2022,governor,SD,false,R,R,R,,,Kristi Noem,SD-gov,0.3517,0.6198
+2022,governor,TN,false,R,R,R,,,Bill Lee,TN-gov,0.3292,0.6491
+2022,governor,TX,false,R,R,R,,,Greg Abbott,TX-gov,0.4387,0.5475
+2022,governor,VT,false,R,R,R,,,Phil Scott,VT-gov,0.2408,0.7132
+2022,governor,WI,false,D,D,D,,,Tony Evers,WI-gov,0.5119,0.4779
+2022,governor,WY,false,R,R,R,,,Mark Gordon,WY-gov,0.1681,0.7872
+2022,senate,AK,false,Other,?,R,"override: MEDSL party_detailed is empty for the winner Lisa Murkowski, so party_simplified is OTHER; she ran as a Republican and sits in the Republican conference; ranked-choice contest so the Wikipedia results block is a multi-round table the parser cannot read (source B unavailable); authority cited by that page (TLS chain not verifiable from this host, not fetched): https://www.elections.alaska.gov/results/22GENR/ElectionSummaryReportRPT.pdf; MEDSL candidate row confirms Murkowski led round 1 (114,118 votes)",R,"MURKOWSKI, LISA",AK-class3,,
+2022,senate,AL,false,R,R,R,,R,KATIE BRITT,AL-class3,0.3094,0.6674
+2022,senate,AR,false,R,R,R,,R,JOHN BOOZMAN,AR-class3,0.3109,0.6573
+2022,senate,AZ,false,D,D,D,,D,MARK KELLY,AZ-class3,0.514,0.4651
+2022,senate,CA,false,D,D,D,,D,ALEX PADILLA,CA-class3,0.6106,0.3894
+2022,senate,CA,true,D,D,D,,D,ALEX PADILLA,CA-class3,0.6106,0.3894
+2022,senate,CO,false,D,D,D,,D,MICHAEL BENNET,CO-class3,0.5588,0.4127
+2022,senate,CT,false,D,D,D,,D,Richard Blumenthal,CT-class3,0.5746,0.4254
+2022,senate,FL,false,R,R,R,,R,MARCO RUBIO,FL-class3,0.4127,0.5768
+2022,senate,GA,false,D,D,D,,D,RAPHAEL WARNOCK,GA-class3,0.514,0.486
+2022,senate,HI,false,D,D,D,,D,"SCHATZ, BRIAN",HI-class3,0.7121,0.2604
+2022,senate,IA,false,R,R,R,,R,CHUCK GRASSLEY,IA-class3,0.439,0.561
+2022,senate,ID,false,R,R,R,,R,MIKE CRAPO,ID-class3,0.2874,0.6068
+2022,senate,IL,false,Other,D,D,"override: MEDSL party_detailed is DEMOCRATIC (not DEMOCRAT) for the winner Tammy Duckworth, so party_simplified is OTHER; she is a Democrat; Wikipedia results table agrees (D); authority cited there (HTTP 200, not machine-read): https://www.elections.il.gov/ElectionOperations/ElectionVoteTotals.aspx?T=637946238386534101",D,TAMMY DUCKWORTH,IL-class3,0.5682,0.415
+2022,senate,IN,false,R,R,R,,R,TODD YOUNG,IN-class3,0.379,0.5866
+2022,senate,KS,false,R,R,R,,R,JERRY MORAN,KS-class3,0.3704,0.6
+2022,senate,KY,false,R,R,R,,R,RAND PAUL,KY-class3,0.3819,0.6181
+2022,senate,LA,false,R,R,R,,R,JOHN KENNEDY,LA-class3,0.1785,0.6156
+2022,senate,MD,false,Other,D,D,"override: MEDSL party_detailed is DEMOCRATIC (not DEMOCRAT) for the winner Chris Van Hollen, so party_simplified is OTHER; he is a Democrat; Wikipedia results table agrees (D); authority cited there (HTTP 200, not machine-read): https://elections.maryland.gov/elections/2022/primary_results/gen_results_2022_4.html",D,CHRIS VAN HOLLEN,MD-class3,0.6587,0.3413
+2022,senate,MO,false,R,R,R,,R,ERIC SCHMITT,MO-class3,0.4218,0.5543
+2022,senate,NC,false,R,R,R,,R,TED BUDD,NC-class3,0.473,0.5053
+2022,senate,ND,false,R,R,R,,R,JOHN HOEVEN,ND-class3,0.2501,0.5648
+2022,senate,NH,false,D,D,D,,D,MAGGIE HASSAN,NH-class3,0.5358,0.4442
+2022,senate,NV,false,D,D,D,,D,"CORTEZ MASTO, CATHERINE",NV-class3,0.4942,0.4863
+2022,senate,NY,false,D,D,D,,D,CHARLES E. SCHUMER,NY-class3,0.5674,0.4273
+2022,senate,OH,false,R,R,R,,R,JD VANCE,OH-class3,0.4694,0.5306
+2022,senate,OK,false,R,R,R,,R,JAMES LANKFORD,OK-class3,0.321,0.643
+2022,senate,OK,true,R,R,R,,R,MARKWAYNE MULLIN,OK-class2,0.3524,0.6177
+2022,senate,OR,false,D,D,D,,D,WYDEN RON,OR-class3,0.559,0.4097
+2022,senate,PA,false,D,D,D,,D,JOHN K FETTERMAN,PA-class3,0.5125,0.4633
+2022,senate,SC,false,R,R,R,,R,TIM SCOTT,SC-class3,0.3705,0.6295
+2022,senate,SD,false,R,R,R,,R,JOHN R THUNE,SD-class3,0.2615,0.6963
+2022,senate,UT,false,R,R,R,,R,MIKE LEE,UT-class3,,0.5317
+2022,senate,VT,false,D,D,D,,D,PETER WELCH,VT-class3,0.6862,0.2809
+2022,senate,WA,false,D,D,D,,D,PATTY MURRAY,WA-class3,0.5728,0.4272
+2022,senate,WI,false,R,R,R,,R,RON JOHNSON,WI-class3,0.4949,0.505
+2024,governor,DE,false,D,D,D,,,Matt Meyer,DE-gov,0.5607,0.4393
+2024,governor,IN,false,R,R,R,,,Mike BraunMicah Beckwith,IN-gov,0.4111,0.5438
+2024,governor,MO,false,R,R,R,,,Mike Kehoe,MO-gov,0.3872,0.5914
+2024,governor,MT,false,R,R,R,,,Greg Gianforte,MT-gov,0.3862,0.5886
+2024,governor,NC,false,D,D,D,,,Josh Stein,NC-gov,0.549,0.4008
+2024,governor,ND,false,R,R,R,,,Kelly ArmstrongMichelle Strinden,ND-gov,0.2602,0.6836
+2024,governor,NH,false,R,R,R,,,Kelly Ayotte,NH-gov,0.4433,0.5368
+2024,governor,UT,false,R,R,R,,,Spencer Cox,UT-gov,0.2846,0.5289
+2024,governor,VT,false,R,R,R,,,Phil Scott,VT-gov,0.2189,0.7361
+2024,governor,WA,false,D,D,D,,,Bob Ferguson,WA-gov,0.5563,0.4437
+2024,governor,WV,false,R,R,R,,,Patrick Morrisey,WV-gov,0.3158,0.6199
+2024,senate,AZ,false,D,D,D,,D,RUBEN GALLEGO,AZ-class1,0.5007,0.4766
+2024,senate,CA,false,D,D,D,,D,ADAM B. SCHIFF,CA-class1,0.5887,0.4113
+2024,senate,CA,true,D,D,D,,D,ADAM B. SCHIFF,CA-class1,0.5887,0.4113
+2024,senate,CT,false,D,D,D,,D,CHRISTOPHER S. MURPHY,CT-class1,0.5858,0.397
+2024,senate,DE,false,D,D,D,,D,LISA BLUNT ROCHESTER,DE-class1,0.5659,0.395
+2024,senate,FL,false,R,R,R,,R,RICK SCOTT,FL-class1,0.4279,0.5557
+2024,senate,HI,false,D,D,D,,D,MAZIE K. HIRONO,HI-class1,0.6461,0.319
+2024,senate,IN,false,R,R,R,,R,JIM BANKS,IN-class1,0.3877,0.5864
+2024,senate,MA,false,D,D,D,,D,ELIZABETH ANN WARREN,MA-class1,0.5992,0.4008
+2024,senate,MD,false,D,D,D,,D,ANGELA ALSOBROOKS,MD-class1,0.5476,0.4294
+2024,senate,ME,false,Other,Other,Other,override: Angus King won as an Independent: resolves Other for race questions; he caucuses with the Democrats so counts toward the D caucus for chamber questions,D,ANGUS S. KING JR.,ME-class1,0.1083,0.3464
+2024,senate,MI,false,D,D,D,,D,ELISSA SLOTKIN,MI-class1,0.4864,0.483
+2024,senate,MN,false,D,D,D,,D,AMY KLOBUCHAR,MN-class1,0.5626,0.4055
+2024,senate,MO,false,R,R,R,,R,JOSH HAWLEY,MO-class1,0.4184,0.5557
+2024,senate,MS,false,R,R,R,,R,ROGER F. WICKER,MS-class1,0.3719,0.6281
+2024,senate,MT,false,R,R,R,,R,TIM SHEEHY,MT-class1,0.455,0.5264
+2024,senate,ND,false,R,R,R,,R,KEVIN CRAMER,ND-class1,0.3348,0.6652
+2024,senate,NE,false,R,R,R,,R,DEB FISCHER,NE-class1,,0.5335
+2024,senate,NE,true,R,R,R,,R,PETE RICKETTS,NE-class2,0.3742,0.6258
+2024,senate,NJ,false,D,D,D,,D,ANDY KIM,NJ-class1,0.5361,0.4399
+2024,senate,NM,false,D,D,D,,D,MARTIN HEINRICH,NM-class1,0.5506,0.4494
+2024,senate,NV,false,D,D,D,,D,JACKY S. ROSEN,NV-class1,0.4936,0.4767
+2024,senate,NY,false,D,D,D,,D,KIRSTEN E. GILLIBRAND,NY-class1,0.5882,0.4052
+2024,senate,OH,false,R,R,R,,R,BERNIE MORENO,OH-class1,0.4648,0.5009
+2024,senate,PA,false,R,R,R,,R,DAVE MCCORMICK,PA-class1,0.486,0.4882
+2024,senate,RI,false,D,D,D,,D,SHELDON WHITEHOUSE,RI-class1,0.6005,0.3995
+2024,senate,TN,false,R,R,R,,R,MARSHA BLACKBURN,TN-class1,0.3416,0.638
+2024,senate,TX,false,R,R,R,,R,TED CRUZ,TX-class1,0.4457,0.5307
+2024,senate,UT,false,R,R,R,,R,JOHN CURTIS,UT-class1,0.3175,0.6251
+2024,senate,VA,false,D,D,D,,D,TIMOTHY M. KAINE,VA-class1,0.5448,0.4552
+2024,senate,VT,false,Other,Other,Other,override: Bernie Sanders won as an Independent: resolves Other for race questions; he caucuses with the Democrats so counts toward the D caucus for chamber questions,D,BERNIE SANDERS,VT-class1,,0.3211
+2024,senate,WA,false,D,D,D,,D,MARIA CANTWELL,WA-class1,0.5925,0.4075
+2024,senate,WI,false,D,D,D,,D,TAMMY BALDWIN,WI-class1,0.4938,0.4853
+2024,senate,WV,false,R,R,R,,R,JIM JUSTICE,WV-class1,0.2776,0.6875
+2024,senate,WY,false,R,R,R,,R,JOHN BARRASSO,WY-class1,0.2431,0.7569

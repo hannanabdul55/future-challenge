@@ -1,4 +1,26 @@
 {
+ "authority_pages": {
+  "ct_sots_2022_senate": {
+   "fetched": "2026-10-17",
+   "local_copy": "/mnt/d/fc-train/data/authority/ct-sots-2022-senate/contest-34715.html",
+   "sha256": "fbb5a503d70d759e03d70c18c54ece7e6111a09eadd44debea3a265782103f46",
+   "url": "https://electionhistory.ct.gov/contest/34715",
+   "used_for": "CT 2022 Senate contest absent from MEDSL: Richard Blumenthal (Democratic) 723,864 votes, 57.45%, isWinner true"
+  }
+ },
+ "medsl_president": {
+  "bytes": 514108,
+  "doi": "doi:10.7910/DVN/42MVDX",
+  "downloaded": "2026-10-17",
+  "file": "1976-2024-president.csv",
+  "licence": "CC0 1.0",
+  "local_dir": "/mnt/d/fc-train/data/medsl/president",
+  "name": "MIT Election Data and Science Lab, U.S. President 1976-2024",
+  "notes": "fractions of the statewide total vote; DC excluded; ME and NE statewide",
+  "output": "data/phase-04.1/pres_margins.csv",
+  "sha256": "9936410a6dd4ecc8be7fe202c6dff5b5f8fee59d88f35ab542ed12879941dcb7",
+  "url": "https://dataverse.harvard.edu/api/access/datafile/13887042"
+ },
  "medsl_senate": {
   "bytes": 530501,
   "doi": "doi:10.7910/DVN/PEJ5QU",
@@ -9,5 +31,1446 @@
   "name": "MIT Election Data and Science Lab, U.S. Senate statewide 1976-2024",
   "sha256": "6f745db1b4a0026ad837e74428f9ed6f3f77fa51eb6f858b58ebdbc186fdb3bd",
   "url": "https://dataverse.harvard.edu/api/access/datafile/13887039?format=original"
+ },
+ "wikipedia": {
+  "api": "https://en.wikipedia.org/w/api.php",
+  "asof": "2026-10-17T00:00:00Z",
+  "licence": "CC BY-SA 4.0; attribution by revision id (page title + revid, see revisions)",
+  "revisions": {
+   "2018 Alabama gubernatorial election": {
+    "page": "2018 Alabama gubernatorial election",
+    "redirected_from": null,
+    "revid": 1379694794,
+    "timestamp": "2026-10-11T11:05:58Z"
+   },
+   "2018 Alaska gubernatorial election": {
+    "page": "2018 Alaska gubernatorial election",
+    "redirected_from": null,
+    "revid": 1374110774,
+    "timestamp": "2026-09-09T22:39:01Z"
+   },
+   "2018 Arizona gubernatorial election": {
+    "page": "2018 Arizona gubernatorial election",
+    "redirected_from": null,
+    "revid": 1379074471,
+    "timestamp": "2026-10-07T20:02:45Z"
+   },
+   "2018 Arkansas gubernatorial election": {
+    "page": "2018 Arkansas gubernatorial election",
+    "redirected_from": null,
+    "revid": 1375685394,
+    "timestamp": "2026-09-19T10:01:39Z"
+   },
+   "2018 California gubernatorial election": {
+    "page": "2018 California gubernatorial election",
+    "redirected_from": null,
+    "revid": 1377114586,
+    "timestamp": "2026-09-27T23:38:25Z"
+   },
+   "2018 Colorado gubernatorial election": {
+    "page": "2018 Colorado gubernatorial election",
+    "redirected_from": null,
+    "revid": 1375744470,
+    "timestamp": "2026-09-19T19:58:43Z"
+   },
+   "2018 Connecticut gubernatorial election": {
+    "page": "2018 Connecticut gubernatorial election",
+    "redirected_from": null,
+    "revid": 1374165777,
+    "timestamp": "2026-09-10T06:06:39Z"
+   },
+   "2018 Florida gubernatorial election": {
+    "page": "2018 Florida gubernatorial election",
+    "redirected_from": null,
+    "revid": 1379066570,
+    "timestamp": "2026-10-07T19:00:08Z"
+   },
+   "2018 Georgia gubernatorial election": {
+    "page": "2018 Georgia gubernatorial election",
+    "redirected_from": null,
+    "revid": 1379206226,
+    "timestamp": "2026-10-08T15:28:22Z"
+   },
+   "2018 Hawaii gubernatorial election": {
+    "page": "2018 Hawaii gubernatorial election",
+    "redirected_from": null,
+    "revid": 1374195466,
+    "timestamp": "2026-09-10T12:32:34Z"
+   },
+   "2018 Idaho gubernatorial election": {
+    "page": "2018 Idaho gubernatorial election",
+    "redirected_from": null,
+    "revid": 1378052660,
+    "timestamp": "2026-10-02T17:59:30Z"
+   },
+   "2018 Illinois gubernatorial election": {
+    "page": "2018 Illinois gubernatorial election",
+    "redirected_from": null,
+    "revid": 1374203616,
+    "timestamp": "2026-09-10T13:57:04Z"
+   },
+   "2018 Iowa gubernatorial election": {
+    "page": "2018 Iowa gubernatorial election",
+    "redirected_from": null,
+    "revid": 1375966807,
+    "timestamp": "2026-09-21T04:23:28Z"
+   },
+   "2018 Kansas gubernatorial election": {
+    "page": "2018 Kansas gubernatorial election",
+    "redirected_from": null,
+    "revid": 1379952974,
+    "timestamp": "2026-10-12T22:20:01Z"
+   },
+   "2018 Maine gubernatorial election": {
+    "page": "2018 Maine gubernatorial election",
+    "redirected_from": null,
+    "revid": 1374228534,
+    "timestamp": "2026-09-10T17:30:39Z"
+   },
+   "2018 Maryland gubernatorial election": {
+    "page": "2018 Maryland gubernatorial election",
+    "redirected_from": null,
+    "revid": 1374231916,
+    "timestamp": "2026-09-10T18:02:14Z"
+   },
+   "2018 Massachusetts gubernatorial election": {
+    "page": "2018 Massachusetts gubernatorial election",
+    "redirected_from": null,
+    "revid": 1375585813,
+    "timestamp": "2026-09-18T18:08:01Z"
+   },
+   "2018 Michigan gubernatorial election": {
+    "page": "2018 Michigan gubernatorial election",
+    "redirected_from": null,
+    "revid": 1378729769,
+    "timestamp": "2026-10-05T22:52:47Z"
+   },
+   "2018 Minnesota gubernatorial election": {
+    "page": "2018 Minnesota gubernatorial election",
+    "redirected_from": null,
+    "revid": 1374243621,
+    "timestamp": "2026-09-10T19:34:47Z"
+   },
+   "2018 Nebraska gubernatorial election": {
+    "page": "2018 Nebraska gubernatorial election",
+    "redirected_from": null,
+    "revid": 1374256124,
+    "timestamp": "2026-09-10T21:21:10Z"
+   },
+   "2018 Nevada gubernatorial election": {
+    "page": "2018 Nevada gubernatorial election",
+    "redirected_from": null,
+    "revid": 1378745015,
+    "timestamp": "2026-10-06T00:27:38Z"
+   },
+   "2018 New Hampshire gubernatorial election": {
+    "page": "2018 New Hampshire gubernatorial election",
+    "redirected_from": null,
+    "revid": 1378399867,
+    "timestamp": "2026-10-04T08:16:31Z"
+   },
+   "2018 New Mexico gubernatorial election": {
+    "page": "2018 New Mexico gubernatorial election",
+    "redirected_from": null,
+    "revid": 1374257581,
+    "timestamp": "2026-09-10T21:34:16Z"
+   },
+   "2018 New York gubernatorial election": {
+    "page": "2018 New York gubernatorial election",
+    "redirected_from": null,
+    "revid": 1378259220,
+    "timestamp": "2026-10-03T18:35:56Z"
+   },
+   "2018 Ohio gubernatorial election": {
+    "page": "2018 Ohio gubernatorial election",
+    "redirected_from": null,
+    "revid": 1380222220,
+    "timestamp": "2026-10-14T14:17:47Z"
+   },
+   "2018 Oklahoma gubernatorial election": {
+    "page": "2018 Oklahoma gubernatorial election",
+    "redirected_from": null,
+    "revid": 1373043908,
+    "timestamp": "2026-09-03T18:33:47Z"
+   },
+   "2018 Oregon gubernatorial election": {
+    "page": "2018 Oregon gubernatorial election",
+    "redirected_from": null,
+    "revid": 1378671199,
+    "timestamp": "2026-10-05T16:10:46Z"
+   },
+   "2018 Pennsylvania gubernatorial election": {
+    "page": "2018 Pennsylvania gubernatorial election",
+    "redirected_from": null,
+    "revid": 1375799268,
+    "timestamp": "2026-09-20T03:33:44Z"
+   },
+   "2018 Rhode Island gubernatorial election": {
+    "page": "2018 Rhode Island gubernatorial election",
+    "redirected_from": null,
+    "revid": 1380143383,
+    "timestamp": "2026-10-14T01:32:14Z"
+   },
+   "2018 South Carolina gubernatorial election": {
+    "page": "2018 South Carolina gubernatorial election",
+    "redirected_from": null,
+    "revid": 1380624957,
+    "timestamp": "2026-10-16T22:26:53Z"
+   },
+   "2018 South Dakota gubernatorial election": {
+    "page": "2018 South Dakota gubernatorial election",
+    "redirected_from": null,
+    "revid": 1379993578,
+    "timestamp": "2026-10-13T03:31:48Z"
+   },
+   "2018 Tennessee gubernatorial election": {
+    "page": "2018 Tennessee gubernatorial election",
+    "redirected_from": null,
+    "revid": 1380080699,
+    "timestamp": "2026-10-13T17:37:14Z"
+   },
+   "2018 Texas gubernatorial election": {
+    "page": "2018 Texas gubernatorial election",
+    "redirected_from": null,
+    "revid": 1379198411,
+    "timestamp": "2026-10-08T14:17:40Z"
+   },
+   "2018 United States Senate election in Arizona": {
+    "page": "2018 United States Senate election in Arizona",
+    "redirected_from": null,
+    "revid": 1379073251,
+    "timestamp": "2026-10-07T19:53:10Z"
+   },
+   "2018 United States Senate election in California": {
+    "page": "2018 United States Senate election in California",
+    "redirected_from": null,
+    "revid": 1371737182,
+    "timestamp": "2026-08-28T04:21:43Z"
+   },
+   "2018 United States Senate election in Connecticut": {
+    "page": "2018 United States Senate election in Connecticut",
+    "redirected_from": null,
+    "revid": 1379139020,
+    "timestamp": "2026-10-08T04:38:58Z"
+   },
+   "2018 United States Senate election in Delaware": {
+    "page": "2018 United States Senate election in Delaware",
+    "redirected_from": null,
+    "revid": 1374352422,
+    "timestamp": "2026-09-11T13:53:55Z"
+   },
+   "2018 United States Senate election in Florida": {
+    "page": "2018 United States Senate election in Florida",
+    "redirected_from": null,
+    "revid": 1378417183,
+    "timestamp": "2026-10-04T10:38:20Z"
+   },
+   "2018 United States Senate election in Hawaii": {
+    "page": "2018 United States Senate election in Hawaii",
+    "redirected_from": null,
+    "revid": 1378948155,
+    "timestamp": "2026-10-07T01:54:32Z"
+   },
+   "2018 United States Senate election in Indiana": {
+    "page": "2018 United States Senate election in Indiana",
+    "redirected_from": null,
+    "revid": 1375330040,
+    "timestamp": "2026-09-17T04:03:23Z"
+   },
+   "2018 United States Senate election in Maine": {
+    "page": "2018 United States Senate election in Maine",
+    "redirected_from": null,
+    "revid": 1378481752,
+    "timestamp": "2026-10-04T18:39:39Z"
+   },
+   "2018 United States Senate election in Maryland": {
+    "page": "2018 United States Senate election in Maryland",
+    "redirected_from": null,
+    "revid": 1374353317,
+    "timestamp": "2026-09-11T14:03:20Z"
+   },
+   "2018 United States Senate election in Massachusetts": {
+    "page": "2018 United States Senate election in Massachusetts",
+    "redirected_from": null,
+    "revid": 1378381152,
+    "timestamp": "2026-10-04T05:52:32Z"
+   },
+   "2018 United States Senate election in Michigan": {
+    "page": "2018 United States Senate election in Michigan",
+    "redirected_from": null,
+    "revid": 1378411480,
+    "timestamp": "2026-10-04T09:46:46Z"
+   },
+   "2018 United States Senate election in Minnesota": {
+    "page": "2018 United States Senate election in Minnesota",
+    "redirected_from": null,
+    "revid": 1378480785,
+    "timestamp": "2026-10-04T18:35:19Z"
+   },
+   "2018 United States Senate election in Mississippi": {
+    "page": "2018 United States Senate election in Mississippi",
+    "redirected_from": null,
+    "revid": 1379605854,
+    "timestamp": "2026-10-10T23:13:17Z"
+   },
+   "2018 United States Senate election in Missouri": {
+    "page": "2018 United States Senate election in Missouri",
+    "redirected_from": null,
+    "revid": 1379560978,
+    "timestamp": "2026-10-10T18:48:27Z"
+   },
+   "2018 United States Senate election in Montana": {
+    "page": "2018 United States Senate election in Montana",
+    "redirected_from": null,
+    "revid": 1374355090,
+    "timestamp": "2026-09-11T14:19:16Z"
+   },
+   "2018 United States Senate election in Nebraska": {
+    "page": "2018 United States Senate election in Nebraska",
+    "redirected_from": null,
+    "revid": 1365504091,
+    "timestamp": "2026-07-22T21:42:59Z"
+   },
+   "2018 United States Senate election in Nevada": {
+    "page": "2018 United States Senate election in Nevada",
+    "redirected_from": null,
+    "revid": 1378744177,
+    "timestamp": "2026-10-06T00:23:54Z"
+   },
+   "2018 United States Senate election in New Jersey": {
+    "page": "2018 United States Senate election in New Jersey",
+    "redirected_from": null,
+    "revid": 1373396958,
+    "timestamp": "2026-09-05T19:10:07Z"
+   },
+   "2018 United States Senate election in New Mexico": {
+    "page": "2018 United States Senate election in New Mexico",
+    "redirected_from": null,
+    "revid": 1379231318,
+    "timestamp": "2026-10-08T18:46:54Z"
+   },
+   "2018 United States Senate election in New York": {
+    "page": "2018 United States Senate election in New York",
+    "redirected_from": null,
+    "revid": 1361476113,
+    "timestamp": "2026-06-28T04:20:11Z"
+   },
+   "2018 United States Senate election in North Dakota": {
+    "page": "2018 United States Senate election in North Dakota",
+    "redirected_from": null,
+    "revid": 1379606847,
+    "timestamp": "2026-10-10T23:21:24Z"
+   },
+   "2018 United States Senate election in Ohio": {
+    "page": "2018 United States Senate election in Ohio",
+    "redirected_from": null,
+    "revid": 1379762710,
+    "timestamp": "2026-10-11T20:33:46Z"
+   },
+   "2018 United States Senate election in Pennsylvania": {
+    "page": "2018 United States Senate election in Pennsylvania",
+    "redirected_from": null,
+    "revid": 1375800743,
+    "timestamp": "2026-09-20T03:46:17Z"
+   },
+   "2018 United States Senate election in Rhode Island": {
+    "page": "2018 United States Senate election in Rhode Island",
+    "redirected_from": null,
+    "revid": 1378480904,
+    "timestamp": "2026-10-04T18:35:44Z"
+   },
+   "2018 United States Senate election in Tennessee": {
+    "page": "2018 United States Senate election in Tennessee",
+    "redirected_from": null,
+    "revid": 1379606011,
+    "timestamp": "2026-10-10T23:14:30Z"
+   },
+   "2018 United States Senate election in Texas": {
+    "page": "2018 United States Senate election in Texas",
+    "redirected_from": null,
+    "revid": 1378480935,
+    "timestamp": "2026-10-04T18:35:52Z"
+   },
+   "2018 United States Senate election in Utah": {
+    "page": "2018 United States Senate election in Utah",
+    "redirected_from": null,
+    "revid": 1362843427,
+    "timestamp": "2026-07-06T15:20:55Z"
+   },
+   "2018 United States Senate election in Vermont": {
+    "page": "2018 United States Senate election in Vermont",
+    "redirected_from": null,
+    "revid": 1380186899,
+    "timestamp": "2026-10-14T08:10:24Z"
+   },
+   "2018 United States Senate election in Virginia": {
+    "page": "2018 United States Senate election in Virginia",
+    "redirected_from": null,
+    "revid": 1375294626,
+    "timestamp": "2026-09-16T23:58:14Z"
+   },
+   "2018 United States Senate election in Washington": {
+    "page": "2018 United States Senate election in Washington",
+    "redirected_from": null,
+    "revid": 1379593292,
+    "timestamp": "2026-10-10T21:59:26Z"
+   },
+   "2018 United States Senate election in West Virginia": {
+    "page": "2018 United States Senate election in West Virginia",
+    "redirected_from": null,
+    "revid": 1378036465,
+    "timestamp": "2026-10-02T15:52:25Z"
+   },
+   "2018 United States Senate election in Wisconsin": {
+    "page": "2018 United States Senate election in Wisconsin",
+    "redirected_from": null,
+    "revid": 1375079134,
+    "timestamp": "2026-09-15T19:05:21Z"
+   },
+   "2018 United States Senate election in Wyoming": {
+    "page": "2018 United States Senate election in Wyoming",
+    "redirected_from": null,
+    "revid": 1372163118,
+    "timestamp": "2026-08-30T17:42:45Z"
+   },
+   "2018 United States Senate special election in Minnesota": {
+    "page": "2018 United States Senate special election in Minnesota",
+    "redirected_from": null,
+    "revid": 1378480828,
+    "timestamp": "2026-10-04T18:35:30Z"
+   },
+   "2018 United States Senate special election in Mississippi": {
+    "page": "2018 United States Senate special election in Mississippi",
+    "redirected_from": null,
+    "revid": 1379414969,
+    "timestamp": "2026-10-09T21:39:01Z"
+   },
+   "2018 United States gubernatorial elections": {
+    "page": "2018 United States gubernatorial elections",
+    "redirected_from": null,
+    "revid": 1370818436,
+    "timestamp": "2026-08-23T06:35:01Z"
+   },
+   "2018 Vermont gubernatorial election": {
+    "page": "2018 Vermont gubernatorial election",
+    "redirected_from": null,
+    "revid": 1379079826,
+    "timestamp": "2026-10-07T20:43:49Z"
+   },
+   "2018 Wisconsin gubernatorial election": {
+    "page": "2018 Wisconsin gubernatorial election",
+    "redirected_from": null,
+    "revid": 1377333939,
+    "timestamp": "2026-09-29T00:01:08Z"
+   },
+   "2018 Wyoming gubernatorial election": {
+    "page": "2018 Wyoming gubernatorial election",
+    "redirected_from": null,
+    "revid": 1374386773,
+    "timestamp": "2026-09-11T19:09:49Z"
+   },
+   "2020 Delaware gubernatorial election": {
+    "page": "2020 Delaware gubernatorial election",
+    "redirected_from": null,
+    "revid": 1378465058,
+    "timestamp": "2026-10-04T16:58:35Z"
+   },
+   "2020 Indiana gubernatorial election": {
+    "page": "2020 Indiana gubernatorial election",
+    "redirected_from": null,
+    "revid": 1380404197,
+    "timestamp": "2026-10-15T14:47:16Z"
+   },
+   "2020 Missouri gubernatorial election": {
+    "page": "2020 Missouri gubernatorial election",
+    "redirected_from": null,
+    "revid": 1378465736,
+    "timestamp": "2026-10-04T17:02:29Z"
+   },
+   "2020 Montana gubernatorial election": {
+    "page": "2020 Montana gubernatorial election",
+    "redirected_from": null,
+    "revid": 1378465888,
+    "timestamp": "2026-10-04T17:03:25Z"
+   },
+   "2020 New Hampshire gubernatorial election": {
+    "page": "2020 New Hampshire gubernatorial election",
+    "redirected_from": null,
+    "revid": 1378505805,
+    "timestamp": "2026-10-04T20:27:30Z"
+   },
+   "2020 North Carolina gubernatorial election": {
+    "page": "2020 North Carolina gubernatorial election",
+    "redirected_from": null,
+    "revid": 1375558126,
+    "timestamp": "2026-09-18T14:55:25Z"
+   },
+   "2020 North Dakota gubernatorial election": {
+    "page": "2020 North Dakota gubernatorial election",
+    "redirected_from": null,
+    "revid": 1379607303,
+    "timestamp": "2026-10-10T23:25:02Z"
+   },
+   "2020 United States Senate election in Alabama": {
+    "page": "2020 United States Senate election in Alabama",
+    "redirected_from": null,
+    "revid": 1379081367,
+    "timestamp": "2026-10-07T20:56:57Z"
+   },
+   "2020 United States Senate election in Alaska": {
+    "page": "2020 United States Senate election in Alaska",
+    "redirected_from": null,
+    "revid": 1371903676,
+    "timestamp": "2026-08-29T06:02:26Z"
+   },
+   "2020 United States Senate election in Arkansas": {
+    "page": "2020 United States Senate election in Arkansas",
+    "redirected_from": null,
+    "revid": 1378687187,
+    "timestamp": "2026-10-05T18:00:00Z"
+   },
+   "2020 United States Senate election in Colorado": {
+    "page": "2020 United States Senate election in Colorado",
+    "redirected_from": null,
+    "revid": 1375634895,
+    "timestamp": "2026-09-19T01:45:48Z"
+   },
+   "2020 United States Senate election in Delaware": {
+    "page": "2020 United States Senate election in Delaware",
+    "redirected_from": null,
+    "revid": 1378464851,
+    "timestamp": "2026-10-04T16:57:27Z"
+   },
+   "2020 United States Senate election in Georgia": {
+    "page": "2020–21 United States Senate election in Georgia",
+    "redirected_from": "2020 United States Senate election in Georgia",
+    "revid": 1380432913,
+    "timestamp": "2026-10-15T18:01:47Z"
+   },
+   "2020 United States Senate election in Idaho": {
+    "page": "2020 United States Senate election in Idaho",
+    "redirected_from": null,
+    "revid": 1377553856,
+    "timestamp": "2026-09-30T00:11:02Z"
+   },
+   "2020 United States Senate election in Illinois": {
+    "page": "2020 United States Senate election in Illinois",
+    "redirected_from": null,
+    "revid": 1379791251,
+    "timestamp": "2026-10-11T23:53:59Z"
+   },
+   "2020 United States Senate election in Iowa": {
+    "page": "2020 United States Senate election in Iowa",
+    "redirected_from": null,
+    "revid": 1378255285,
+    "timestamp": "2026-10-03T18:17:52Z"
+   },
+   "2020 United States Senate election in Kansas": {
+    "page": "2020 United States Senate election in Kansas",
+    "redirected_from": null,
+    "revid": 1379798318,
+    "timestamp": "2026-10-12T00:45:26Z"
+   },
+   "2020 United States Senate election in Kentucky": {
+    "page": "2020 United States Senate election in Kentucky",
+    "redirected_from": null,
+    "revid": 1379170660,
+    "timestamp": "2026-10-08T09:44:59Z"
+   },
+   "2020 United States Senate election in Louisiana": {
+    "page": "2020 United States Senate election in Louisiana",
+    "redirected_from": null,
+    "revid": 1367393320,
+    "timestamp": "2026-08-02T20:55:17Z"
+   },
+   "2020 United States Senate election in Maine": {
+    "page": "2020 United States Senate election in Maine",
+    "redirected_from": null,
+    "revid": 1380478372,
+    "timestamp": "2026-10-15T23:30:44Z"
+   },
+   "2020 United States Senate election in Massachusetts": {
+    "page": "2020 United States Senate election in Massachusetts",
+    "redirected_from": null,
+    "revid": 1378444018,
+    "timestamp": "2026-10-04T14:36:59Z"
+   },
+   "2020 United States Senate election in Michigan": {
+    "page": "2020 United States Senate election in Michigan",
+    "redirected_from": null,
+    "revid": 1378375446,
+    "timestamp": "2026-10-04T05:03:36Z"
+   },
+   "2020 United States Senate election in Minnesota": {
+    "page": "2020 United States Senate election in Minnesota",
+    "redirected_from": null,
+    "revid": 1378180798,
+    "timestamp": "2026-10-03T09:08:06Z"
+   },
+   "2020 United States Senate election in Mississippi": {
+    "page": "2020 United States Senate election in Mississippi",
+    "redirected_from": null,
+    "revid": 1378463967,
+    "timestamp": "2026-10-04T16:53:38Z"
+   },
+   "2020 United States Senate election in Montana": {
+    "page": "2020 United States Senate election in Montana",
+    "redirected_from": null,
+    "revid": 1379599071,
+    "timestamp": "2026-10-10T22:28:37Z"
+   },
+   "2020 United States Senate election in Nebraska": {
+    "page": "2020 United States Senate election in Nebraska",
+    "redirected_from": null,
+    "revid": 1375801080,
+    "timestamp": "2026-09-20T03:49:07Z"
+   },
+   "2020 United States Senate election in New Hampshire": {
+    "page": "2020 United States Senate election in New Hampshire",
+    "redirected_from": null,
+    "revid": 1377002992,
+    "timestamp": "2026-09-27T11:03:05Z"
+   },
+   "2020 United States Senate election in New Jersey": {
+    "page": "2020 United States Senate election in New Jersey",
+    "redirected_from": null,
+    "revid": 1375638090,
+    "timestamp": "2026-09-19T02:14:37Z"
+   },
+   "2020 United States Senate election in New Mexico": {
+    "page": "2020 United States Senate election in New Mexico",
+    "redirected_from": null,
+    "revid": 1379231383,
+    "timestamp": "2026-10-08T18:47:29Z"
+   },
+   "2020 United States Senate election in North Carolina": {
+    "page": "2020 United States Senate election in North Carolina",
+    "redirected_from": null,
+    "revid": 1375638797,
+    "timestamp": "2026-09-19T02:20:30Z"
+   },
+   "2020 United States Senate election in Oklahoma": {
+    "page": "2020 United States Senate election in Oklahoma",
+    "redirected_from": null,
+    "revid": 1377531120,
+    "timestamp": "2026-09-29T21:59:55Z"
+   },
+   "2020 United States Senate election in Oregon": {
+    "page": "2020 United States Senate election in Oregon",
+    "redirected_from": null,
+    "revid": 1378107323,
+    "timestamp": "2026-10-03T00:39:27Z"
+   },
+   "2020 United States Senate election in Rhode Island": {
+    "page": "2020 United States Senate election in Rhode Island",
+    "redirected_from": null,
+    "revid": 1354918987,
+    "timestamp": "2026-05-18T23:51:15Z"
+   },
+   "2020 United States Senate election in South Carolina": {
+    "page": "2020 United States Senate election in South Carolina",
+    "redirected_from": null,
+    "revid": 1379342687,
+    "timestamp": "2026-10-09T10:51:23Z"
+   },
+   "2020 United States Senate election in South Dakota": {
+    "page": "2020 United States Senate election in South Dakota",
+    "redirected_from": null,
+    "revid": 1370403994,
+    "timestamp": "2026-08-20T23:18:08Z"
+   },
+   "2020 United States Senate election in Tennessee": {
+    "page": "2020 United States Senate election in Tennessee",
+    "redirected_from": null,
+    "revid": 1380080372,
+    "timestamp": "2026-10-13T17:34:31Z"
+   },
+   "2020 United States Senate election in Texas": {
+    "page": "2020 United States Senate election in Texas",
+    "redirected_from": null,
+    "revid": 1380144331,
+    "timestamp": "2026-10-14T01:38:02Z"
+   },
+   "2020 United States Senate election in Virginia": {
+    "page": "2020 United States Senate election in Virginia",
+    "redirected_from": null,
+    "revid": 1375640506,
+    "timestamp": "2026-09-19T02:35:44Z"
+   },
+   "2020 United States Senate election in West Virginia": {
+    "page": "2020 United States Senate election in West Virginia",
+    "redirected_from": null,
+    "revid": 1378690908,
+    "timestamp": "2026-10-05T18:20:16Z"
+   },
+   "2020 United States Senate election in Wyoming": {
+    "page": "2020 United States Senate election in Wyoming",
+    "redirected_from": null,
+    "revid": 1379601328,
+    "timestamp": "2026-10-10T22:40:22Z"
+   },
+   "2020 United States Senate special election in Arizona": {
+    "page": "2020 United States Senate special election in Arizona",
+    "redirected_from": null,
+    "revid": 1379072753,
+    "timestamp": "2026-10-07T19:48:54Z"
+   },
+   "2020 United States Senate special election in Georgia": {
+    "page": "2020–21 United States Senate special election in Georgia",
+    "redirected_from": "2020 United States Senate special election in Georgia",
+    "revid": 1379984724,
+    "timestamp": "2026-10-13T02:22:52Z"
+   },
+   "2020 United States gubernatorial elections": {
+    "page": "2020 United States gubernatorial elections",
+    "redirected_from": null,
+    "revid": 1375642661,
+    "timestamp": "2026-09-19T02:53:55Z"
+   },
+   "2020 Utah gubernatorial election": {
+    "page": "2020 Utah gubernatorial election",
+    "redirected_from": null,
+    "revid": 1378466336,
+    "timestamp": "2026-10-04T17:06:26Z"
+   },
+   "2020 Vermont gubernatorial election": {
+    "page": "2020 Vermont gubernatorial election",
+    "redirected_from": null,
+    "revid": 1379387841,
+    "timestamp": "2026-10-09T18:05:29Z"
+   },
+   "2020 Washington gubernatorial election": {
+    "page": "2020 Washington gubernatorial election",
+    "redirected_from": null,
+    "revid": 1377328141,
+    "timestamp": "2026-09-28T23:18:38Z"
+   },
+   "2020 West Virginia gubernatorial election": {
+    "page": "2020 West Virginia gubernatorial election",
+    "redirected_from": null,
+    "revid": 1378466248,
+    "timestamp": "2026-10-04T17:05:54Z"
+   },
+   "2022 Alabama gubernatorial election": {
+    "page": "2022 Alabama gubernatorial election",
+    "redirected_from": null,
+    "revid": 1379695984,
+    "timestamp": "2026-10-11T11:19:43Z"
+   },
+   "2022 Alaska gubernatorial election": {
+    "page": "2022 Alaska gubernatorial election",
+    "redirected_from": null,
+    "revid": 1376359781,
+    "timestamp": "2026-09-23T18:06:10Z"
+   },
+   "2022 Arizona gubernatorial election": {
+    "page": "2022 Arizona gubernatorial election",
+    "redirected_from": null,
+    "revid": 1380600203,
+    "timestamp": "2026-10-16T19:09:36Z"
+   },
+   "2022 Arkansas gubernatorial election": {
+    "page": "2022 Arkansas gubernatorial election",
+    "redirected_from": null,
+    "revid": 1378381819,
+    "timestamp": "2026-10-04T05:59:01Z"
+   },
+   "2022 California gubernatorial election": {
+    "page": "2022 California gubernatorial election",
+    "redirected_from": null,
+    "revid": 1376403613,
+    "timestamp": "2026-09-24T00:11:10Z"
+   },
+   "2022 Colorado gubernatorial election": {
+    "page": "2022 Colorado gubernatorial election",
+    "redirected_from": null,
+    "revid": 1376428797,
+    "timestamp": "2026-09-24T02:37:06Z"
+   },
+   "2022 Connecticut gubernatorial election": {
+    "page": "2022 Connecticut gubernatorial election",
+    "redirected_from": null,
+    "revid": 1380485714,
+    "timestamp": "2026-10-16T00:41:32Z"
+   },
+   "2022 Florida gubernatorial election": {
+    "page": "2022 Florida gubernatorial election",
+    "redirected_from": null,
+    "revid": 1376467462,
+    "timestamp": "2026-09-24T08:39:24Z"
+   },
+   "2022 Georgia gubernatorial election": {
+    "page": "2022 Georgia gubernatorial election",
+    "redirected_from": null,
+    "revid": 1376472544,
+    "timestamp": "2026-09-24T09:51:41Z"
+   },
+   "2022 Hawaii gubernatorial election": {
+    "page": "2022 Hawaii gubernatorial election",
+    "redirected_from": null,
+    "revid": 1376536639,
+    "timestamp": "2026-09-24T19:34:18Z"
+   },
+   "2022 Idaho gubernatorial election": {
+    "page": "2022 Idaho gubernatorial election",
+    "redirected_from": null,
+    "revid": 1371443614,
+    "timestamp": "2026-08-26T13:30:59Z"
+   },
+   "2022 Illinois gubernatorial election": {
+    "page": "2022 Illinois gubernatorial election",
+    "redirected_from": null,
+    "revid": 1376490781,
+    "timestamp": "2026-09-24T13:20:24Z"
+   },
+   "2022 Iowa gubernatorial election": {
+    "page": "2022 Iowa gubernatorial election",
+    "redirected_from": null,
+    "revid": 1364041656,
+    "timestamp": "2026-07-14T03:41:00Z"
+   },
+   "2022 Kansas gubernatorial election": {
+    "page": "2022 Kansas gubernatorial election",
+    "redirected_from": null,
+    "revid": 1379705531,
+    "timestamp": "2026-10-11T13:01:55Z"
+   },
+   "2022 Maine gubernatorial election": {
+    "page": "2022 Maine gubernatorial election",
+    "redirected_from": null,
+    "revid": 1380532403,
+    "timestamp": "2026-10-16T08:18:42Z"
+   },
+   "2022 Maryland gubernatorial election": {
+    "page": "2022 Maryland gubernatorial election",
+    "redirected_from": null,
+    "revid": 1379848786,
+    "timestamp": "2026-10-12T06:54:58Z"
+   },
+   "2022 Massachusetts gubernatorial election": {
+    "page": "2022 Massachusetts gubernatorial election",
+    "redirected_from": null,
+    "revid": 1376541438,
+    "timestamp": "2026-09-24T20:18:25Z"
+   },
+   "2022 Michigan gubernatorial election": {
+    "page": "2022 Michigan gubernatorial election",
+    "redirected_from": null,
+    "revid": 1379236830,
+    "timestamp": "2026-10-08T19:30:25Z"
+   },
+   "2022 Minnesota gubernatorial election": {
+    "page": "2022 Minnesota gubernatorial election",
+    "redirected_from": null,
+    "revid": 1380277150,
+    "timestamp": "2026-10-14T20:39:21Z"
+   },
+   "2022 Nebraska gubernatorial election": {
+    "page": "2022 Nebraska gubernatorial election",
+    "redirected_from": null,
+    "revid": 1376570328,
+    "timestamp": "2026-09-25T00:28:53Z"
+   },
+   "2022 Nevada gubernatorial election": {
+    "page": "2022 Nevada gubernatorial election",
+    "redirected_from": null,
+    "revid": 1380606253,
+    "timestamp": "2026-10-16T19:57:01Z"
+   },
+   "2022 New Hampshire gubernatorial election": {
+    "page": "2022 New Hampshire gubernatorial election",
+    "redirected_from": null,
+    "revid": 1378378124,
+    "timestamp": "2026-10-04T05:24:41Z"
+   },
+   "2022 New Mexico gubernatorial election": {
+    "page": "2022 New Mexico gubernatorial election",
+    "redirected_from": null,
+    "revid": 1378391261,
+    "timestamp": "2026-10-04T07:14:11Z"
+   },
+   "2022 New York gubernatorial election": {
+    "page": "2022 New York gubernatorial election",
+    "redirected_from": null,
+    "revid": 1378960405,
+    "timestamp": "2026-10-07T03:02:10Z"
+   },
+   "2022 Ohio gubernatorial election": {
+    "page": "2022 Ohio gubernatorial election",
+    "redirected_from": null,
+    "revid": 1371442830,
+    "timestamp": "2026-08-26T13:24:23Z"
+   },
+   "2022 Oklahoma gubernatorial election": {
+    "page": "2022 Oklahoma gubernatorial election",
+    "redirected_from": null,
+    "revid": 1379310064,
+    "timestamp": "2026-10-09T04:03:52Z"
+   },
+   "2022 Oregon gubernatorial election": {
+    "page": "2022 Oregon gubernatorial election",
+    "redirected_from": null,
+    "revid": 1376594834,
+    "timestamp": "2026-09-25T03:07:53Z"
+   },
+   "2022 Pennsylvania gubernatorial election": {
+    "page": "2022 Pennsylvania gubernatorial election",
+    "redirected_from": null,
+    "revid": 1378353469,
+    "timestamp": "2026-10-04T02:56:48Z"
+   },
+   "2022 Rhode Island gubernatorial election": {
+    "page": "2022 Rhode Island gubernatorial election",
+    "redirected_from": null,
+    "revid": 1376620270,
+    "timestamp": "2026-09-25T06:36:34Z"
+   },
+   "2022 South Carolina gubernatorial election": {
+    "page": "2022 South Carolina gubernatorial election",
+    "redirected_from": null,
+    "revid": 1376630518,
+    "timestamp": "2026-09-25T08:44:24Z"
+   },
+   "2022 South Dakota gubernatorial election": {
+    "page": "2022 South Dakota gubernatorial election",
+    "redirected_from": null,
+    "revid": 1376630811,
+    "timestamp": "2026-09-25T08:48:26Z"
+   },
+   "2022 Tennessee gubernatorial election": {
+    "page": "2022 Tennessee gubernatorial election",
+    "redirected_from": null,
+    "revid": 1379606393,
+    "timestamp": "2026-10-10T23:17:33Z"
+   },
+   "2022 Texas gubernatorial election": {
+    "page": "2022 Texas gubernatorial election",
+    "redirected_from": null,
+    "revid": 1379199533,
+    "timestamp": "2026-10-08T14:28:41Z"
+   },
+   "2022 United States Senate election in Alabama": {
+    "page": "2022 United States Senate election in Alabama",
+    "redirected_from": null,
+    "revid": 1379695489,
+    "timestamp": "2026-10-11T11:14:21Z"
+   },
+   "2022 United States Senate election in Alaska": {
+    "page": "2022 United States Senate election in Alaska",
+    "redirected_from": null,
+    "revid": 1376676521,
+    "timestamp": "2026-09-25T16:25:21Z"
+   },
+   "2022 United States Senate election in Arizona": {
+    "page": "2022 United States Senate election in Arizona",
+    "redirected_from": null,
+    "revid": 1379072613,
+    "timestamp": "2026-10-07T19:47:39Z"
+   },
+   "2022 United States Senate election in Arkansas": {
+    "page": "2022 United States Senate election in Arkansas",
+    "redirected_from": null,
+    "revid": 1379463103,
+    "timestamp": "2026-10-10T03:49:46Z"
+   },
+   "2022 United States Senate election in California": {
+    "page": "2022 United States Senate elections in California",
+    "redirected_from": "2022 United States Senate election in California",
+    "revid": 1380609149,
+    "timestamp": "2026-10-16T20:20:35Z"
+   },
+   "2022 United States Senate election in Colorado": {
+    "page": "2022 United States Senate election in Colorado",
+    "redirected_from": null,
+    "revid": 1380612407,
+    "timestamp": "2026-10-16T20:49:34Z"
+   },
+   "2022 United States Senate election in Connecticut": {
+    "page": "2022 United States Senate election in Connecticut",
+    "redirected_from": null,
+    "revid": 1379139062,
+    "timestamp": "2026-10-08T04:39:12Z"
+   },
+   "2022 United States Senate election in Florida": {
+    "page": "2022 United States Senate election in Florida",
+    "redirected_from": null,
+    "revid": 1378470035,
+    "timestamp": "2026-10-04T17:27:47Z"
+   },
+   "2022 United States Senate election in Georgia": {
+    "page": "2022 United States Senate election in Georgia",
+    "redirected_from": null,
+    "revid": 1379244958,
+    "timestamp": "2026-10-08T20:42:23Z"
+   },
+   "2022 United States Senate election in Hawaii": {
+    "page": "2022 United States Senate election in Hawaii",
+    "redirected_from": null,
+    "revid": 1376678254,
+    "timestamp": "2026-09-25T16:37:08Z"
+   },
+   "2022 United States Senate election in Idaho": {
+    "page": "2022 United States Senate election in Idaho",
+    "redirected_from": null,
+    "revid": 1379596082,
+    "timestamp": "2026-10-10T22:13:01Z"
+   },
+   "2022 United States Senate election in Illinois": {
+    "page": "2022 United States Senate election in Illinois",
+    "redirected_from": null,
+    "revid": 1376678608,
+    "timestamp": "2026-09-25T16:39:31Z"
+   },
+   "2022 United States Senate election in Indiana": {
+    "page": "2022 United States Senate election in Indiana",
+    "redirected_from": null,
+    "revid": 1376678911,
+    "timestamp": "2026-09-25T16:41:33Z"
+   },
+   "2022 United States Senate election in Iowa": {
+    "page": "2022 United States Senate election in Iowa",
+    "redirected_from": null,
+    "revid": 1379752910,
+    "timestamp": "2026-10-11T19:19:31Z"
+   },
+   "2022 United States Senate election in Kansas": {
+    "page": "2022 United States Senate election in Kansas",
+    "redirected_from": null,
+    "revid": 1376260538,
+    "timestamp": "2026-09-23T02:29:55Z"
+   },
+   "2022 United States Senate election in Kentucky": {
+    "page": "2022 United States Senate election in Kentucky",
+    "redirected_from": null,
+    "revid": 1376679343,
+    "timestamp": "2026-09-25T16:44:49Z"
+   },
+   "2022 United States Senate election in Louisiana": {
+    "page": "2022 United States Senate election in Louisiana",
+    "redirected_from": null,
+    "revid": 1380217154,
+    "timestamp": "2026-10-14T13:32:37Z"
+   },
+   "2022 United States Senate election in Maryland": {
+    "page": "2022 United States Senate election in Maryland",
+    "redirected_from": null,
+    "revid": 1376679507,
+    "timestamp": "2026-09-25T16:45:58Z"
+   },
+   "2022 United States Senate election in Missouri": {
+    "page": "2022 United States Senate election in Missouri",
+    "redirected_from": null,
+    "revid": 1376680112,
+    "timestamp": "2026-09-25T16:50:19Z"
+   },
+   "2022 United States Senate election in Nevada": {
+    "page": "2022 United States Senate election in Nevada",
+    "redirected_from": null,
+    "revid": 1378871723,
+    "timestamp": "2026-10-06T17:06:57Z"
+   },
+   "2022 United States Senate election in New Hampshire": {
+    "page": "2022 United States Senate election in New Hampshire",
+    "redirected_from": null,
+    "revid": 1378370530,
+    "timestamp": "2026-10-04T04:29:48Z"
+   },
+   "2022 United States Senate election in New York": {
+    "page": "2022 United States Senate election in New York",
+    "redirected_from": null,
+    "revid": 1376680767,
+    "timestamp": "2026-09-25T16:54:32Z"
+   },
+   "2022 United States Senate election in North Carolina": {
+    "page": "2022 United States Senate election in North Carolina",
+    "redirected_from": null,
+    "revid": 1380126950,
+    "timestamp": "2026-10-13T23:22:20Z"
+   },
+   "2022 United States Senate election in North Dakota": {
+    "page": "2022 United States Senate election in North Dakota",
+    "redirected_from": null,
+    "revid": 1378425291,
+    "timestamp": "2026-10-04T11:56:30Z"
+   },
+   "2022 United States Senate election in Ohio": {
+    "page": "2022 United States Senate election in Ohio",
+    "redirected_from": null,
+    "revid": 1379924907,
+    "timestamp": "2026-10-12T18:34:04Z"
+   },
+   "2022 United States Senate election in Oklahoma": {
+    "page": "2022 United States Senate election in Oklahoma",
+    "redirected_from": null,
+    "revid": 1376841873,
+    "timestamp": "2026-09-26T15:29:05Z"
+   },
+   "2022 United States Senate election in Oregon": {
+    "page": "2022 United States Senate election in Oregon",
+    "redirected_from": null,
+    "revid": 1378107197,
+    "timestamp": "2026-10-03T00:38:24Z"
+   },
+   "2022 United States Senate election in Pennsylvania": {
+    "page": "2022 United States Senate election in Pennsylvania",
+    "redirected_from": null,
+    "revid": 1379763264,
+    "timestamp": "2026-10-11T20:37:47Z"
+   },
+   "2022 United States Senate election in South Carolina": {
+    "page": "2022 United States Senate election in South Carolina",
+    "redirected_from": null,
+    "revid": 1376683570,
+    "timestamp": "2026-09-25T17:14:32Z"
+   },
+   "2022 United States Senate election in South Dakota": {
+    "page": "2022 United States Senate election in South Dakota",
+    "redirected_from": null,
+    "revid": 1379683511,
+    "timestamp": "2026-10-11T08:55:17Z"
+   },
+   "2022 United States Senate election in Utah": {
+    "page": "2022 United States Senate election in Utah",
+    "redirected_from": null,
+    "revid": 1380601807,
+    "timestamp": "2026-10-16T19:23:02Z"
+   },
+   "2022 United States Senate election in Vermont": {
+    "page": "2022 United States Senate election in Vermont",
+    "redirected_from": null,
+    "revid": 1376683901,
+    "timestamp": "2026-09-25T17:16:58Z"
+   },
+   "2022 United States Senate election in Washington": {
+    "page": "2022 United States Senate election in Washington",
+    "redirected_from": null,
+    "revid": 1380467107,
+    "timestamp": "2026-10-15T21:49:29Z"
+   },
+   "2022 United States Senate election in Wisconsin": {
+    "page": "2022 United States Senate election in Wisconsin",
+    "redirected_from": null,
+    "revid": 1377344924,
+    "timestamp": "2026-09-29T01:11:15Z"
+   },
+   "2022 United States Senate special election in California": {
+    "page": "2022 United States Senate elections in California",
+    "redirected_from": "2022 United States Senate special election in California",
+    "revid": 1380609149,
+    "timestamp": "2026-10-16T20:20:35Z"
+   },
+   "2022 United States Senate special election in Oklahoma": {
+    "page": "2022 United States Senate special election in Oklahoma",
+    "redirected_from": null,
+    "revid": 1377316147,
+    "timestamp": "2026-09-28T21:41:27Z"
+   },
+   "2022 United States gubernatorial elections": {
+    "page": "2022 United States gubernatorial elections",
+    "redirected_from": null,
+    "revid": 1376686561,
+    "timestamp": "2026-09-25T17:36:29Z"
+   },
+   "2022 Vermont gubernatorial election": {
+    "page": "2022 Vermont gubernatorial election",
+    "redirected_from": null,
+    "revid": 1370494663,
+    "timestamp": "2026-08-21T12:37:00Z"
+   },
+   "2022 Wisconsin gubernatorial election": {
+    "page": "2022 Wisconsin gubernatorial election",
+    "redirected_from": null,
+    "revid": 1378121230,
+    "timestamp": "2026-10-03T02:04:53Z"
+   },
+   "2022 Wyoming gubernatorial election": {
+    "page": "2022 Wyoming gubernatorial election",
+    "redirected_from": null,
+    "revid": 1376456133,
+    "timestamp": "2026-09-24T06:28:49Z"
+   },
+   "2024 Delaware gubernatorial election": {
+    "page": "2024 Delaware gubernatorial election",
+    "redirected_from": null,
+    "revid": 1379288260,
+    "timestamp": "2026-10-09T02:03:48Z"
+   },
+   "2024 Indiana gubernatorial election": {
+    "page": "2024 Indiana gubernatorial election",
+    "redirected_from": null,
+    "revid": 1380303546,
+    "timestamp": "2026-10-14T23:48:30Z"
+   },
+   "2024 Missouri gubernatorial election": {
+    "page": "2024 Missouri gubernatorial election",
+    "redirected_from": null,
+    "revid": 1377808867,
+    "timestamp": "2026-10-01T05:59:44Z"
+   },
+   "2024 Montana gubernatorial election": {
+    "page": "2024 Montana gubernatorial election",
+    "redirected_from": null,
+    "revid": 1377862511,
+    "timestamp": "2026-10-01T16:07:13Z"
+   },
+   "2024 New Hampshire gubernatorial election": {
+    "page": "2024 New Hampshire gubernatorial election",
+    "redirected_from": null,
+    "revid": 1380248293,
+    "timestamp": "2026-10-14T17:31:56Z"
+   },
+   "2024 North Carolina gubernatorial election": {
+    "page": "2024 North Carolina gubernatorial election",
+    "redirected_from": null,
+    "revid": 1378824342,
+    "timestamp": "2026-10-06T09:24:45Z"
+   },
+   "2024 North Dakota gubernatorial election": {
+    "page": "2024 North Dakota gubernatorial election",
+    "redirected_from": null,
+    "revid": 1379607240,
+    "timestamp": "2026-10-10T23:24:32Z"
+   },
+   "2024 United States Senate election in Arizona": {
+    "page": "2024 United States Senate election in Arizona",
+    "redirected_from": null,
+    "revid": 1377921655,
+    "timestamp": "2026-10-01T23:56:52Z"
+   },
+   "2024 United States Senate election in California": {
+    "page": "2024 United States Senate elections in California",
+    "redirected_from": "2024 United States Senate election in California",
+    "revid": 1377971098,
+    "timestamp": "2026-10-02T04:52:00Z"
+   },
+   "2024 United States Senate election in Connecticut": {
+    "page": "2024 United States Senate election in Connecticut",
+    "redirected_from": null,
+    "revid": 1379139090,
+    "timestamp": "2026-10-08T04:39:24Z"
+   },
+   "2024 United States Senate election in Delaware": {
+    "page": "2024 United States Senate election in Delaware",
+    "redirected_from": null,
+    "revid": 1377921780,
+    "timestamp": "2026-10-01T23:57:39Z"
+   },
+   "2024 United States Senate election in Florida": {
+    "page": "2024 United States Senate election in Florida",
+    "redirected_from": null,
+    "revid": 1378874463,
+    "timestamp": "2026-10-06T17:22:48Z"
+   },
+   "2024 United States Senate election in Hawaii": {
+    "page": "2024 United States Senate election in Hawaii",
+    "redirected_from": null,
+    "revid": 1377922170,
+    "timestamp": "2026-10-01T23:59:43Z"
+   },
+   "2024 United States Senate election in Indiana": {
+    "page": "2024 United States Senate election in Indiana",
+    "redirected_from": null,
+    "revid": 1380304271,
+    "timestamp": "2026-10-14T23:53:25Z"
+   },
+   "2024 United States Senate election in Maine": {
+    "page": "2024 United States Senate election in Maine",
+    "redirected_from": null,
+    "revid": 1377922722,
+    "timestamp": "2026-10-02T00:01:55Z"
+   },
+   "2024 United States Senate election in Maryland": {
+    "page": "2024 United States Senate election in Maryland",
+    "redirected_from": null,
+    "revid": 1377923526,
+    "timestamp": "2026-10-02T00:05:27Z"
+   },
+   "2024 United States Senate election in Massachusetts": {
+    "page": "2024 United States Senate election in Massachusetts",
+    "redirected_from": null,
+    "revid": 1377923741,
+    "timestamp": "2026-10-02T00:06:32Z"
+   },
+   "2024 United States Senate election in Michigan": {
+    "page": "2024 United States Senate election in Michigan",
+    "redirected_from": null,
+    "revid": 1377924685,
+    "timestamp": "2026-10-02T00:10:55Z"
+   },
+   "2024 United States Senate election in Minnesota": {
+    "page": "2024 United States Senate election in Minnesota",
+    "redirected_from": null,
+    "revid": 1379331437,
+    "timestamp": "2026-10-09T08:25:22Z"
+   },
+   "2024 United States Senate election in Mississippi": {
+    "page": "2024 United States Senate election in Mississippi",
+    "redirected_from": null,
+    "revid": 1379415174,
+    "timestamp": "2026-10-09T21:40:24Z"
+   },
+   "2024 United States Senate election in Missouri": {
+    "page": "2024 United States Senate election in Missouri",
+    "redirected_from": null,
+    "revid": 1380549341,
+    "timestamp": "2026-10-16T12:04:33Z"
+   },
+   "2024 United States Senate election in Montana": {
+    "page": "2024 United States Senate election in Montana",
+    "redirected_from": null,
+    "revid": 1379598749,
+    "timestamp": "2026-10-10T22:26:54Z"
+   },
+   "2024 United States Senate election in Nebraska": {
+    "page": "2024 United States Senate election in Nebraska",
+    "redirected_from": null,
+    "revid": 1377925699,
+    "timestamp": "2026-10-02T00:15:49Z"
+   },
+   "2024 United States Senate election in Nevada": {
+    "page": "2024 United States Senate election in Nevada",
+    "redirected_from": null,
+    "revid": 1378743538,
+    "timestamp": "2026-10-06T00:20:47Z"
+   },
+   "2024 United States Senate election in New Jersey": {
+    "page": "2024 United States Senate election in New Jersey",
+    "redirected_from": null,
+    "revid": 1377927177,
+    "timestamp": "2026-10-02T00:22:07Z"
+   },
+   "2024 United States Senate election in New Mexico": {
+    "page": "2024 United States Senate election in New Mexico",
+    "redirected_from": null,
+    "revid": 1379231257,
+    "timestamp": "2026-10-08T18:46:27Z"
+   },
+   "2024 United States Senate election in New York": {
+    "page": "2024 United States Senate election in New York",
+    "redirected_from": null,
+    "revid": 1375755162,
+    "timestamp": "2026-09-19T21:36:21Z"
+   },
+   "2024 United States Senate election in North Dakota": {
+    "page": "2024 United States Senate election in North Dakota",
+    "redirected_from": null,
+    "revid": 1379606781,
+    "timestamp": "2026-10-10T23:20:49Z"
+   },
+   "2024 United States Senate election in Ohio": {
+    "page": "2024 United States Senate election in Ohio",
+    "redirected_from": null,
+    "revid": 1380302065,
+    "timestamp": "2026-10-14T23:37:02Z"
+   },
+   "2024 United States Senate election in Pennsylvania": {
+    "page": "2024 United States Senate election in Pennsylvania",
+    "redirected_from": null,
+    "revid": 1379224939,
+    "timestamp": "2026-10-08T18:00:52Z"
+   },
+   "2024 United States Senate election in Rhode Island": {
+    "page": "2024 United States Senate election in Rhode Island",
+    "redirected_from": null,
+    "revid": 1377927938,
+    "timestamp": "2026-10-02T00:25:13Z"
+   },
+   "2024 United States Senate election in Tennessee": {
+    "page": "2024 United States Senate election in Tennessee",
+    "redirected_from": null,
+    "revid": 1379605942,
+    "timestamp": "2026-10-10T23:14:00Z"
+   },
+   "2024 United States Senate election in Texas": {
+    "page": "2024 United States Senate election in Texas",
+    "redirected_from": null,
+    "revid": 1377928324,
+    "timestamp": "2026-10-02T00:26:57Z"
+   },
+   "2024 United States Senate election in Utah": {
+    "page": "2024 United States Senate election in Utah",
+    "redirected_from": null,
+    "revid": 1377928517,
+    "timestamp": "2026-10-02T00:27:52Z"
+   },
+   "2024 United States Senate election in Vermont": {
+    "page": "2024 United States Senate election in Vermont",
+    "redirected_from": null,
+    "revid": 1379474633,
+    "timestamp": "2026-10-10T05:30:22Z"
+   },
+   "2024 United States Senate election in Virginia": {
+    "page": "2024 United States Senate election in Virginia",
+    "redirected_from": null,
+    "revid": 1377928637,
+    "timestamp": "2026-10-02T00:28:23Z"
+   },
+   "2024 United States Senate election in Washington": {
+    "page": "2024 United States Senate election in Washington",
+    "redirected_from": null,
+    "revid": 1379575814,
+    "timestamp": "2026-10-10T20:30:32Z"
+   },
+   "2024 United States Senate election in West Virginia": {
+    "page": "2024 United States Senate election in West Virginia",
+    "redirected_from": null,
+    "revid": 1377929082,
+    "timestamp": "2026-10-02T00:30:52Z"
+   },
+   "2024 United States Senate election in Wisconsin": {
+    "page": "2024 United States Senate election in Wisconsin",
+    "redirected_from": null,
+    "revid": 1377929161,
+    "timestamp": "2026-10-02T00:31:33Z"
+   },
+   "2024 United States Senate election in Wyoming": {
+    "page": "2024 United States Senate election in Wyoming",
+    "redirected_from": null,
+    "revid": 1379601125,
+    "timestamp": "2026-10-10T22:39:18Z"
+   },
+   "2024 United States Senate special election in California": {
+    "page": "2024 United States Senate elections in California",
+    "redirected_from": "2024 United States Senate special election in California",
+    "revid": 1377971098,
+    "timestamp": "2026-10-02T04:52:00Z"
+   },
+   "2024 United States Senate special election in Nebraska": {
+    "page": "2024 United States Senate special election in Nebraska",
+    "redirected_from": null,
+    "revid": 1375800411,
+    "timestamp": "2026-09-20T03:43:42Z"
+   },
+   "2024 United States gubernatorial elections": {
+    "page": "2024 United States gubernatorial elections",
+    "redirected_from": null,
+    "revid": 1377930320,
+    "timestamp": "2026-10-02T00:42:53Z"
+   },
+   "2024 Utah gubernatorial election": {
+    "page": "2024 Utah gubernatorial election",
+    "redirected_from": null,
+    "revid": 1377934348,
+    "timestamp": "2026-10-02T01:12:47Z"
+   },
+   "2024 Vermont gubernatorial election": {
+    "page": "2024 Vermont gubernatorial election",
+    "redirected_from": null,
+    "revid": 1377942284,
+    "timestamp": "2026-10-02T02:06:29Z"
+   },
+   "2024 Washington gubernatorial election": {
+    "page": "2024 Washington gubernatorial election",
+    "redirected_from": null,
+    "revid": 1379403719,
+    "timestamp": "2026-10-09T20:15:50Z"
+   },
+   "2024 West Virginia gubernatorial election": {
+    "page": "2024 West Virginia gubernatorial election",
+    "redirected_from": null,
+    "revid": 1377955213,
+    "timestamp": "2026-10-02T03:07:09Z"
+   }
+  }
  }
 }
