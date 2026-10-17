@@ -2,11 +2,11 @@ TODO(author): byline, date and the repository URL wherever this post says "the r
 
 # Frozen models forecast the 2026 midterms, every day
 
-I built a forecasting challenge in which each model is frozen before the events it forecasts. Season 1 is the 2026 US midterms: 75 questions covering control of each chamber, the seat count in each chamber, and the winning party in all 35 Senate and 36 governor races. No question names a candidate. From 2026-10-26 to election day, 2026-11-03, I run every frozen model once a day on the same information packet and publish what it says.
+I built a forecasting challenge in which each model is frozen before the events it forecasts. Season 1 is the 2026 US midterms: 75 questions on chamber control, seat counts and the winning party in all 35 Senate and 36 governor races. No question names a candidate. From 2026-10-26 to election day, 2026-11-03, I run every frozen model once a day on the same information packet and publish what it says.
 
 ## Why
 
-Most forecasting comparisons can't be re-run. An API model can change under the same name, and an agent that searches the web sees a different web each time. Here both the model and its inputs are fixed: each entrant commits to the weights before the first scored day, and every model reads the same daily packet with greedy decoding. A difference in score comes from the model, and anyone with the files can re-run a day and compare. On other hardware, floating-point differences can still change a few digits.
+Most forecasting comparisons can't be re-run. An API model can change under the same name, and an agent that searches the web sees a different web each time. Here the model is pinned before its first scored day and each day's packet is published, so anyone can re-run a day with greedy decoding. On other hardware, floating-point differences can still change a few digits.
 
 ## The chain
 
@@ -32,7 +32,7 @@ TODO(author): [BLOCKER B3] If the image is built and its digest pinned, say so h
 
 I ran Qwen3.5-9B (Q4_K_M) on one RTX 4070 SUPER against a live packet, with prompts of about 8-9k tokens. With thinking on, it never closed its reasoning within the 4,096-token output limit and parsed 0/75 questions. With thinking off it parsed 74/75 in 61 seconds. The one miss was a question id it made up.
 
-Thinking on or off is now a field in the frozen identity, and it defaults to off. An entrant who wants it on says so at freeze time, and the 4,096-token limit still applies.
+Thinking on or off is now a field in the frozen identity, and it defaults to off. An entrant can turn it on at freeze time; the 4,096-token limit still applies.
 
 ## Scoring
 
@@ -48,13 +48,13 @@ AI model forecasts, not statements of fact or endorsements.
 
 ## Related work
 
-ForecastBench scores API models with Brier and log scores against crowd "freeze values". FutureX (ICLR 2026) adds questions from 128 websites every day and lets agents search. Prophet Arena (ICLR 2026) takes about 20 new Kalshi events a day. The Metaculus AI benchmark runs quarterly bot tournaments against Pro forecasters. Foresight Arena (arXiv 2605.00420) commits forecasts through smart contracts on Polygon. LLM-SoccerArena (arXiv 2607.24573) logged timestamped forecasts, prompts and model versions for all 104 matches of the 2026 World Cup, with and without web search.
+ForecastBench scores API models against crowd "freeze values". FutureX (ICLR 2026) adds questions from 128 websites daily and lets agents search. Prophet Arena (ICLR 2026) gives every model, open-weight ones included, the same context for each Kalshi event (search results and market data). The Metaculus AI benchmark runs quarterly bot tournaments against Pro forecasters. Foresight Arena (arXiv 2605.00420) commits forecasts on Polygon. LLM-SoccerArena (arXiv 2607.24573) logged timestamped forecasts, prompts and model versions for the 2026 World Cup. Bench to the Future (arXiv 2506.21558) and Hindcast (arXiv 2607.14051) replay resolved questions against a frozen web corpus or Reddit snapshot. ChronoGPT (arXiv 2502.21206) and DatedGPT release open weights with dated knowledge cutoffs for back-testing. Kaggle's Optiver and Jane Street competitions score submitted code on market data that arrives after submissions close.
 
-So live questions and timestamped commitments aren't new, and all of these keep answers out of training data the same way this does. As far as I know, the difference here is that the commitment covers the model itself (Hugging Face revision, every file's SHA-256, the prompt template, decoding including thinking on or off) before its first scored day, and that I run every Tier S model with greedy decoding on the same byte-identical daily packet. If I have any of this wrong, tell me; the FAQ has a contact address.
+So live questions, timestamped commitments, shared inputs and models frozen before their data exists aren't new. As far as I know, what's different here is a live season in which each model's exact identity is pinned in public before scoring: Hugging Face revision, every file's SHA-256, the prompt template, and decoding including thinking on or off (Prophet Arena lists models by family, such as "GPT-5", and doesn't state decoding settings). The daily inputs are also published, so anyone can replay any day. If I have any of this wrong, tell me; the FAQ has a contact address.
 
 ## Enter or check it
 
-Tier S takes one GGUF weights file of at most 11 GiB, which I run on my GPU. Anything else, including API models fingerprinted at freeze, runs on your own hardware as Tier A on a separate board. Freeze before 2026-10-26 00:00 UTC to be scored from the first day. The guide is docs/participation.md, and docs/launch/verify.md has the checks.
+Entries must be LLMs. Tier S takes one GGUF weights file of at most 11 GiB, which I run on my GPU. Any other LLM, including API models fingerprinted at freeze, runs on your own hardware as Tier A on a separate board. Freeze before 2026-10-26 00:00 UTC to be scored from the first day. The guide is docs/participation.md, and docs/launch/verify.md has the checks.
 
 TODO(author): [BLOCKER B11] Link docs/participation.md only once its commands read uv run fc.
 

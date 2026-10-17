@@ -7,7 +7,7 @@ Rules: [`rules.md`](rules.md) v2026.10. Everything you submit is public and perm
 | Tier | Who runs the model | Fits | Board |
 |---|---|---|---|
 | **S** hub-run | The hub, every day, on its GPU, with no network | one GGUF file ≤ 11 GiB (≈ 8–9B bf16 or ≈ 14B 4-bit) | headline board |
-| **A** self-run | You, every day, on the same packet; outputs committed before 12:00 UTC, revealed by 18:00 UTC with transcripts | anything, including API models | separate board, "self-run, audited" |
+| **A** self-run | You, every day, on the same packet; outputs committed before 12:00 UTC, revealed by 18:00 UTC with transcripts | any other LLM, including API models | separate board, "self-run, audited" |
 
 ## 2. Freeze (both tiers)
 

@@ -49,9 +49,9 @@ TODO(author): repository link and docs/launch/verify.md link for the first comme
 Title: Show HN: Future Challenge, frozen LLMs forecast the 2026 midterms daily
 
 ```text
-FutureX, Prophet Arena and Foresight Arena already score live forecasts. I wanted a comparison anyone can re-run, so here the model and its inputs are both fixed.
+FutureX, Prophet Arena and Foresight Arena already score live forecasts, and Prophet Arena gives every model the same context. Here each model is pinned publicly before scoring: Hugging Face revision, SHA-256 of every file, prompt template and decoding settings.
 
-An entrant commits to a model: Hugging Face revision, SHA-256 of every file, prompt template and decoding settings. Each day from 2026-10-26 to 2026-11-03, at 00:00 UTC I publish an information packet (Wikipedia polling tables, GDELT headlines) and pin its hash. I run every Tier S model with greedy decoding on that packet. There are 75 questions: chamber control, seat counts, and every Senate and governor race by party. Most of them move with one national swing, so one season won't separate close models.
+Each day from 2026-10-26 to 2026-11-03, at 00:00 UTC I publish an information packet (Wikipedia polling tables, GDELT headlines) and pin its hash, so anyone can replay a day. I run every Tier S model on it with greedy decoding. There are 75 questions: chamber control, seat counts, and every Senate and governor race by party. Most of them move with one national swing, so one season won't separate close models.
 
 In the dry run, Qwen3.5-9B with thinking on never finished reasoning within 4,096 tokens and parsed 0/75. With thinking off it parsed 74/75. Thinking on/off is now part of the frozen identity.
 
@@ -100,7 +100,7 @@ Title: [P] Frozen LLMs forecast the 2026 US midterms daily; thinking mode broke 
 ```text
 In a dry run, Qwen3.5-9B (Q4_K_M, one RTX 4070 SUPER) with thinking on never closed its reasoning within the 4,096-token output limit and parsed 0/75 questions. With thinking off it parsed 74/75 in 61 s. The one miss was a question id the model made up. Thinking on/off is now a field in each model's frozen identity, off by default.
 
-The point is a comparison anyone can re-run. Entrants commit to a model (HF revision, SHA-256 of every file, prompt template, decoding settings) before the first day it is scored, and the questions are about the 2026 US midterms, whose results don't exist yet. From 2026-10-26 to 2026-11-03 I run every Tier S model (one GGUF of at most 11 GiB) with greedy decoding on the same byte-identical daily packet, about 8-9k tokens of polls and headlines.
+Prophet Arena already gives every model the same context; what I wanted was each model's exact identity pinned in public and each day's packet published, so anyone can re-run a day. Entrants commit to a model (HF revision, SHA-256 of every file, prompt template, decoding settings) before the first day it is scored, and the questions are about the 2026 US midterms, whose results don't exist yet. From 2026-10-26 to 2026-11-03 I run every Tier S model (one GGUF of at most 11 GiB) with greedy decoding on the same byte-identical daily packet, about 8-9k tokens of polls and headlines.
 
 Not live yet: Bitcoin anchoring of the freeze receipts, and the Docker image for runs (the dry run ran outside it).
 
@@ -142,7 +142,7 @@ To enter, you freeze the model: the Hugging Face revision, the one weights file,
 
 You commit the freeze with uv run fc commit --entry and open a pull request with the entry YAML and its sidecar. CI checks the hashes, the licence allowlist and the size budget. Freeze before 2026-10-26 00:00 UTC to be scored from the first day.
 
-I run every Tier S model with greedy decoding and a 16384-token context on one RTX 4070 SUPER, all on the same daily packet. Each team can have up to 5 entries. Anything bigger, or an API model, can enter as Tier A on a separate board.
+I run every Tier S model with greedy decoding and a 16384-token context on one RTX 4070 SUPER, all on the same daily packet. Each team can have up to 5 entries. Any other LLM, including API models, can enter as Tier A on a separate board.
 
 AI model forecasts, not statements of fact or endorsements.
 ```

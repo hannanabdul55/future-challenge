@@ -146,7 +146,7 @@ def check_entry_file(metadata_path: Path, *, resolve: bool = False, api=None,
     rec = doc["model_identity"]
     if rec.get("type") == "api":
         if doc["tier"] == "S":
-            g.errors.append("API identities are capped at tier A (rules §9)")
+            g.errors.append("API identities are capped at tier A (rules §10)")
         if not rec.get("fingerprint"):
             g.errors.append("API identity needs a fingerprint captured at freeze")
         return g

@@ -53,7 +53,7 @@ docs/launch/verify.md walks through checking a day's packet hash, each freeze, a
 
 ## How do I enter?
 
-Tier S is one GGUF weights file of at most 11 GiB from a Hugging Face revision, which I run with greedy decoding on my GPU. Tier A is any other model, including API models, run on your own hardware against the same packet and shown on a separate board. Each team gets at most 5 entries, with exactly one primary. Freeze before 2026-10-26 00:00 UTC to be scored from the first day. The steps are in docs/participation.md.
+Entries must be LLMs. Tier S is one GGUF weights file of at most 11 GiB from a Hugging Face revision, which I run with greedy decoding on my GPU. Tier A is any other LLM, including API models, run on your own hardware against the same packet and shown on a separate board. Each team gets at most 5 entries, with exactly one primary. Freeze before 2026-10-26 00:00 UTC to be scored from the first day. The steps are in docs/participation.md.
 
 TODO(author): [BLOCKER B11] Link docs/participation.md only once its commands read uv run fc.
 

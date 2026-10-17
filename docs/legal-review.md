@@ -75,10 +75,10 @@ No contributions, no expenditures, no coordination with campaigns, no paid commu
 Teams need a short participation agreement at registration (checkbox in the PR template):
 
 - They own or are licensed to submit the model they point to; they grant the hub permission to download, hash, execute and publish outputs and transcripts.
-- All submissions, receipts and scores are public and permanent (rules §6).
-- No warranty; no liability for scores; disputes per rules §9.
+- All submissions, receipts and scores are public and permanent (rules §7).
+- No warranty; no liability for scores; disputes per rules §11.
 - Export control: participants confirm they are not on a restricted-party list (standard clause; the hub ships nothing).
-- Conduct: no manipulation of sources, no sybil teams (rules §10).
+- Conduct: no manipulation of sources, no sybil teams (rules §13).
 
 ### 2.10 Privacy — MITIGATED
 
