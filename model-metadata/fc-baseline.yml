@@ -1,7 +1,7 @@
 team_abbr: fc
 model_abbr: baseline
 model_id: fc-baseline
-model_name: Persistence baseline
+model_name: Prior-election persistence baseline
 team_name: Future Challenge hub
 contributors:
   - name: hub maintainers
@@ -10,9 +10,14 @@ designated_model: true
 primary: true
 tier: H
 methods: >
-  Median = last observed value; quantiles from the empirical distribution of historical
-  h-step changes. Reference model; always on the board (DESIGN.md §13).
-data_inputs: target-data/vintages/synthetic-hosp
+  Status-quo rule fixed before the season, computed from the question set alone
+  (fc/baselines.py, season_baselines, persistence_p = 0.85). Senate and governor races: the
+  party that won the state in the 2024 presidential election gets 0.85, the other parties
+  split 0.15 (incumbent party if the 2024 winner is missing). Chamber control: both chambers
+  are Republican-held, so P(Democratic majority) = 0.15. Seat counts: a normal fan around the
+  current split, House Democrats 214 (sd 12), Senate Democratic caucus 47 (sd 2.5), rounded
+  and clipped to the bounds. Reference model; always on the board.
+data_inputs: questions/2026-us-midterms/questions.json (pres_2024, incumbent_party)
 model_identity:
   type: code
   repo_path: fc/baselines.py
