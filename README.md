@@ -63,3 +63,7 @@ Hardware budget for Tier S: one GGUF ≤ 11 GiB (12 GB consumer GPU). Larger or 
 ## Status
 
 Built 2026-10-16 (pivot night): freeze/commit/verify for Hugging Face identities; Season 1 question set (75) and season manifest; daily packet builder (per-source degradation, attribution, hashes); daily-round workflow with backstop; reference forecaster image and host runner with weights re-hash, sealed docker command and signed bundles; mixed-type scoring and season baselines. Not yet: real OTS/Rekor anchoring (seam exists), scheduler on the GPU box, scoring/board pipeline for the season, resolution connectors, market mapping (`questions/2026-us-midterms/markets.json` is empty), site.
+
+## Licence
+
+Code, scripts and the runner are under the Apache License 2.0 (see `LICENSE`). The question sets under `questions/` and the documents under `docs/` are under CC BY 4.0. Daily packets are not relicensed: they contain text from Wikipedia (CC BY-SA) and other sources named in each packet's attribution block, which keep their own terms.
