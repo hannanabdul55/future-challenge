@@ -1,0 +1,47 @@
+office,state,state_name,seat,incumbent_party,open_seat,pres_2016
+senate,AK,Alaska,class2,R,false,R
+senate,AL,Alabama,class2,D,false,R
+senate,AR,Arkansas,class2,R,false,R
+senate,AZ,Arizona,special,R,false,R
+senate,CO,Colorado,class2,R,false,D
+senate,DE,Delaware,class2,D,false,D
+senate,GA,Georgia,class2,R,false,R
+senate,GA,Georgia,special,R,false,R
+senate,IA,Iowa,class2,R,false,R
+senate,ID,Idaho,class2,R,false,R
+senate,IL,Illinois,class2,D,false,D
+senate,KS,Kansas,class2,R,true,R
+senate,KY,Kentucky,class2,R,false,R
+senate,LA,Louisiana,class2,R,false,R
+senate,MA,Massachusetts,class2,D,false,D
+senate,ME,Maine,class2,R,false,D
+senate,MI,Michigan,class2,D,false,R
+senate,MN,Minnesota,class2,D,false,D
+senate,MS,Mississippi,class2,R,false,R
+senate,MT,Montana,class2,R,false,R
+senate,NC,North Carolina,class2,R,false,R
+senate,NE,Nebraska,class2,R,false,R
+senate,NH,New Hampshire,class2,D,false,D
+senate,NJ,New Jersey,class2,D,false,D
+senate,NM,New Mexico,class2,D,true,D
+senate,OK,Oklahoma,class2,R,false,R
+senate,OR,Oregon,class2,D,false,D
+senate,RI,Rhode Island,class2,D,false,D
+senate,SC,South Carolina,class2,R,false,R
+senate,SD,South Dakota,class2,R,false,R
+senate,TN,Tennessee,class2,R,true,R
+senate,TX,Texas,class2,R,false,R
+senate,VA,Virginia,class2,D,false,D
+senate,WV,West Virginia,class2,R,false,R
+senate,WY,Wyoming,class2,R,true,R
+governor,DE,Delaware,,D,false,D
+governor,IN,Indiana,,R,false,R
+governor,MO,Missouri,,R,false,R
+governor,MT,Montana,,D,true,R
+governor,NC,North Carolina,,D,false,R
+governor,ND,North Dakota,,R,false,R
+governor,NH,New Hampshire,,R,false,D
+governor,UT,Utah,,R,true,R
+governor,VT,Vermont,,R,false,D
+governor,WA,Washington,,D,false,D
+governor,WV,West Virginia,,R,false,R

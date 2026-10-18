@@ -1,73 +1,73 @@
 office,state,state_name,seat,incumbent_party,open_seat,pres_2020
-senate,AK,Alaska,class3,,,
-senate,AL,Alabama,class3,,,
-senate,AR,Arkansas,class3,,,
-senate,AZ,Arizona,class3,,,
-senate,CA,California,class3,,,
-senate,CA,California,special,,,
-senate,CO,Colorado,class3,,,
-senate,CT,Connecticut,class3,,,
-senate,FL,Florida,class3,,,
-senate,GA,Georgia,class3,,,
-senate,HI,Hawaii,class3,,,
-senate,IA,Iowa,class3,,,
-senate,ID,Idaho,class3,,,
-senate,IL,Illinois,class3,,,
-senate,IN,Indiana,class3,,,
-senate,KS,Kansas,class3,,,
-senate,KY,Kentucky,class3,,,
-senate,LA,Louisiana,class3,,,
-senate,MD,Maryland,class3,,,
-senate,MO,Missouri,class3,,,
-senate,NC,North Carolina,class3,,,
-senate,ND,North Dakota,class3,,,
-senate,NH,New Hampshire,class3,,,
-senate,NV,Nevada,class3,,,
-senate,NY,New York,class3,,,
-senate,OH,Ohio,class3,,,
-senate,OK,Oklahoma,class3,,,
-senate,OK,Oklahoma,special,,,
-senate,OR,Oregon,class3,,,
-senate,PA,Pennsylvania,class3,,,
-senate,SC,South Carolina,class3,,,
-senate,SD,South Dakota,class3,,,
-senate,UT,Utah,class3,,,
-senate,VT,Vermont,class3,,,
-senate,WA,Washington,class3,,,
-senate,WI,Wisconsin,class3,,,
-governor,AK,Alaska,,,,
-governor,AL,Alabama,,,,
-governor,AR,Arkansas,,,,
-governor,AZ,Arizona,,,,
-governor,CA,California,,,,
-governor,CO,Colorado,,,,
-governor,CT,Connecticut,,,,
-governor,FL,Florida,,,,
-governor,GA,Georgia,,,,
-governor,HI,Hawaii,,,,
-governor,IA,Iowa,,,,
-governor,ID,Idaho,,,,
-governor,IL,Illinois,,,,
-governor,KS,Kansas,,,,
-governor,MA,Massachusetts,,,,
-governor,MD,Maryland,,,,
-governor,ME,Maine,,,,
-governor,MI,Michigan,,,,
-governor,MN,Minnesota,,,,
-governor,NE,Nebraska,,,,
-governor,NH,New Hampshire,,,,
-governor,NM,New Mexico,,,,
-governor,NV,Nevada,,,,
-governor,NY,New York,,,,
-governor,OH,Ohio,,,,
-governor,OK,Oklahoma,,,,
-governor,OR,Oregon,,,,
-governor,PA,Pennsylvania,,,,
-governor,RI,Rhode Island,,,,
-governor,SC,South Carolina,,,,
-governor,SD,South Dakota,,,,
-governor,TN,Tennessee,,,,
-governor,TX,Texas,,,,
-governor,VT,Vermont,,,,
-governor,WI,Wisconsin,,,,
-governor,WY,Wyoming,,,,
+senate,AK,Alaska,class3,R,false,R
+senate,AL,Alabama,class3,R,true,R
+senate,AR,Arkansas,class3,R,false,R
+senate,AZ,Arizona,class3,D,false,D
+senate,CA,California,class3,D,false,D
+senate,CA,California,special,D,false,D
+senate,CO,Colorado,class3,D,false,D
+senate,CT,Connecticut,class3,D,false,D
+senate,FL,Florida,class3,R,false,R
+senate,GA,Georgia,class3,D,false,D
+senate,HI,Hawaii,class3,D,false,D
+senate,IA,Iowa,class3,R,false,R
+senate,ID,Idaho,class3,R,false,R
+senate,IL,Illinois,class3,D,false,D
+senate,IN,Indiana,class3,R,false,R
+senate,KS,Kansas,class3,R,false,R
+senate,KY,Kentucky,class3,R,false,R
+senate,LA,Louisiana,class3,R,false,R
+senate,MD,Maryland,class3,D,false,D
+senate,MO,Missouri,class3,R,true,R
+senate,NC,North Carolina,class3,R,true,R
+senate,ND,North Dakota,class3,R,false,R
+senate,NH,New Hampshire,class3,D,false,D
+senate,NV,Nevada,class3,D,false,D
+senate,NY,New York,class3,D,false,D
+senate,OH,Ohio,class3,R,true,R
+senate,OK,Oklahoma,class3,R,false,R
+senate,OK,Oklahoma,special,R,true,R
+senate,OR,Oregon,class3,D,false,D
+senate,PA,Pennsylvania,class3,R,true,D
+senate,SC,South Carolina,class3,R,false,R
+senate,SD,South Dakota,class3,R,false,R
+senate,UT,Utah,class3,R,false,R
+senate,VT,Vermont,class3,D,true,D
+senate,WA,Washington,class3,D,false,D
+senate,WI,Wisconsin,class3,R,false,D
+governor,AK,Alaska,,R,false,R
+governor,AL,Alabama,,R,false,R
+governor,AR,Arkansas,,R,true,R
+governor,AZ,Arizona,,R,true,D
+governor,CA,California,,D,false,D
+governor,CO,Colorado,,D,false,D
+governor,CT,Connecticut,,D,false,D
+governor,FL,Florida,,R,false,R
+governor,GA,Georgia,,R,false,D
+governor,HI,Hawaii,,D,true,D
+governor,IA,Iowa,,R,false,R
+governor,ID,Idaho,,R,false,R
+governor,IL,Illinois,,D,false,D
+governor,KS,Kansas,,D,false,R
+governor,MA,Massachusetts,,R,true,D
+governor,MD,Maryland,,R,true,D
+governor,ME,Maine,,D,false,D
+governor,MI,Michigan,,D,false,D
+governor,MN,Minnesota,,D,false,D
+governor,NE,Nebraska,,R,true,R
+governor,NH,New Hampshire,,R,false,D
+governor,NM,New Mexico,,D,false,D
+governor,NV,Nevada,,D,false,D
+governor,NY,New York,,D,false,D
+governor,OH,Ohio,,R,false,R
+governor,OK,Oklahoma,,R,false,R
+governor,OR,Oregon,,D,true,D
+governor,PA,Pennsylvania,,D,true,D
+governor,RI,Rhode Island,,D,false,D
+governor,SC,South Carolina,,R,false,R
+governor,SD,South Dakota,,R,false,R
+governor,TN,Tennessee,,R,false,R
+governor,TX,Texas,,R,false,R
+governor,VT,Vermont,,R,false,D
+governor,WI,Wisconsin,,D,false,D
+governor,WY,Wyoming,,R,false,R

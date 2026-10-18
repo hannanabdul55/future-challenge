@@ -1,0 +1,72 @@
+office,state,state_name,seat,incumbent_party,open_seat,pres_2016
+senate,AZ,Arizona,class1,R,true,R
+senate,CA,California,class1,D,false,D
+senate,CT,Connecticut,class1,D,false,D
+senate,DE,Delaware,class1,D,false,D
+senate,FL,Florida,class1,D,false,R
+senate,HI,Hawaii,class1,D,false,D
+senate,IN,Indiana,class1,D,false,R
+senate,MA,Massachusetts,class1,D,false,D
+senate,MD,Maryland,class1,D,false,D
+senate,ME,Maine,class1,Other,false,D
+senate,MI,Michigan,class1,D,false,R
+senate,MN,Minnesota,class1,D,false,D
+senate,MN,Minnesota,special,D,false,D
+senate,MO,Missouri,class1,D,false,R
+senate,MS,Mississippi,class1,R,false,R
+senate,MS,Mississippi,special,R,false,R
+senate,MT,Montana,class1,D,false,R
+senate,ND,North Dakota,class1,D,false,R
+senate,NE,Nebraska,class1,R,false,R
+senate,NJ,New Jersey,class1,D,false,D
+senate,NM,New Mexico,class1,D,false,D
+senate,NV,Nevada,class1,R,false,D
+senate,NY,New York,class1,D,false,D
+senate,OH,Ohio,class1,D,false,R
+senate,PA,Pennsylvania,class1,D,false,R
+senate,RI,Rhode Island,class1,D,false,D
+senate,TN,Tennessee,class1,R,true,R
+senate,TX,Texas,class1,R,false,R
+senate,UT,Utah,class1,R,true,R
+senate,VA,Virginia,class1,D,false,D
+senate,VT,Vermont,class1,Other,false,D
+senate,WA,Washington,class1,D,false,D
+senate,WI,Wisconsin,class1,D,false,R
+senate,WV,West Virginia,class1,D,false,R
+senate,WY,Wyoming,class1,R,false,R
+governor,AK,Alaska,,Other,true,R
+governor,AL,Alabama,,R,false,R
+governor,AR,Arkansas,,R,false,R
+governor,AZ,Arizona,,R,false,R
+governor,CA,California,,D,true,D
+governor,CO,Colorado,,D,true,D
+governor,CT,Connecticut,,D,true,D
+governor,FL,Florida,,R,true,R
+governor,GA,Georgia,,R,true,R
+governor,HI,Hawaii,,D,false,D
+governor,IA,Iowa,,R,false,R
+governor,ID,Idaho,,R,true,R
+governor,IL,Illinois,,R,false,D
+governor,KS,Kansas,,R,true,R
+governor,MA,Massachusetts,,R,false,D
+governor,MD,Maryland,,R,false,D
+governor,ME,Maine,,R,true,D
+governor,MI,Michigan,,R,true,R
+governor,MN,Minnesota,,D,true,D
+governor,NE,Nebraska,,R,false,R
+governor,NH,New Hampshire,,R,false,D
+governor,NM,New Mexico,,R,true,D
+governor,NV,Nevada,,R,true,D
+governor,NY,New York,,D,false,D
+governor,OH,Ohio,,R,true,R
+governor,OK,Oklahoma,,R,true,R
+governor,OR,Oregon,,D,false,D
+governor,PA,Pennsylvania,,D,false,R
+governor,RI,Rhode Island,,D,false,D
+governor,SC,South Carolina,,R,false,R
+governor,SD,South Dakota,,R,true,R
+governor,TN,Tennessee,,R,true,R
+governor,TX,Texas,,R,false,R
+governor,VT,Vermont,,R,false,D
+governor,WI,Wisconsin,,R,false,R
+governor,WY,Wyoming,,R,true,R

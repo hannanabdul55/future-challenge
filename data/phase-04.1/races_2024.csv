@@ -1,0 +1,47 @@
+office,state,state_name,seat,incumbent_party,open_seat,pres_2020
+senate,AZ,Arizona,class1,Other,true,D
+senate,CA,California,class1,D,true,D
+senate,CA,California,special,D,true,D
+senate,CT,Connecticut,class1,D,false,D
+senate,DE,Delaware,class1,D,true,D
+senate,FL,Florida,class1,R,false,R
+senate,HI,Hawaii,class1,D,false,D
+senate,IN,Indiana,class1,R,true,R
+senate,MA,Massachusetts,class1,D,false,D
+senate,MD,Maryland,class1,D,true,D
+senate,ME,Maine,class1,Other,false,D
+senate,MI,Michigan,class1,D,true,D
+senate,MN,Minnesota,class1,D,false,D
+senate,MO,Missouri,class1,R,false,R
+senate,MS,Mississippi,class1,R,false,R
+senate,MT,Montana,class1,D,false,R
+senate,ND,North Dakota,class1,R,false,R
+senate,NE,Nebraska,class1,R,false,R
+senate,NE,Nebraska,special,R,false,R
+senate,NJ,New Jersey,class1,D,true,D
+senate,NM,New Mexico,class1,D,false,D
+senate,NV,Nevada,class1,D,false,D
+senate,NY,New York,class1,D,false,D
+senate,OH,Ohio,class1,D,false,R
+senate,PA,Pennsylvania,class1,D,false,D
+senate,RI,Rhode Island,class1,D,false,D
+senate,TN,Tennessee,class1,R,false,R
+senate,TX,Texas,class1,R,false,R
+senate,UT,Utah,class1,R,true,R
+senate,VA,Virginia,class1,D,false,D
+senate,VT,Vermont,class1,Other,false,D
+senate,WA,Washington,class1,D,false,D
+senate,WI,Wisconsin,class1,D,false,D
+senate,WV,West Virginia,class1,Other,true,R
+senate,WY,Wyoming,class1,R,false,R
+governor,DE,Delaware,,D,true,D
+governor,IN,Indiana,,R,true,R
+governor,MO,Missouri,,R,true,R
+governor,MT,Montana,,R,false,R
+governor,NC,North Carolina,,D,true,R
+governor,ND,North Dakota,,R,true,R
+governor,NH,New Hampshire,,R,true,D
+governor,UT,Utah,,R,false,R
+governor,VT,Vermont,,R,false,D
+governor,WA,Washington,,D,true,D
+governor,WV,West Virginia,,R,true,R
