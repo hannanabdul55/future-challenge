@@ -1,0 +1,22 @@
+{
+  "builds": [
+    {
+      "date": "2026-10-18",
+      "packet_md_sha256": "04eeadceb3257487bdaae9800323b44b5689076e271686b3a4ced702c9195b86",
+      "len_polls": 15975,
+      "len_markets": 68,
+      "len_headlines": 3938,
+      "gdelt_status": "ok",
+      "markets_status": "unavailable",
+      "polls_status": "ok"
+    }
+  ],
+  "live_budget_chars": 20000,
+  "median_len_headlines": 3938,
+  "median_len_markets": 68,
+  "live_polls_allowance": 15994,
+  "hist_budget_chars": 16160,
+  "formula": "fc.packet.build gives polls (weight 3 of 5) its share plus every character the other sections left unused, so polls allowance = budget - len(markets section) - len(headlines section). Live: 20000 - len_markets - len_headlines (median headlines length over the builds with gdelt_status ok). Historical: hist_budget_chars - len(markets render, empty mapping) - len(GdeltUnavailable render). hist_budget_chars is the value that makes the two equal (fc.train.packets.derive_hist_budget). A live day whose GDELT call fails gives polls the same allowance as a historical packet, because both then carry the degraded headlines render.",
+  "assumption_A10": "settled by measurement: the live GDELT headlines section was 3938 of its 4000 character share",
+  "note": "A live day whose GDELT call fails gives polls the same allowance as the historical packets (both carry the degraded headlines render); a live day whose GDELT call works gives the measured live allowance above."
+}
