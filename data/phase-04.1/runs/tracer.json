@@ -1,0 +1,54 @@
+{
+  "steps": 10,
+  "losses": [
+    0.2542765140533447,
+    0.2542765140533447,
+    0.2365972250699997,
+    0.1985892653465271,
+    0.17481285333633423,
+    0.16107119619846344,
+    0.14972656965255737,
+    0.140387162566185,
+    0.13488666713237762,
+    0.132853701710701
+  ],
+  "peak_vram_mib": 11878,
+  "tokens_per_s": 574.2,
+  "sequence_length": 9365,
+  "liger_path": "none (TRL fused LM head, pure-torch tiles)",
+  "trainer_class": "SFTTrainer",
+  "train_seconds": 251.1,
+  "merge_s": 1435.9,
+  "convert_s": 968.5,
+  "quantize_s": 416.0,
+  "gguf_size_bytes": 4471601216,
+  "gguf_sha256": "4a405fcbfa2358803f450a7843836cc442dc8db6d0db6ed37d8bd906afb9f2e1",
+  "gguf_check": "ok",
+  "parse_rate": 0.9736842105263158,
+  "batch_modes": [
+    "chat",
+    "chat",
+    "chat",
+    "chat",
+    "chat",
+    "chat"
+  ],
+  "batch_seconds": [
+    57.5,
+    102.4,
+    80.2,
+    23.9,
+    243.1,
+    226.3
+  ],
+  "think_prefill": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "eval_wall_s": 786.6,
+  "run_status": "ok"
+}

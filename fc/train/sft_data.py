@@ -115,3 +115,39 @@ def check_example(example: dict[str, Any], batch: list[dict[str, Any]], round_id
         raise ValueError(f"{example['id']}: masked_ids and mask_spans differ in length")
     for a, b in example["mask_spans"]:
         json.loads(example["completion"][a:b])  # a mask span must be exactly one value object
+
+
+def tokenize_example(example: dict[str, Any], tokenizer: Any, *,
+                     eos_id: int = 100257) -> dict[str, Any]:
+    """Pre-tokenise one example for the trainer: input_ids, labels, attention_mask.
+
+    The prompt is rendered with the chat template and ``add_generation_prompt=True`` (the
+    render proven equal to llama.cpp's in plan 04.1-03) and tokenised on its own with
+    ``add_special_tokens=False``; the completion is tokenised separately, so the prompt ids
+    equal what llama.cpp feeds at inference and no BPE merge crosses the boundary. Prompt
+    labels are -100. A completion token keeps its id as label unless its character range
+    overlaps a mask span (D-13). ``eos_id`` is appended with a real label so the model
+    learns to stop. ``tokenizer`` is duck-typed (apply_chat_template, __call__).
+    """
+    rendered = tokenizer.apply_chat_template(
+        [{"role": "user", "content": example["prompt"]}],
+        add_generation_prompt=True, tokenize=False)
+    prompt_ids = list(tokenizer(rendered, add_special_tokens=False)["input_ids"])
+    comp = tokenizer(example["completion"], add_special_tokens=False,
+                     return_offsets_mapping=True)
+    comp_ids = list(comp["input_ids"])
+    offsets = list(comp["offset_mapping"])
+    spans = [(int(a), int(b)) for a, b in example.get("mask_spans", [])]
+    labels = [-100] * len(prompt_ids)
+    for tid, (a, b) in zip(comp_ids, offsets, strict=True):
+        hidden = any(a < e and b > s for s, e in spans)
+        labels.append(-100 if hidden else tid)
+    input_ids = prompt_ids + comp_ids + [eos_id]
+    labels.append(eos_id)
+    n_label = sum(1 for x in labels if x != -100)
+    if n_label == 0:
+        raise ValueError(f"{example.get('id')}: no label tokens")
+    return {"input_ids": input_ids, "labels": labels,
+            "attention_mask": [1] * len(input_ids),
+            "n_prompt": len(prompt_ids), "n_completion": len(comp_ids) + 1,
+            "n_label": n_label}
