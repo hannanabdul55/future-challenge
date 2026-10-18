@@ -8,4 +8,4 @@ keys/
 .ruff_cache/
 .gsd/
 .planning/
-docs/launch/outreach-*.md
+docs/launch/outreach*.md
