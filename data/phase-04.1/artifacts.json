@@ -1,0 +1,165 @@
+{
+  "base-q4km": {
+    "path": "/mnt/d/fc-train/gguf/base/base-Q4_K_M.gguf",
+    "sha256": "b14239dd4b1ef46af7df9853b5ce2f0eec2346971002a60fd1d9c9cdef590315",
+    "size_bytes": 4471601248,
+    "gguf_check": "ok",
+    "merge_s": 0.0,
+    "convert_s": 548.2,
+    "quantize_s": 218.9,
+    "probe": {
+      "offloaded": "33/33",
+      "needle_ok": true,
+      "prompt_eval_tps": 152.65,
+      "gen_tps": 46.5,
+      "load_s": 20.5,
+      "needle_tokens": 10517,
+      "needle_seconds": 69.1,
+      "arch": "olmo2"
+    },
+    "runner_tracer_day": {
+      "parse_rate": 0.9736842105263158,
+      "modes": [
+        "chat",
+        "chat",
+        "chat",
+        "chat",
+        "chat",
+        "chat"
+      ],
+      "seconds": [
+        35.9,
+        73.0,
+        56.9,
+        17.0,
+        72.9,
+        58.8
+      ],
+      "wall_s": 343.0,
+      "n_missing": 2,
+      "think_prefill": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  },
+  "tracer-q4km": {
+    "path": "/mnt/d/fc-train/gguf/tracer/tracer-Q4_K_M.gguf",
+    "sha256": "4a405fcbfa2358803f450a7843836cc442dc8db6d0db6ed37d8bd906afb9f2e1",
+    "size_bytes": 4471601216,
+    "gguf_check": "ok",
+    "merge_s": 1435.9,
+    "convert_s": 968.5,
+    "quantize_s": 416.0,
+    "run": {
+      "status": "ok",
+      "args": {
+        "train": [
+          "/mnt/d/fc-train/tracer/example.jsonl"
+        ],
+        "eval": null,
+        "snapshot": null,
+        "out": "/mnt/d/fc-train/runs/tracer",
+        "epochs": 1.0,
+        "max_steps": 10,
+        "lr": 0.0001,
+        "lora_r": 16,
+        "lora_alpha": 32,
+        "lora_dropout": 0.05,
+        "grad_accum": 1,
+        "seed": 0,
+        "max_length": null,
+        "activation_offloading": false,
+        "save_each_epoch": false,
+        "deadline_utc": null,
+        "liger": "off",
+        "trainer": "sft"
+      },
+      "steps": 10,
+      "losses": [
+        0.2542765140533447,
+        0.2542765140533447,
+        0.2365972250699997,
+        0.1985892653465271,
+        0.17481285333633423,
+        0.16107119619846344,
+        0.14972656965255737,
+        0.140387162566185,
+        0.13488666713237762,
+        0.132853701710701
+      ],
+      "eval_losses": [],
+      "snapshot": "/mnt/d/hf-cache/hub/models--allenai--Olmo-3-7B-Instruct/snapshots/6e5971d9eba42665f5bd5a0fcf047f299ce1dccc",
+      "max_length": 9429,
+      "max_length_seen": 9365,
+      "n_examples": 1,
+      "n_eval": 0,
+      "n_label": [
+        591
+      ],
+      "n_prompt": [
+        8774
+      ],
+      "label_check": {
+        "collator_labels": 591,
+        "n_label": 591
+      },
+      "triton": "disabled (no C compiler)",
+      "liger_path": "none (TRL fused LM head, pure-torch tiles)",
+      "trainable_params": 39976960,
+      "trainer_class": "SFTTrainer",
+      "transformers": "5.20.1",
+      "step_tokens_per_s": [
+        104.9,
+        609.9,
+        608.4,
+        608.7,
+        303.4,
+        603.8,
+        609.5,
+        607.9,
+        607.6,
+        608.3
+      ],
+      "peak_vram_mib": 11878,
+      "seconds": 251.1,
+      "torch_max_allocated_mib": 10662,
+      "torch_max_reserved_mib": 11170,
+      "tokens_per_s": 574.2,
+      "adapter": "/mnt/d/fc-train/runs/tracer/adapter"
+    },
+    "runner_tracer_day": {
+      "parse_rate": 0.9736842105263158,
+      "modes": [
+        "chat",
+        "chat",
+        "chat",
+        "chat",
+        "chat",
+        "chat"
+      ],
+      "seconds": [
+        40.1,
+        71.4,
+        55.9,
+        16.4,
+        71.4,
+        55.8
+      ],
+      "wall_s": 354.9,
+      "n_missing": 2,
+      "think_prefill": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  }
+}

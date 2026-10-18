@@ -34,12 +34,12 @@
     "chat"
   ],
   "batch_seconds": [
-    57.5,
-    102.4,
-    80.2,
-    23.9,
-    243.1,
-    226.3
+    40.1,
+    71.4,
+    55.9,
+    16.4,
+    71.4,
+    55.8
   ],
   "think_prefill": [
     false,
@@ -49,6 +49,6 @@
     false,
     false
   ],
-  "eval_wall_s": 786.6,
+  "eval_wall_s": 354.9,
   "run_status": "ok"
 }

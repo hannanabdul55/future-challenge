@@ -212,3 +212,63 @@ def test_completion_text_spans_cover_each_value_object():
     text, spans = sft_data.completion_text(batch, {"a": {"p": 0.25}, "b": {"D": 0.5, "R": 0.5}})
     assert text == '{"a": {"p": 0.25}, "b": {"D": 0.5, "R": 0.5}}'
     assert text[slice(*spans["b"])] == '{"D": 0.5, "R": 0.5}'
+
+
+class CharTokenizer:
+    """Duck-typed stub: one token per character, ids are code points, offsets are (i, i+1)."""
+
+    def apply_chat_template(self, messages, *, add_generation_prompt, tokenize):
+        assert add_generation_prompt is True and tokenize is False
+        assert [m["role"] for m in messages] == ["user"]
+        return "<u>" + messages[0]["content"] + "<a>"
+
+    def __call__(self, text, *, add_special_tokens, return_offsets_mapping=False):
+        assert add_special_tokens is False
+        out = {"input_ids": [ord(c) for c in text]}
+        if return_offsets_mapping:
+            out["offset_mapping"] = [(i, i + 1) for i in range(len(text))]
+        return out
+
+
+def _ex(completion, spans):
+    return {"id": "x", "prompt": "hello", "completion": completion, "mask_spans": spans}
+
+
+def test_tokenize_example_labels_only_the_unmasked_completion_and_eos():
+    comp = '{"a": {"p": 0.4}, "b": {"p": 0.5}}'
+    start = comp.index('{"p": 0.5}')
+    span = [start, start + len('{"p": 0.5}')]
+    tok = sft_data.tokenize_example(_ex(comp, [span]), CharTokenizer())
+    n_prompt = len("<u>hello<a>")
+    assert tok["n_prompt"] == n_prompt
+    assert all(x == -100 for x in tok["labels"][:n_prompt])  # prompt labels
+    body = tok["labels"][n_prompt:-1]
+    assert len(body) == len(comp)
+    assert all(lab == -100 for lab in body[span[0]:span[1]])  # masked characters
+    assert all(lab == ord(c) for lab, c in zip(body[:span[0]], comp[:span[0]]))
+    assert tok["labels"][-1] == 100257 and tok["input_ids"][-1] == 100257
+    unmasked = len(comp) - (span[1] - span[0])
+    assert tok["n_label"] == unmasked + 1 == sum(1 for x in tok["labels"] if x != -100)
+    assert tok["n_completion"] == len(comp) + 1
+    assert len(tok["input_ids"]) == len(tok["labels"]) == len(tok["attention_mask"])
+    assert set(tok["attention_mask"]) == {1}
+
+
+def test_tokenize_example_without_spans_labels_everything_in_the_completion():
+    tok = sft_data.tokenize_example(_ex('{"a": 1}', []), CharTokenizer())
+    assert tok["n_label"] == len('{"a": 1}') + 1
+
+
+def test_tokenize_example_prompt_ids_come_from_the_template_render_alone():
+    tok = sft_data.tokenize_example(_ex("{}", []), CharTokenizer())
+    assert tok["input_ids"][:tok["n_prompt"]] == [ord(c) for c in "<u>hello<a>"]
+
+
+def test_tokenize_example_rejects_a_fully_masked_example_that_has_no_labels():
+    class NoEos(CharTokenizer):
+        pass
+
+    # eos is always labelled, so n_label can never be 0 through spans alone: an empty
+    # completion still carries the eos label.
+    tok = sft_data.tokenize_example(_ex("", []), NoEos())
+    assert tok["n_label"] == 1
