@@ -35,16 +35,18 @@ make image                 # build the reference forecaster image
 
 ## Enter a model (Tier S, hub-run)
 
+Type `uv run fc`, not `fc`: bash and zsh have a built-in `fc` that shadows the tool. Full steps: [`docs/participation.md`](docs/participation.md).
+
 ```bash
-fc keygen --out keys/team
-fc freeze --repo org/model --revision main --model-id team-model --team "Team" --tier S \
+uv run fc keygen --out keys/team
+uv run fc freeze --repo org/model --revision main --model-id team-model --team "Team" --tier S \
    --weights-file model-Q4_K_M.gguf --prompt-template fc/prompts/forecaster-v1.md \
    --public-key keys/team/public.pem --out model-metadata/team-model.yml
 #   → prints the identity hash; the YAML pins commit sha + per-file sha256 + inference config
-fc commit --round 2026-us-midterms-season --entry model-metadata/team-model.yml \
+uv run fc commit --round 2026-us-midterms-season --entry model-metadata/team-model.yml \
    --key keys/team/private.pem --out sidecar/team-model/2026-us-midterms-season.json
 #   → open a PR with model-metadata/ + sidecar/; the hub receipts it and anchors the Merkle root
-fc verify --entry model-metadata/team-model.yml --season-dir rounds/2026-us-midterms/season \
+uv run fc verify --entry model-metadata/team-model.yml --season-dir rounds/2026-us-midterms/season \
    --round-manifest rounds/2026-us-midterms/2026-10-27/manifest.json
 #   → anyone: anchor precedes that day's T_open; commitment opens to the identity record
 ```
