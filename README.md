@@ -1,71 +1,74 @@
 # Future Challenge
 
-**Freeze your model before the election. We run it every day. The world grades it.**
+Future Challenge is a forecasting challenge for frozen language models whose first season is the 2026 US midterm elections.
 
-An open, contamination-proof forecasting challenge for frozen AI models. A participant freezes a model (a Hugging Face revision whose files are hashed and externally timestamped) *before* the events it will forecast have happened. The hub runs every frozen model every day on the same curated information packet, publishes the forecasts, and scores them when reality arrives. Anyone can verify the chain — weights hash → anchored timestamp → daily packet hash → forecast → outcome — from public artifacts, offline.
+An entrant pins a model before the season: its Hugging Face revision, the SHA-256 of every weights file, the prompt template and the decoding settings. I run each Tier S model daily on the same information packet, publish the forecasts, and score them when results arrive. Anyone can check the chain from public files, except the external timestamp, which is not live yet.
 
-**Season 1: the 2026 US midterm elections** (November 3, 2026). Daily forecasts from 2026-10-26 of House and Senate control, seat counts, and all 35 Senate and 36 gubernatorial races by party. Design: [`DESIGN.md`](DESIGN.md) (§3.4 for the daily season). Rules: [`docs/rules.md`](docs/rules.md). Legal notes: [`docs/legal-review.md`](docs/legal-review.md).
+As far as I know, the difference from other LLM forecasting benchmarks is that each model's exact identity is pinned in public before its first scored day, and every daily packet is published so anyone can replay a day. Entry is limited to language models that answer in text. One season is 75 outcomes that mostly move with one national swing, so it cannot separate close models.
+
+## Season 1
+
+The election is on 2026-11-03; daily forecasts run from 2026-10-26 to 2026-11-03. The 75 questions are House and Senate control, the Democratic seat count in each chamber, all 35 Senate races and all 36 governor races, each by party. See [DESIGN.md](DESIGN.md) (section 3.4), [docs/rules.md](docs/rules.md) and [docs/legal-review.md](docs/legal-review.md).
+
+## Layout
 
 ```
 future-challenge/
-├── DESIGN.md                 rationale, threat model, scoring; §3.4 the frozen-model daily season
-├── docs/                     rules (versioned), question checklist, legal review, marketing plan
-├── questions/<season>/       races.csv → questions.json (75 machine-readable specs), markets.json
-├── rounds/<season>/          season.json · season/manifest.json (freeze round) · <date>/manifest.json
-├── target-data/packets/      daily packets: packet.md, packet.json, raw/, attribution.json, index.json
-├── model-metadata/           one YAML per entry: tier, model_identity (HF revision + file hashes), key
-├── sidecar/                  freeze commitments + hub receipts
-├── model-output/<entry>/     daily forecasts (hubverse long format)
-├── runs/<season>/<date>/     Tier S run bundles: transcript, status, signed bundle.json
-├── fc/                       library + `fc` CLI
-├── runner/forecast/          reference Tier S image (llama.cpp) + forecast.py
-├── eval/, leaderboard/       evaluator image, static board
+├── questions/<season>/       questions.json, markets.json
+├── rounds/<season>/          season and daily manifests
+├── target-data/packets/      created by the first daily build
+├── model-metadata/           one YAML per entry
+├── sidecar/                  created by the first entry
+├── runs/<season>/<date>/     created by the first run
 ```
 
 ## Quick start
 
 ```bash
-make setup                 # uv sync
-make test                  # 70 tests: commitments, Merkle, receipts, freeze, questions, packet, runner, scores
-make questions             # regenerate + validate questions/2026-us-midterms/questions.json
-make packet DAY=2026-10-26 # build the day's packet from Wikipedia / markets / GDELT
-make round-open DAY=...    # packet + daily manifest
-make image                 # build the reference forecaster image
+git clone https://github.com/hannanabdul55/future-challenge && cd future-challenge
+make setup
+make test                        # 281 tests
+make questions
+make packet DAY=2026-10-26       # fetches Wikipedia and GDELT data live
+make round-open DAY=2026-10-26
+make image
 ```
 
-## Enter a model (Tier S, hub-run)
+## Entering a model
 
-Type `uv run fc`, not `fc`: bash and zsh have a built-in `fc` that shadows the tool. Full steps: [`docs/participation.md`](docs/participation.md).
+Type `uv run fc`, not `fc`: bash and zsh have a built-in `fc` that shadows the tool. Tier S is one GGUF weights file of at most 11 GiB from a Hugging Face revision. I run it on the shared GPU with no network, greedy decoding and the day's seed. Run `uv sync --extra hf` before freezing.
 
 ```bash
 uv run fc keygen --out keys/team
 uv run fc freeze --repo org/model --revision main --model-id team-model --team "Team" --tier S \
    --weights-file model-Q4_K_M.gguf --prompt-template fc/prompts/forecaster-v1.md \
    --public-key keys/team/public.pem --out model-metadata/team-model.yml
-#   → prints the identity hash; the YAML pins commit sha + per-file sha256 + inference config
 uv run fc commit --round 2026-us-midterms-season --entry model-metadata/team-model.yml \
    --key keys/team/private.pem --out sidecar/team-model/2026-us-midterms-season.json
-#   → open a PR with model-metadata/ + sidecar/; the hub receipts it and anchors the Merkle root
 uv run fc verify --entry model-metadata/team-model.yml --season-dir rounds/2026-us-midterms/season \
    --round-manifest rounds/2026-us-midterms/2026-10-27/manifest.json
-#   → anyone: anchor precedes that day's T_open; commitment opens to the identity record
 ```
 
-Hardware budget for Tier S: one GGUF ≤ 11 GiB (12 GB consumer GPU). Larger or API models enter as Tier A: run your frozen model on the same packet and `fc commit` / `fc reveal` the forecast daily (see [`docs/participation.md`](docs/participation.md)).
+Open a pull request with the YAML and the sidecar JSON, and I merge it and issue a receipt. OpenTimestamps and Rekor anchoring of the receipt root is not live yet, so the anchor check in `uv run fc verify` fails for now. The commitment and Merkle inclusion checks run offline today, and so does the file-hash check with a local snapshot.
 
-## The hub's day (all UTC)
+Tier A is any other LLM, including API models. Entrants run their own frozen model on the same packet, commit before 12:00 UTC and reveal by 18:00 UTC, on a separate board. Full steps and the daily Tier A commands are in [docs/participation.md](docs/participation.md).
 
-| 00:00 | `daily-round` workflow builds the packet, opens `rounds/<season>/<date>/manifest.json` (packet hash, drand round) |
+## Daily schedule (UTC)
+
+| Time | What happens |
 |---|---|
-| 00:00–12:00 | GPU box: `fc run --entry … --date …` for every admitted Tier S entry; outputs rooted before 12:00 |
-| 12:00 | commit close (Tier A commitments due) |
-| 18:00 | reveal close; Tier S outputs + transcripts and Tier A reveals published together |
-| after 11-03 | resolution from public record; provisional (72 h stable calls) then final (certified / seating) |
+| 00:00 | The daily-round workflow builds the packet and manifest. |
+| 00:00 to 12:00 | The shared GPU runs `uv run fc run` for each admitted Tier S entry. |
+| 12:00 | Commit close: Tier A commitments are due. |
+| 18:00 | Reveal close: Tier S outputs and Tier A reveals are published. |
+| After 2026-11-03 | Provisional resolution once the race call is stable for 72 h, then final resolution on certified results or official seating. |
 
-## Status
+## Status on 2026-10-17
 
-Built 2026-10-16 (pivot night): freeze/commit/verify for Hugging Face identities; Season 1 question set (75) and season manifest; daily packet builder (per-source degradation, attribution, hashes); daily-round workflow with backstop; reference forecaster image and host runner with weights re-hash, sealed docker command and signed bundles; mixed-type scoring and season baselines. Not yet: real OTS/Rekor anchoring (seam exists), scheduler on the GPU box, scoring/board pipeline for the season, resolution connectors, market mapping (`questions/2026-us-midterms/markets.json` is empty), site.
+Done: freeze, commit and verify for Hugging Face revisions; the 75-question set, season manifest, packet builder and daily-round workflow; the reference image and `uv run fc run`, whose container path is untested; and the scoring and board code. No entry is frozen yet. I am fine-tuning OLMo 3 7B Instruct in-house for a freeze before 2026-10-26.
+
+Not done: OpenTimestamps and Rekor anchoring, the scheduler on the shared GPU, the pipeline that scores live days and publishes the board, resolution connectors, market mapping (`questions/2026-us-midterms/markets.json` is empty) and the GitHub Pages site.
 
 ## Licence
 
-Code, scripts and the runner are under the Apache License 2.0 (see `LICENSE`). The question sets under `questions/` and the documents under `docs/` are under CC BY 4.0. Daily packets are not relicensed: they contain text from Wikipedia (CC BY-SA) and other sources named in each packet's attribution block, which keep their own terms.
+Code, scripts and the runner are under the Apache License 2.0 (see `LICENSE`). The question sets under `questions/` and the documents under `docs/` are under CC BY 4.0. Daily packets are not relicensed: they contain Wikipedia text (CC BY-SA) and other sources named in each packet's attribution block, which keep their own terms.
