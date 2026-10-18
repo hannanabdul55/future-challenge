@@ -1,0 +1,1799 @@
+{
+ "schema": "fc-question/2026.10",
+ "season": "2024-us-elections",
+ "questions_hash": "b4b27ff5132d80cdc185ca0bd287dcffb253ef74ede8875194a333696f8a7360",
+ "questions": [
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "control-house",
+   "family": "control",
+   "statement": "Will the Democratic Party hold a majority of seats (at least 218 of 435) in the U.S. House of Representatives when the 119th Congress is seated?",
+   "output_type": "binary",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_House_of_Representatives_elections",
+    "provisional_rule": "seats_by_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "membership_at_seating_of_the_119th_congress_2025-01-03",
+    "fallback_sources": [
+     "house.gov / senate.gov official rosters",
+     "council"
+    ],
+    "void_if": [
+     "seating of the 119th Congress delayed beyond T_final"
+    ],
+    "T_final": "2025-01-06",
+    "resolver": "automated",
+    "notes": "Independents who caucus with the Democratic conference count toward the Democratic caucus for seat-count and control questions; vacancies at seating count for neither party."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "control-senate",
+   "family": "control",
+   "statement": "Will the Democratic caucus (Democrats plus independents who caucus with them) hold at least 51 of 100 seats in the U.S. Senate when the 119th Congress is seated?",
+   "output_type": "binary",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "seats_by_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "membership_at_seating_of_the_119th_congress_2025-01-03",
+    "fallback_sources": [
+     "house.gov / senate.gov official rosters",
+     "council"
+    ],
+    "void_if": [
+     "seating of the 119th Congress delayed beyond T_final"
+    ],
+    "T_final": "2025-01-06",
+    "resolver": "automated",
+    "notes": "Independents who caucus with the Democratic conference count toward the Democratic caucus for seat-count and control questions; vacancies at seating count for neither party."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-de",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 5, 2024 election for Governor in Delaware?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "DE",
+   "incumbent_party": "D",
+   "open_seat": true,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-in",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 5, 2024 election for Governor in Indiana?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "IN",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2020": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-mo",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 5, 2024 election for Governor in Missouri?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "MO",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2020": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-mt",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 5, 2024 election for Governor in Montana?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "MT",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2020": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-nc",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 5, 2024 election for Governor in North Carolina?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "NC",
+   "incumbent_party": "D",
+   "open_seat": true,
+   "pres_2020": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-nd",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 5, 2024 election for Governor in North Dakota?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "ND",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2020": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-nh",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 5, 2024 election for Governor in New Hampshire?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "NH",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-ut",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 5, 2024 election for Governor in Utah?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "UT",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2020": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-vt",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 5, 2024 election for Governor in Vermont?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "VT",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-wa",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 5, 2024 election for Governor in Washington?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "WA",
+   "incumbent_party": "D",
+   "open_seat": true,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "governor-wv",
+   "family": "governor",
+   "statement": "Which party's nominee will win the November 5, 2024 election for Governor in West Virginia?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "WV",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2020": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_gubernatorial_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "seats-house-d",
+   "family": "seats",
+   "statement": "How many seats will the Democratic Party hold in the U.S. House of Representatives when the 119th Congress is seated (excluding independents)?",
+   "output_type": "quantile",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "quantile_levels": [
+    0.025,
+    0.1,
+    0.25,
+    0.4,
+    0.5,
+    0.6,
+    0.75,
+    0.9,
+    0.975
+   ],
+   "bounds": [
+    0,
+    435
+   ],
+   "unit": "seats",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_House_of_Representatives_elections",
+    "provisional_rule": "seats_by_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "membership_at_seating_of_the_119th_congress_2025-01-03",
+    "fallback_sources": [
+     "house.gov / senate.gov official rosters",
+     "council"
+    ],
+    "void_if": [
+     "seating of the 119th Congress delayed beyond T_final"
+    ],
+    "T_final": "2025-01-06",
+    "resolver": "automated",
+    "notes": "Independents who caucus with the Democratic conference count toward the Democratic caucus for seat-count and control questions; vacancies at seating count for neither party."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "seats-senate-dcaucus",
+   "family": "seats",
+   "statement": "How many of the 100 U.S. Senate seats will the Democratic caucus (Democrats plus independents who caucus with them) hold when the 119th Congress is seated?",
+   "output_type": "quantile",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "quantile_levels": [
+    0.025,
+    0.1,
+    0.25,
+    0.4,
+    0.5,
+    0.6,
+    0.75,
+    0.9,
+    0.975
+   ],
+   "bounds": [
+    0,
+    100
+   ],
+   "unit": "seats",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "seats_by_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "membership_at_seating_of_the_119th_congress_2025-01-03",
+    "fallback_sources": [
+     "house.gov / senate.gov official rosters",
+     "council"
+    ],
+    "void_if": [
+     "seating of the 119th Congress delayed beyond T_final"
+    ],
+    "T_final": "2025-01-06",
+    "resolver": "automated",
+    "notes": "Independents who caucus with the Democratic conference count toward the Democratic caucus for seat-count and control questions; vacancies at seating count for neither party."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-az",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Arizona (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "AZ",
+   "incumbent_party": "Other",
+   "open_seat": true,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-ca",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in California (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "CA",
+   "incumbent_party": "D",
+   "open_seat": true,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-ca-special",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 special election for U.S. Senate in California (special seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "CA",
+   "incumbent_party": "D",
+   "open_seat": true,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-ct",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Connecticut (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "CT",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-de",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Delaware (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "DE",
+   "incumbent_party": "D",
+   "open_seat": true,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-fl",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Florida (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "FL",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2020": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-hi",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Hawaii (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "HI",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-in",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Indiana (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "IN",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2020": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-ma",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Massachusetts (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "MA",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-md",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Maryland (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "MD",
+   "incumbent_party": "D",
+   "open_seat": true,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-me",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Maine (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "ME",
+   "incumbent_party": "Other",
+   "open_seat": false,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-mi",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Michigan (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "MI",
+   "incumbent_party": "D",
+   "open_seat": true,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-mn",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Minnesota (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "MN",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-mo",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Missouri (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "MO",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2020": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-ms",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Mississippi (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "MS",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2020": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-mt",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Montana (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "MT",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2020": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-nd",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in North Dakota (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "ND",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2020": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-ne",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Nebraska (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "NE",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2020": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-ne-special",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 special election for U.S. Senate in Nebraska (special seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "NE",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2020": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-nj",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in New Jersey (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "NJ",
+   "incumbent_party": "D",
+   "open_seat": true,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-nm",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in New Mexico (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "NM",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-nv",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Nevada (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "NV",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-ny",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in New York (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "NY",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-oh",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Ohio (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "OH",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2020": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-pa",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Pennsylvania (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "PA",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-ri",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Rhode Island (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "RI",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-tn",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Tennessee (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "TN",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2020": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-tx",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Texas (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "TX",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2020": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-ut",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Utah (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "UT",
+   "incumbent_party": "R",
+   "open_seat": true,
+   "pres_2020": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-va",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Virginia (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "VA",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-vt",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Vermont (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "VT",
+   "incumbent_party": "Other",
+   "open_seat": false,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-wa",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Washington (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "WA",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-wi",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Wisconsin (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "WI",
+   "incumbent_party": "D",
+   "open_seat": false,
+   "pres_2020": "D",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-wv",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in West Virginia (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "WV",
+   "incumbent_party": "Other",
+   "open_seat": true,
+   "pres_2020": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "senate-wy",
+   "family": "senate",
+   "statement": "Which party's nominee will win the November 5, 2024 election for U.S. Senate in Wyoming (class1 seat)?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2024-11-05",
+   "categories": [
+    "D",
+    "R",
+    "Other"
+   ],
+   "state": "WY",
+   "incumbent_party": "R",
+   "open_seat": false,
+   "pres_2020": "R",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2024_United_States_Senate_elections",
+    "provisional_rule": "winner_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "certified_result_from_state_election_authority",
+    "fallback_sources": [
+     "state election authority results page",
+     "council"
+    ],
+    "void_if": [
+     "election for this seat postponed or cancelled",
+     "no winner certified by T_final and no runoff scheduled"
+    ],
+    "T_final": "2024-12-15",
+    "resolver": "automated",
+    "notes": "If a runoff is required, the question resolves on the runoff winner; T_final extends to runoff certification. Independents and third-party winners resolve as Other regardless of caucus."
+   }
+  }
+ ]
+}
