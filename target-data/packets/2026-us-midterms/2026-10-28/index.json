@@ -1,0 +1,22 @@
+{
+  "schema": "fc-packet/2026.10",
+  "day": "2026-10-28",
+  "season": "2026-us-midterms",
+  "built_at": "2026-10-28T02:58:07Z",
+  "packet.json": "290bfae80e740c4517a73db8f41c4ecaa1ce3b0d6f477bb4cbfe8e5461549e37",
+  "packet.md": "8d489ae3537e63f5f9e21506a2c5b689b4c1c0e0e75758542d785d506e9814ba",
+  "attribution.json": "239daec3ca4bf3b79d561b867b9be554e468b7cdefaeaeba09a01deddc5166a3",
+  "raw": {
+    "gdelt_headlines.json": "01c3e44abb012ee046da01f6151f39cfef37896786265b9556950427c125a176",
+    "wikipedia_polls.json": "b89cbc03fe0a16fc11ac5467fb6e3fad792e576162f2b97959d698d84e96fd0d"
+  },
+  "sections": {
+    "wikipedia_polls": "ok",
+    "prediction_markets": "unavailable",
+    "gdelt_headlines": "ok"
+  },
+  "section_reasons": {
+    "wikipedia_polls": "58/73 pages failed: house: HTTPError: HTTP Error 503: Service Unavailable; senate: HTTPError: HTTP Error 503: Service Unavailable; governor-ak: HTTPError: HTTP Error 503: Service Unavailable; governor-al: HTTPError: HTTP Error 503: Service Unavailable; governor-ar: HTTPError: HTTP Error 503: Service Unavailable; governor-ca: HTTPError: HTTP Error 503: Service Unavailable; governor-fl: HTTPError: HTTP Error 503: Service Unavailable; governor-ga: HTTPError: HTTP Error 503: Service Unavailable; governor-hi: HTTPError: HTTP Error 503: Service Unavailable; governor-ia: HTTPError: HTTP Error 503: Service Unavailable; governor-id: HTTPError: HTTP Error 503: Service Unavailable; governor-ks: HTTPError: HTTP Error 503: Service Unavailable; governor-md: HTTPError: HTTP Error 503: Service Unavailable; governor-me: HTTPError: HTTP Error 503: Service Unavailable; governor-mi: HTTPError: HTTP Error 503: Service Unavailable; governor-mn: HTTPError: HTTP Error 503: Service Unavailable; governor-ne: HTTPError: HTTP Error 503: Service Unavailable; governor-nh: HTTPError: HTTP Error 503: Service Unavailable; governor-nm: HTTPError: HTTP Error 503: Service Unavailable; governor-nv: HTTPError: HTTP Error 503: Service Unavailable; governor-oh: HTTPError: HTTP Error 503: Service Unavailable; governor-ok: HTTPError: HTTP Error 503: Service Unavailable; governor-or: HTTPError: HTTP Error 503: Service Unavailable; governor-ri: HTTPError: HTTP Error 503: Service Unavailable; governor-sc: HTTPError: HTTP Error 503: Service Unavailable; governor-tn: HTTPError: HTTP Error 503: Service Unavailable; governor-tx: HTTPError: HTTP Error 503: Service Unavailable; governor-wi: HTTPError: HTTP Error 503: Service Unavailable; governor-wy: HTTPError: HTTP Error 503: Service Unavailable; senate-ak: HTTPError: HTTP Error 503: Service Unavailable; senate-al: HTTPError: HTTP Error 503: Service Unavailable; senate-ar: HTTPError: HTTP Error 503: Service Unavailable; senate-co: HTTPError: HTTP Error 503: Service Unavailable; senate-de: HTTPError: HTTP Error 503: Service Unavailable; senate-fl: HTTPError: HTTP Error 503: Service Unavailable; senate-ga: HTTPError: HTTP Error 503: Service Unavailable; senate-ia: HTTPError: HTTP Error 503: Service Unavailable; senate-il: HTTPError: HTTP Error 503: Service Unavailable; senate-ks: HTTPError: HTTP Error 503: Service Unavailable; senate-ky: HTTPError: HTTP Error 503: Service Unavailable; senate-la: HTTPError: HTTP Error 503: Service Unavailable; senate-ma: HTTPError: HTTP Error 503: Service Unavailable; senate-mi: HTTPError: HTTP Error 503: Service Unavailable; senate-mn: HTTPError: HTTP Error 503: Service Unavailable; senate-ms: HTTPError: HTTP Error 503: Service Unavailable; senate-mt: HTTPError: HTTP Error 503: Service Unavailable; senate-ne: HTTPError: HTTP Error 503: Service Unavailable; senate-nh: HTTPError: HTTP Error 503: Service Unavailable; senate-nj: HTTPError: HTTP Error 503: Service Unavailable; senate-ok: HTTPError: HTTP Error 503: Service Unavailable; senate-or: HTTPError: HTTP Error 503: Service Unavailable; senate-ri: HTTPError: HTTP Error 503: Service Unavailable; senate-sc: HTTPError: HTTP Error 503: Service Unavailable; senate-sd: HTTPError: HTTP Error 503: Service Unavailable; senate-tn: HTTPError: HTTP Error 503: Service Unavailable; senate-tx: HTTPError: HTTP Error 503: Service Unavailable; senate-va: HTTPError: HTTP Error 503: Service Unavailable; senate-wy: HTTPError: HTTP Error 503: Service Unavailable",
+    "prediction_markets": "no market mapping configured"
+  }
+}

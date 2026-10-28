@@ -1,0 +1,166 @@
+{
+  "packet_licence": "CC-BY-SA-4.0",
+  "sources": [
+    {
+      "name": "wikipedia_polls",
+      "status": "ok",
+      "licence": "CC-BY-SA-4.0",
+      "attribution": {
+        "pages": {
+          "governor-az": {
+            "title": "2026 Arizona gubernatorial election",
+            "revid": 1382309010,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Arizona_gubernatorial_election&oldid=1382309010"
+          },
+          "governor-co": {
+            "title": "2026 Colorado gubernatorial election",
+            "revid": 1381675070,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Colorado_gubernatorial_election&oldid=1381675070"
+          },
+          "governor-ct": {
+            "title": "2026 Connecticut gubernatorial election",
+            "revid": 1381940187,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Connecticut_gubernatorial_election&oldid=1381940187"
+          },
+          "governor-il": {
+            "title": "2026 Illinois gubernatorial election",
+            "revid": 1381674831,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Illinois_gubernatorial_election&oldid=1381674831"
+          },
+          "governor-ma": {
+            "title": "2026 Massachusetts gubernatorial election",
+            "revid": 1382287380,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Massachusetts_gubernatorial_election&oldid=1382287380"
+          },
+          "governor-ny": {
+            "title": "2026 New York gubernatorial election",
+            "revid": 1381829463,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_New_York_gubernatorial_election&oldid=1381829463"
+          },
+          "governor-pa": {
+            "title": "2026 Pennsylvania gubernatorial election",
+            "revid": 1382324619,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Pennsylvania_gubernatorial_election&oldid=1382324619"
+          },
+          "governor-sd": {
+            "title": "2026 South Dakota gubernatorial election",
+            "revid": 1382239689,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_South_Dakota_gubernatorial_election&oldid=1382239689"
+          },
+          "governor-vt": {
+            "title": "2026 Vermont gubernatorial election",
+            "revid": 1382262333,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Vermont_gubernatorial_election&oldid=1382262333"
+          },
+          "senate-id": {
+            "title": "2026 United States Senate election in Idaho",
+            "revid": 1382267778,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Idaho&oldid=1382267778"
+          },
+          "senate-me": {
+            "title": "2026 United States Senate election in Maine",
+            "revid": 1382307509,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Maine&oldid=1382307509"
+          },
+          "senate-nc": {
+            "title": "2026 United States Senate election in North Carolina",
+            "revid": 1382273157,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_North_Carolina&oldid=1382273157"
+          },
+          "senate-nm": {
+            "title": "2026 United States Senate election in New Mexico",
+            "revid": 1382299106,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_New_Mexico&oldid=1382299106"
+          },
+          "senate-oh": {
+            "title": "2026 United States Senate special election in Ohio",
+            "revid": 1382268066,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_special_election_in_Ohio&oldid=1382268066"
+          },
+          "senate-wv": {
+            "title": "2026 United States Senate election in West Virginia",
+            "revid": 1381516676,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_West_Virginia&oldid=1381516676"
+          }
+        },
+        "failed_pages": [
+          "governor-ak",
+          "governor-al",
+          "governor-ar",
+          "governor-ca",
+          "governor-fl",
+          "governor-ga",
+          "governor-hi",
+          "governor-ia",
+          "governor-id",
+          "governor-ks",
+          "governor-md",
+          "governor-me",
+          "governor-mi",
+          "governor-mn",
+          "governor-ne",
+          "governor-nh",
+          "governor-nm",
+          "governor-nv",
+          "governor-oh",
+          "governor-ok",
+          "governor-or",
+          "governor-ri",
+          "governor-sc",
+          "governor-tn",
+          "governor-tx",
+          "governor-wi",
+          "governor-wy",
+          "house",
+          "senate",
+          "senate-ak",
+          "senate-al",
+          "senate-ar",
+          "senate-co",
+          "senate-de",
+          "senate-fl",
+          "senate-ga",
+          "senate-ia",
+          "senate-il",
+          "senate-ks",
+          "senate-ky",
+          "senate-la",
+          "senate-ma",
+          "senate-mi",
+          "senate-mn",
+          "senate-ms",
+          "senate-mt",
+          "senate-ne",
+          "senate-nh",
+          "senate-nj",
+          "senate-ok",
+          "senate-or",
+          "senate-ri",
+          "senate-sc",
+          "senate-sd",
+          "senate-tn",
+          "senate-tx",
+          "senate-va",
+          "senate-wy"
+        ]
+      }
+    },
+    {
+      "name": "prediction_markets",
+      "status": "unavailable",
+      "licence": "platform terms (see legal-review \u00a72.4)",
+      "attribution": {}
+    },
+    {
+      "name": "gdelt_headlines",
+      "status": "ok",
+      "licence": "GDELT terms (free, attribution)",
+      "attribution": {
+        "queries": [
+          "(\"midterm elections\" OR \"Senate race\" OR \"governor race\" OR gubernatorial) sourcelang:english"
+        ],
+        "source": "GDELT 2.0 DOC API"
+      }
+    }
+  ]
+}
