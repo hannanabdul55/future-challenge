@@ -1,0 +1,395 @@
+{
+  "packet_licence": "CC-BY-SA-4.0",
+  "sources": [
+    {
+      "name": "wikipedia_polls",
+      "status": "ok",
+      "licence": "CC-BY-SA-4.0",
+      "attribution": {
+        "pages": {
+          "house": {
+            "title": "2026 United States House of Representatives elections",
+            "revid": 1382821364,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_House_of_Representatives_elections&oldid=1382821364"
+          },
+          "senate": {
+            "title": "2026 United States Senate elections",
+            "revid": 1382915634,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_elections&oldid=1382915634"
+          },
+          "governor-ak": {
+            "title": "2026 Alaska gubernatorial election",
+            "revid": 1382788748,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Alaska_gubernatorial_election&oldid=1382788748"
+          },
+          "governor-al": {
+            "title": "2026 Alabama gubernatorial election",
+            "revid": 1382681441,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Alabama_gubernatorial_election&oldid=1382681441"
+          },
+          "governor-ar": {
+            "title": "2026 Arkansas gubernatorial election",
+            "revid": 1382903704,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Arkansas_gubernatorial_election&oldid=1382903704"
+          },
+          "governor-az": {
+            "title": "2026 Arizona gubernatorial election",
+            "revid": 1382853824,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Arizona_gubernatorial_election&oldid=1382853824"
+          },
+          "governor-ca": {
+            "title": "2026 California gubernatorial election",
+            "revid": 1382882164,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_California_gubernatorial_election&oldid=1382882164"
+          },
+          "governor-co": {
+            "title": "2026 Colorado gubernatorial election",
+            "revid": 1382519959,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Colorado_gubernatorial_election&oldid=1382519959"
+          },
+          "governor-ct": {
+            "title": "2026 Connecticut gubernatorial election",
+            "revid": 1382887682,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Connecticut_gubernatorial_election&oldid=1382887682"
+          },
+          "governor-fl": {
+            "title": "2026 Florida gubernatorial election",
+            "revid": 1382837380,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Florida_gubernatorial_election&oldid=1382837380"
+          },
+          "governor-ga": {
+            "title": "2026 Georgia gubernatorial election",
+            "revid": 1382827265,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Georgia_gubernatorial_election&oldid=1382827265"
+          },
+          "governor-hi": {
+            "title": "2026 Hawaii gubernatorial election",
+            "revid": 1382520957,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Hawaii_gubernatorial_election&oldid=1382520957"
+          },
+          "governor-ia": {
+            "title": "2026 Iowa gubernatorial election",
+            "revid": 1382939863,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Iowa_gubernatorial_election&oldid=1382939863"
+          },
+          "governor-id": {
+            "title": "2026 Idaho gubernatorial election",
+            "revid": 1382521086,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Idaho_gubernatorial_election&oldid=1382521086"
+          },
+          "governor-il": {
+            "title": "2026 Illinois gubernatorial election",
+            "revid": 1382902615,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Illinois_gubernatorial_election&oldid=1382902615"
+          },
+          "governor-ks": {
+            "title": "2026 Kansas gubernatorial election",
+            "revid": 1382854550,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Kansas_gubernatorial_election&oldid=1382854550"
+          },
+          "governor-ma": {
+            "title": "2026 Massachusetts gubernatorial election",
+            "revid": 1382543901,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Massachusetts_gubernatorial_election&oldid=1382543901"
+          },
+          "governor-md": {
+            "title": "2026 Maryland gubernatorial election",
+            "revid": 1382894361,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Maryland_gubernatorial_election&oldid=1382894361"
+          },
+          "governor-me": {
+            "title": "2026 Maine gubernatorial election",
+            "revid": 1382874482,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Maine_gubernatorial_election&oldid=1382874482"
+          },
+          "governor-mi": {
+            "title": "2026 Michigan gubernatorial election",
+            "revid": 1382939945,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Michigan_gubernatorial_election&oldid=1382939945"
+          },
+          "governor-mn": {
+            "title": "2026 Minnesota gubernatorial election",
+            "revid": 1382924183,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Minnesota_gubernatorial_election&oldid=1382924183"
+          },
+          "governor-ne": {
+            "title": "2026 Nebraska gubernatorial election",
+            "revid": 1382571444,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Nebraska_gubernatorial_election&oldid=1382571444"
+          },
+          "governor-nh": {
+            "title": "2026 New Hampshire gubernatorial election",
+            "revid": 1382903016,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_New_Hampshire_gubernatorial_election&oldid=1382903016"
+          },
+          "governor-nm": {
+            "title": "2026 New Mexico gubernatorial election",
+            "revid": 1382903095,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_New_Mexico_gubernatorial_election&oldid=1382903095"
+          },
+          "governor-nv": {
+            "title": "2026 Nevada gubernatorial election",
+            "revid": 1382885617,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Nevada_gubernatorial_election&oldid=1382885617"
+          },
+          "governor-ny": {
+            "title": "2026 New York gubernatorial election",
+            "revid": 1382903180,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_New_York_gubernatorial_election&oldid=1382903180"
+          },
+          "governor-oh": {
+            "title": "2026 Ohio gubernatorial election",
+            "revid": 1382894986,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Ohio_gubernatorial_election&oldid=1382894986"
+          },
+          "governor-ok": {
+            "title": "2026 Oklahoma gubernatorial election",
+            "revid": 1382602339,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Oklahoma_gubernatorial_election&oldid=1382602339"
+          },
+          "governor-or": {
+            "title": "2026 Oregon gubernatorial election",
+            "revid": 1382669610,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Oregon_gubernatorial_election&oldid=1382669610"
+          },
+          "governor-pa": {
+            "title": "2026 Pennsylvania gubernatorial election",
+            "revid": 1382614138,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Pennsylvania_gubernatorial_election&oldid=1382614138"
+          },
+          "governor-ri": {
+            "title": "2026 Rhode Island gubernatorial election",
+            "revid": 1382685886,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Rhode_Island_gubernatorial_election&oldid=1382685886"
+          },
+          "governor-sc": {
+            "title": "2026 South Carolina gubernatorial election",
+            "revid": 1382624862,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_South_Carolina_gubernatorial_election&oldid=1382624862"
+          },
+          "governor-sd": {
+            "title": "2026 South Dakota gubernatorial election",
+            "revid": 1382924393,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_South_Dakota_gubernatorial_election&oldid=1382924393"
+          },
+          "governor-tn": {
+            "title": "2026 Tennessee gubernatorial election",
+            "revid": 1382668828,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Tennessee_gubernatorial_election&oldid=1382668828"
+          },
+          "governor-tx": {
+            "title": "2026 Texas gubernatorial election",
+            "revid": 1382865024,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Texas_gubernatorial_election&oldid=1382865024"
+          },
+          "governor-vt": {
+            "title": "2026 Vermont gubernatorial election",
+            "revid": 1382650552,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Vermont_gubernatorial_election&oldid=1382650552"
+          },
+          "governor-wi": {
+            "title": "2026 Wisconsin gubernatorial election",
+            "revid": 1382860705,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Wisconsin_gubernatorial_election&oldid=1382860705"
+          },
+          "governor-wy": {
+            "title": "2026 Wyoming gubernatorial election",
+            "revid": 1382903554,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_Wyoming_gubernatorial_election&oldid=1382903554"
+          },
+          "senate-ak": {
+            "title": "2026 United States Senate election in Alaska",
+            "revid": 1382939290,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Alaska&oldid=1382939290"
+          },
+          "senate-al": {
+            "title": "2026 United States Senate election in Alabama",
+            "revid": 1382939228,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Alabama&oldid=1382939228"
+          },
+          "senate-ar": {
+            "title": "2026 United States Senate election in Arkansas",
+            "revid": 1382911927,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Arkansas&oldid=1382911927"
+          },
+          "senate-co": {
+            "title": "2026 United States Senate election in Colorado",
+            "revid": 1382698367,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Colorado&oldid=1382698367"
+          },
+          "senate-de": {
+            "title": "2026 United States Senate election in Delaware",
+            "revid": 1382505642,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Delaware&oldid=1382505642"
+          },
+          "senate-fl": {
+            "title": "2026 United States Senate special election in Florida",
+            "revid": 1382875301,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_special_election_in_Florida&oldid=1382875301"
+          },
+          "senate-ga": {
+            "title": "2026 United States Senate election in Georgia",
+            "revid": 1382941086,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Georgia&oldid=1382941086"
+          },
+          "senate-ia": {
+            "title": "2026 United States Senate election in Iowa",
+            "revid": 1382939678,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Iowa&oldid=1382939678"
+          },
+          "senate-id": {
+            "title": "2026 United States Senate election in Idaho",
+            "revid": 1382544118,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Idaho&oldid=1382544118"
+          },
+          "senate-il": {
+            "title": "2026 United States Senate election in Illinois",
+            "revid": 1382939595,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Illinois&oldid=1382939595"
+          },
+          "senate-ks": {
+            "title": "2026 United States Senate election in Kansas",
+            "revid": 1382918209,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Kansas&oldid=1382918209"
+          },
+          "senate-ky": {
+            "title": "2026 United States Senate election in Kentucky",
+            "revid": 1382940254,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Kentucky&oldid=1382940254"
+          },
+          "senate-la": {
+            "title": "2026 United States Senate election in Louisiana",
+            "revid": 1382940350,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Louisiana&oldid=1382940350"
+          },
+          "senate-ma": {
+            "title": "2026 United States Senate election in Massachusetts",
+            "revid": 1382941284,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Massachusetts&oldid=1382941284"
+          },
+          "senate-me": {
+            "title": "2026 United States Senate election in Maine",
+            "revid": 1382941199,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Maine&oldid=1382941199"
+          },
+          "senate-mi": {
+            "title": "2026 United States Senate election in Michigan",
+            "revid": 1382941378,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Michigan&oldid=1382941378"
+          },
+          "senate-mn": {
+            "title": "2026 United States Senate election in Minnesota",
+            "revid": 1382941533,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Minnesota&oldid=1382941533"
+          },
+          "senate-ms": {
+            "title": "2026 United States Senate election in Mississippi",
+            "revid": 1382692867,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Mississippi&oldid=1382692867"
+          },
+          "senate-mt": {
+            "title": "2026 United States Senate election in Montana",
+            "revid": 1382853635,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Montana&oldid=1382853635"
+          },
+          "senate-nc": {
+            "title": "2026 United States Senate election in North Carolina",
+            "revid": 1382844720,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_North_Carolina&oldid=1382844720"
+          },
+          "senate-ne": {
+            "title": "2026 United States Senate election in Nebraska",
+            "revid": 1382872137,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Nebraska&oldid=1382872137"
+          },
+          "senate-nh": {
+            "title": "2026 United States Senate election in New Hampshire",
+            "revid": 1382941669,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_New_Hampshire&oldid=1382941669"
+          },
+          "senate-nj": {
+            "title": "2026 United States Senate election in New Jersey",
+            "revid": 1382938100,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_New_Jersey&oldid=1382938100"
+          },
+          "senate-nm": {
+            "title": "2026 United States Senate election in New Mexico",
+            "revid": 1382578961,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_New_Mexico&oldid=1382578961"
+          },
+          "senate-oh": {
+            "title": "2026 United States Senate special election in Ohio",
+            "revid": 1382936566,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_special_election_in_Ohio&oldid=1382936566"
+          },
+          "senate-ok": {
+            "title": "2026 United States Senate election in Oklahoma",
+            "revid": 1382941943,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Oklahoma&oldid=1382941943"
+          },
+          "senate-or": {
+            "title": "2026 United States Senate election in Oregon",
+            "revid": 1382915740,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Oregon&oldid=1382915740"
+          },
+          "senate-ri": {
+            "title": "2026 United States Senate election in Rhode Island",
+            "revid": 1382830606,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Rhode_Island&oldid=1382830606"
+          },
+          "senate-sc": {
+            "title": "2026 United States Senate election in South Carolina",
+            "revid": 1382942070,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_South_Carolina&oldid=1382942070"
+          },
+          "senate-sd": {
+            "title": "2026 United States Senate election in South Dakota",
+            "revid": 1382938795,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_South_Dakota&oldid=1382938795"
+          },
+          "senate-tn": {
+            "title": "2026 United States Senate election in Tennessee",
+            "revid": 1382633084,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Tennessee&oldid=1382633084"
+          },
+          "senate-tx": {
+            "title": "2026 United States Senate election in Texas",
+            "revid": 1382942247,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Texas&oldid=1382942247"
+          },
+          "senate-va": {
+            "title": "2026 United States Senate election in Virginia",
+            "revid": 1382673527,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Virginia&oldid=1382673527"
+          },
+          "senate-wv": {
+            "title": "2026 United States Senate election in West Virginia",
+            "revid": 1382667996,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_West_Virginia&oldid=1382667996"
+          },
+          "senate-wy": {
+            "title": "2026 United States Senate election in Wyoming",
+            "revid": 1382942403,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_Senate_election_in_Wyoming&oldid=1382942403"
+          }
+        }
+      }
+    },
+    {
+      "name": "prediction_markets",
+      "status": "unavailable",
+      "licence": "platform terms (see legal-review \u00a72.4)",
+      "attribution": {}
+    },
+    {
+      "name": "gdelt_headlines",
+      "status": "unavailable",
+      "licence": "GDELT terms (free, attribution)",
+      "attribution": {
+        "queries": [
+          "(\"midterm elections\" OR \"Senate race\" OR \"governor race\" OR gubernatorial) sourcelang:english"
+        ]
+      }
+    }
+  ]
+}

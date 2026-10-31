@@ -1,0 +1,21 @@
+{
+  "schema": "fc-packet/2026.10",
+  "day": "2026-10-31",
+  "season": "2026-us-midterms",
+  "built_at": "2026-10-31T03:10:35Z",
+  "packet.json": "f78bfa9ecad3b3edf4188001f1ca5e53d4eba2296506285ddd6b5cbf86bfa1cd",
+  "packet.md": "76fc916bb541623071109b36a8586888a5996dae9ab13cafa2998aa810473b65",
+  "attribution.json": "96bece668bbbe14a1301aedbe9788fc5763f4b9a8564474fd01db42464bdcf58",
+  "raw": {
+    "wikipedia_polls.json": "ccf362cbbca80e9b7ed6f25b6472c894865362d5f6f2bcd7fae18489cd6b5775"
+  },
+  "sections": {
+    "wikipedia_polls": "ok",
+    "prediction_markets": "unavailable",
+    "gdelt_headlines": "unavailable"
+  },
+  "section_reasons": {
+    "prediction_markets": "no market mapping configured",
+    "gdelt_headlines": "no articles"
+  }
+}
