@@ -1,0 +1,21 @@
+{
+  "schema": "fc-packet/2026.10",
+  "day": "2026-11-01",
+  "season": "2026-us-midterms",
+  "built_at": "2026-11-01T03:04:49Z",
+  "packet.json": "aeac8e4d97262f7ab09d1e69d5d1ff41318f7f48539f8023e3d685fb541a2323",
+  "packet.md": "bb00a9955fb093bde4cf1d031010a775beef6f9a1c3f4d8cf5af7c15b12cdaae",
+  "attribution.json": "a370aa159b8f4af316fbc4d6124deb73276314842f9f8c7d83c7bf4e267adcc1",
+  "raw": {
+    "wikipedia_polls.json": "681d60bb40a48ce4783ba27943041054415f500685485ac7cc1d78fb2bf561e9"
+  },
+  "sections": {
+    "wikipedia_polls": "ok",
+    "prediction_markets": "unavailable",
+    "gdelt_headlines": "unavailable"
+  },
+  "section_reasons": {
+    "prediction_markets": "no market mapping configured",
+    "gdelt_headlines": "'(\"midterm elections\" OR \"Senate race\" OR \"governor race\" OR gubernatorial) sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests"
+  }
+}
