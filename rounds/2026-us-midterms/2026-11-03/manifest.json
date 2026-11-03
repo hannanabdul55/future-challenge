@@ -1,0 +1,28 @@
+{
+  "round_id": "2026-us-midterms-2026-11-03",
+  "kind": "daily",
+  "season": "2026-us-midterms",
+  "day": "2026-11-03",
+  "rules_version": "2026.10",
+  "T_open": "2026-11-03T00:00:00Z",
+  "T_commit": "2026-11-03T12:00:00Z",
+  "T_reveal": "2026-11-03T18:00:00Z",
+  "questions_hash": "4a4647cbc2581cb5b23ddc31b90a4c4bf810eef639002c915c71a84b086d2906",
+  "season_manifest_sha256": "a1e605f51ba779c63c4a642794e383c74d14d93b372cfb5ebe9a791c0197084a",
+  "packet": {
+    "path": "target-data/packets/2026-us-midterms/2026-11-03",
+    "index_sha256": "21ec8ee0bd4d2626d974bf6c2110c679080549fc0ca2fac8725e64265350c507",
+    "packet_json_sha256": "1c04dd8b9ced7531f7fdcaeca43357067060f5be887bae71c0d2e1846958ce7d",
+    "packet_md_sha256": "fef70c6c477bd0a9216ac15f8120d3a7f010ce0de9420d5b1c6bfd123a5a98d4",
+    "built_at": "2026-11-03T04:29:19Z"
+  },
+  "drand": {
+    "chain": "quicknet",
+    "round": 33620213,
+    "expected_time": "2026-11-03T00:00:03Z"
+  },
+  "hub_secret_commitment": null,
+  "runner_image_digest": null,
+  "evaluator_image_digest": null,
+  "published_at": "2026-11-03T04:29:20Z"
+}
