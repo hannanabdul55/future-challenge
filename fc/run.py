@@ -91,9 +91,9 @@ def docker_cmd(image: str, *, snapshot: Path, paths: RunPaths, prompt: Path, out
     cmd = ["docker", "run", "--rm", "--network", "none", "--read-only",
            "--tmpfs", "/tmp:size=2g", "--security-opt", "no-new-privileges",
            "--cap-drop", "ALL", "--pids-limit", "256", f"--cpus={cpus}", f"--memory={memory}",
-           "-v", f"{snapshot}:/model:ro", "-v", f"{paths.packet_dir}:/packet:ro",
-           "-v", f"{paths.questions.parent}:/questions:ro", "-v", f"{prompt.parent}:/prompt:ro",
-           "-v", f"{out}:/out"]
+           "-v", f"{snapshot.resolve()}:/model:ro", "-v", f"{paths.packet_dir.resolve()}:/packet:ro",
+           "-v", f"{paths.questions.parent.resolve()}:/questions:ro", "-v", f"{prompt.parent.resolve()}:/prompt:ro",
+           "-v", f"{out.resolve()}:/out"]
     if gpus:
         cmd += ["--gpus", "all"]
     for k, v in env.items():
