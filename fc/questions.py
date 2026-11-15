@@ -27,6 +27,9 @@ SCHEMA = "fc-question/2026.10"
 OUTPUT_TYPES = ("binary", "categorical", "quantile")
 RESOLVERS = ("automated", "council")
 RISK_LABELS = ("low", "medium", "high")
+# `ranked` questions feed relative skill and imputation; `world` questions (curated,
+# judgment-heavy "real-world understanding" items) are scored and shown but never ranked.
+TRACKS = ("ranked", "world")
 QID_RE = re.compile(r"^[a-z0-9][a-z0-9.-]*$")
 PARTIES = ["D", "R", "Other"]
 
@@ -114,6 +117,8 @@ def validate_question(q: dict[str, Any]) -> list[str]:
         errs.append(f"{qid}: manipulation_risk must be one of {RISK_LABELS}")
     if not isinstance(q["core"], bool):
         errs.append(f"{qid}: core must be boolean")
+    if q.get("track", "ranked") not in TRACKS:
+        errs.append(f"{qid}: track must be one of {TRACKS}")
     res = q["resolution"]
     if not isinstance(res, dict):
         errs.append(f"{qid}: resolution must be a mapping")
@@ -141,11 +146,62 @@ def validate_questions(questions: list[dict[str, Any]], *,
         rep.errors.append(f"duplicate question_id(s): {dup}")
     for q in questions:
         rep.errors.extend(validate_question(q))
-        if event_date and q.get("resolution", {}).get("T_final", "9999") <= event_date:
+        res = q.get("resolution", {}) if isinstance(q.get("resolution"), dict) else {}
+        if event_date and res.get("T_final", "9999") <= event_date:
             rep.errors.append(f"{q.get('question_id')}: T_final must be after the event date")
+        for k in ("vintage_rule", "expected_resolution_date"):
+            if k not in res:
+                rep.warnings.append(f"{q.get('question_id')}: resolution has no {k}")
     if not any(q.get("core") for q in questions):
         rep.warnings.append("no core questions; coverage imputation has nothing to enforce")
+    if not any(q.get("track", "ranked") == "ranked" for q in questions):
+        rep.warnings.append("no ranked questions; the board will have no relative-skill table")
     return rep
+
+
+def resolution_date(q: dict[str, Any]) -> str | None:
+    """The day a question's answer becomes public: resolution.expected_resolution_date, else
+    event_date. None when the spec gives neither (treated as always active)."""
+    res = q["resolution"] if isinstance(q.get("resolution"), dict) else {}
+    return res.get("expected_resolution_date") or q.get("event_date")
+
+
+def is_active(q: dict[str, Any], day: str) -> bool:
+    """A question is asked on ``day`` only if its answer is not yet public on that day (the
+    release date itself is excluded) and ``open_from``, when given, has arrived."""
+    rd = resolution_date(q)
+    if rd is not None and rd <= day:
+        return False
+    return q.get("open_from", "0000") <= day
+
+
+def active_on(questions: list[dict[str, Any]], day: str) -> list[dict[str, Any]]:
+    return [q for q in questions if is_active(q, day)]
+
+
+def ranked_ids(questions: list[dict[str, Any]]) -> set[str]:
+    return {q["question_id"] for q in questions if q.get("track", "ranked") == "ranked"}
+
+
+def cluster_of(q: dict[str, Any], day: str) -> str:
+    """Block-bootstrap key: the question's declared cluster (family × resolution month for
+    templated sets), else the day (Season 1 behaviour)."""
+    return str(q.get("cluster") or day)
+
+
+def assemble_season(season_dir: Path) -> list[dict[str, Any]]:
+    """Merge a season's curated ``world.json`` with every generated ``macro/*.json`` into one
+    list, rejecting duplicate ids. Deterministic: sorted by question_id by the writer."""
+    out: dict[str, dict[str, Any]] = {}
+    paths = sorted(season_dir.glob("macro/*.json"))
+    if (season_dir / "world.json").exists():
+        paths.insert(0, season_dir / "world.json")
+    for p in paths:
+        for q in load_questions(p):
+            if q["question_id"] in out:
+                raise ValueError(f"duplicate question_id {q['question_id']} in {p}")
+            out[q["question_id"]] = q
+    return list(out.values())
 
 
 # --------------------------------------------------------------------------- Season 1 generator

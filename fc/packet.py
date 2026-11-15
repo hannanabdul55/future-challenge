@@ -504,7 +504,11 @@ def default_sources(markets_mapping: dict[str, dict[str, str]] | None = None,
         q["gdelt_query"] for q in (questions or []) if q.get("gdelt_query")
     ))
     gdelt = GdeltHeadlines(queries=custom_queries) if custom_queries else GdeltHeadlines()
-    return [polls, PredictionMarkets(markets_mapping or {}), gdelt]
+    sources: list[Source] = [polls, PredictionMarkets(markets_mapping or {}), gdelt]
+    if any(q.get("template", {}).get("name") == "macro" for q in (questions or [])):
+        from .macro import MacroSeries  # local import: macro imports this module
+        sources.append(MacroSeries())
+    return sources
 
 
 def build(day: date, out_dir: Path, *, sources: list[Source], http: Http = urllib_http,

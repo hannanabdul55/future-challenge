@@ -120,6 +120,8 @@ def run_entry(entry_yaml: Path, *, root: Path, season: str, day: str, snapshot: 
     qs = Q.load_questions(paths.questions)
     if Q.questions_hash(qs) != manifest["questions_hash"]:
         raise ValueError("question set hash does not match the round manifest")
+    # Rolling sets: a question whose answer is already public on `day` is not asked.
+    qs = Q.active_on(qs, day)
 
     bundle: dict[str, Any] = {
         "schema": "fc-run/2026.10", "round_id": round_id, "model_id": model_id,

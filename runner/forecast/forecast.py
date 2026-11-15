@@ -120,7 +120,6 @@ def main() -> int:
         for i, qb in enumerate(F.batches(qs, max_per_batch=batch)):
             batch_packet = F.filter_packet_for_batch(packet_md, qb)
             prompt = F.build_prompt(template, packet_md=batch_packet, questions=qb, day=day)
-            schema = F.batch_json_schema(qb)
             t0 = time.time()
             info: dict = {"mode": None, "think_prefill": False}
             try:

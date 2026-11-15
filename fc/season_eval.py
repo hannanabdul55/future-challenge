@@ -277,7 +277,15 @@ def impute_missing(scores: pd.DataFrame, forecasts: pd.DataFrame, questions: lis
     """SCORE-05: for every admitted (entry, day) — including full-day dropouts with 0 submitted
     rows — impute every resolved core question it did not answer using the worse of the baseline
     score and the 75th percentile of submitted scores."""
-    core = {q["question_id"] for q in questions if q.get("core", True)}
+    ranked = Q.ranked_ids(questions)
+    core_qs = [q for q in questions if q.get("core", True) and q["question_id"] in ranked]
+    active_cache: dict[str, set[str]] = {}
+
+    def core_on(day: str) -> set[str]:
+        if day not in active_cache:
+            active_cache[day] = {q["question_id"] for q in Q.active_on(core_qs, day)}
+        return active_cache[day]
+
     resolved = set(truth[truth["status"] != "void"]["question_id"])
     out = scores.copy()
     out["imputed"] = False
@@ -294,7 +302,7 @@ def impute_missing(scores: pd.DataFrame, forecasts: pd.DataFrame, questions: lis
 
     for (m, d), round_id in sorted(target_pairs.items()):
         answered = set(scores[(scores.model_id == m) & (scores.day == d)]["question_id"])
-        for qid in sorted((core & resolved) - answered):
+        for qid in sorted((core_on(d) & resolved) - answered):
             day_scores = scores[(scores.day == d) & (scores.question_id == qid)]
             if day_scores.empty:
                 continue
@@ -436,14 +444,22 @@ def run(root: Path, season: str, *, truth_path: Path | None = None, out_dir: Pat
     )
     sc["tier"] = sc["model_id"].map(lambda m: entries.get(m, {}).get("tier", BASELINE_IDS.get(m)))
 
+    # Only `ranked` questions enter relative skill; `world` questions are scored and shown.
+    ranked = Q.ranked_ids(questions)
+    by_id = {q["question_id"]: q for q in questions}
+    sc_ranked = sc[sc.question_id.isin(ranked)] if len(sc) else sc
     rel = []
     for tier in TIERS:
-        sub = sc[(sc.tier == tier) | (sc.model_id == BASELINE)] if tier != "H" else sc[sc.tier == "H"]
+        sub = (sc_ranked[(sc_ranked.tier == tier) | (sc_ranked.model_id == BASELINE)]
+               if tier != "H" else sc_ranked[sc_ranked.tier == "H"])
         if sub.empty or sub.model_id.nunique() < 2:
             continue
         keyed = sub.copy()
         keyed["question_id"] = keyed["day"] + "/" + keyed["question_id"]
-        block = pd.Series({q: q.split("/")[0] for q in keyed.question_id.unique()})
+        # Block bootstrap over outcome clusters: the question's declared cluster when it has
+        # one (family × resolution month for templated sets), else the day.
+        block = pd.Series({k: Q.cluster_of(by_id.get(k.split("/", 1)[1], {}), k.split("/", 1)[0])
+                           for k in keyed.question_id.unique()})
         try:
             rs = bootstrap_relative_skill(keyed, BASELINE, n_boot=n_boot, block=block,
                                           min_shared=min_shared)

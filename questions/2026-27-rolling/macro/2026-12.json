@@ -1,0 +1,1064 @@
+{
+ "schema": "fc-question/2026.10",
+ "season": "2026-27-rolling",
+ "questions_hash": "d8196ff6af1e0a56fce19f9e09a96ce34007cf29db8f80da9754c6a85f8f7f21",
+ "questions": [
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "macro-ahe-yoy-2026-11",
+   "family": "macro",
+   "statement": "What will the first-published value of the Average hourly earnings of all private employees 12-month percent change (seasonally adjusted) for November 2026 be, as released by the U.S. Bureau of Labor Statistics on December 4, 2026? Answer in percent.",
+   "output_type": "quantile",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-04",
+   "quantile_levels": [
+    0.025,
+    0.1,
+    0.25,
+    0.4,
+    0.5,
+    0.6,
+    0.75,
+    0.9,
+    0.975
+   ],
+   "bounds": [
+    -2.0,
+    10.0
+   ],
+   "baseline": {
+    "centre": 3.1,
+    "spread": 0.17,
+    "integer": false
+   },
+   "headline": false,
+   "resolution": {
+    "primary_source": "https://www.bls.gov/ces/",
+    "provisional_rule": "first_print:yoy:CES0500000003:2026-11",
+    "final_rule": "first_print_is_final; later revisions are ignored",
+    "vintage_rule": "first_release",
+    "expected_resolution_date": "2026-12-04",
+    "fallback_sources": [
+     "FRED/ALFRED CES0500000003 initial release (output_type=4)",
+     "agency news release table",
+     "council"
+    ],
+    "void_if": [
+     "release delayed more than 14 days past expected_resolution_date",
+     "series discontinued, rebased or redefined before the release",
+     "agency announces a methodology change affecting this period before the release"
+    ],
+    "T_final": "2026-12-25",
+    "resolver": "automated",
+    "resolver_id": "fc.macro",
+    "schedule_source": "https://www.bls.gov/schedule/news_release/empsit.htm"
+   },
+   "track": "ranked",
+   "cluster": "macro/2026-12",
+   "template": {
+    "name": "macro",
+    "series_id": "ahe-yoy",
+    "release": "empsit",
+    "period": "2026-11"
+   },
+   "unit": "percent",
+   "gdelt_query": "\"U.S. Bureau of Labor Statistics\" Average sourcelang:english",
+   "reference": {
+    "period": "2026-10",
+    "value": 3.1,
+    "as_of": "2026-11-15",
+    "source": "fred:CES0500000003",
+    "vintage": "latest"
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "macro-ahe-yoy-2026-11-gt",
+   "family": "macro",
+   "statement": "Will the first-published value of the Average hourly earnings of all private employees 12-month percent change (seasonally adjusted) for November 2026, released by the U.S. Bureau of Labor Statistics on December 4, 2026, be strictly greater than 3.3 percent?",
+   "output_type": "binary",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-04",
+   "threshold": 3.3,
+   "threshold_offset": 0.2,
+   "baseline": {
+    "p": 0.111
+   },
+   "resolution": {
+    "primary_source": "https://www.bls.gov/ces/",
+    "provisional_rule": "first_print:yoy:CES0500000003:2026-11",
+    "final_rule": "first_print_is_final; later revisions are ignored",
+    "vintage_rule": "first_release",
+    "expected_resolution_date": "2026-12-04",
+    "fallback_sources": [
+     "FRED/ALFRED CES0500000003 initial release (output_type=4)",
+     "agency news release table",
+     "council"
+    ],
+    "void_if": [
+     "release delayed more than 14 days past expected_resolution_date",
+     "series discontinued, rebased or redefined before the release",
+     "agency announces a methodology change affecting this period before the release"
+    ],
+    "T_final": "2026-12-25",
+    "resolver": "automated",
+    "resolver_id": "fc.macro",
+    "schedule_source": "https://www.bls.gov/schedule/news_release/empsit.htm"
+   },
+   "track": "ranked",
+   "cluster": "macro/2026-12",
+   "template": {
+    "name": "macro",
+    "series_id": "ahe-yoy",
+    "release": "empsit",
+    "period": "2026-11"
+   },
+   "unit": "percent",
+   "gdelt_query": "\"U.S. Bureau of Labor Statistics\" Average sourcelang:english",
+   "reference": {
+    "period": "2026-10",
+    "value": 3.1,
+    "as_of": "2026-11-15",
+    "source": "fred:CES0500000003",
+    "vintage": "latest"
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "macro-cpi-core-yoy-2026-11",
+   "family": "macro",
+   "statement": "What will the first-published value of the CPI-U all items less food and energy 12-month percent change (not seasonally adjusted) for November 2026 be, as released by the U.S. Bureau of Labor Statistics on December 10, 2026? Answer in percent.",
+   "output_type": "quantile",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-10",
+   "quantile_levels": [
+    0.025,
+    0.1,
+    0.25,
+    0.4,
+    0.5,
+    0.6,
+    0.75,
+    0.9,
+    0.975
+   ],
+   "bounds": [
+    -3.0,
+    12.0
+   ],
+   "baseline": {
+    "centre": 2.6,
+    "spread": 0.14,
+    "integer": false
+   },
+   "headline": false,
+   "resolution": {
+    "primary_source": "https://www.bls.gov/cpi/",
+    "provisional_rule": "first_print:yoy:CUUR0000SA0L1E:2026-11",
+    "final_rule": "first_print_is_final; later revisions are ignored",
+    "vintage_rule": "first_release",
+    "expected_resolution_date": "2026-12-10",
+    "fallback_sources": [
+     "FRED/ALFRED CPILFENS initial release (output_type=4)",
+     "agency news release table",
+     "council"
+    ],
+    "void_if": [
+     "release delayed more than 14 days past expected_resolution_date",
+     "series discontinued, rebased or redefined before the release",
+     "agency announces a methodology change affecting this period before the release"
+    ],
+    "T_final": "2026-12-31",
+    "resolver": "automated",
+    "resolver_id": "fc.macro",
+    "schedule_source": "https://www.bls.gov/schedule/news_release/cpi.htm"
+   },
+   "track": "ranked",
+   "cluster": "macro/2026-12",
+   "template": {
+    "name": "macro",
+    "series_id": "cpi-core-yoy",
+    "release": "cpi",
+    "period": "2026-11"
+   },
+   "unit": "percent",
+   "gdelt_query": "\"U.S. Bureau of Labor Statistics\" CPI-U sourcelang:english",
+   "reference": {
+    "period": "2026-10",
+    "value": 2.6,
+    "as_of": "2026-11-15",
+    "source": "fred:CPILFENS",
+    "vintage": "latest"
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "macro-cpi-core-yoy-2026-11-gt",
+   "family": "macro",
+   "statement": "Will the first-published value of the CPI-U all items less food and energy 12-month percent change (not seasonally adjusted) for November 2026, released by the U.S. Bureau of Labor Statistics on December 10, 2026, be strictly greater than 2.8 percent?",
+   "output_type": "binary",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-10",
+   "threshold": 2.8,
+   "threshold_offset": 0.2,
+   "baseline": {
+    "p": 0.056
+   },
+   "resolution": {
+    "primary_source": "https://www.bls.gov/cpi/",
+    "provisional_rule": "first_print:yoy:CUUR0000SA0L1E:2026-11",
+    "final_rule": "first_print_is_final; later revisions are ignored",
+    "vintage_rule": "first_release",
+    "expected_resolution_date": "2026-12-10",
+    "fallback_sources": [
+     "FRED/ALFRED CPILFENS initial release (output_type=4)",
+     "agency news release table",
+     "council"
+    ],
+    "void_if": [
+     "release delayed more than 14 days past expected_resolution_date",
+     "series discontinued, rebased or redefined before the release",
+     "agency announces a methodology change affecting this period before the release"
+    ],
+    "T_final": "2026-12-31",
+    "resolver": "automated",
+    "resolver_id": "fc.macro",
+    "schedule_source": "https://www.bls.gov/schedule/news_release/cpi.htm"
+   },
+   "track": "ranked",
+   "cluster": "macro/2026-12",
+   "template": {
+    "name": "macro",
+    "series_id": "cpi-core-yoy",
+    "release": "cpi",
+    "period": "2026-11"
+   },
+   "unit": "percent",
+   "gdelt_query": "\"U.S. Bureau of Labor Statistics\" CPI-U sourcelang:english",
+   "reference": {
+    "period": "2026-10",
+    "value": 2.6,
+    "as_of": "2026-11-15",
+    "source": "fred:CPILFENS",
+    "vintage": "latest"
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "macro-cpi-headline-mom-2026-11",
+   "family": "macro",
+   "statement": "What will the first-published value of the CPI-U all items 1-month percent change (seasonally adjusted) for November 2026 be, as released by the U.S. Bureau of Labor Statistics on December 10, 2026? Answer in percent.",
+   "output_type": "quantile",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-10",
+   "quantile_levels": [
+    0.025,
+    0.1,
+    0.25,
+    0.4,
+    0.5,
+    0.6,
+    0.75,
+    0.9,
+    0.975
+   ],
+   "bounds": [
+    -2.0,
+    3.0
+   ],
+   "baseline": {
+    "centre": 0.4,
+    "spread": 0.25,
+    "integer": false
+   },
+   "headline": false,
+   "resolution": {
+    "primary_source": "https://www.bls.gov/cpi/",
+    "provisional_rule": "first_print:mom:CUSR0000SA0:2026-11",
+    "final_rule": "first_print_is_final; later revisions are ignored",
+    "vintage_rule": "first_release",
+    "expected_resolution_date": "2026-12-10",
+    "fallback_sources": [
+     "FRED/ALFRED CPIAUCSL initial release (output_type=4)",
+     "agency news release table",
+     "council"
+    ],
+    "void_if": [
+     "release delayed more than 14 days past expected_resolution_date",
+     "series discontinued, rebased or redefined before the release",
+     "agency announces a methodology change affecting this period before the release"
+    ],
+    "T_final": "2026-12-31",
+    "resolver": "automated",
+    "resolver_id": "fc.macro",
+    "schedule_source": "https://www.bls.gov/schedule/news_release/cpi.htm"
+   },
+   "track": "ranked",
+   "cluster": "macro/2026-12",
+   "template": {
+    "name": "macro",
+    "series_id": "cpi-headline-mom",
+    "release": "cpi",
+    "period": "2026-11"
+   },
+   "unit": "percent",
+   "gdelt_query": "\"U.S. Bureau of Labor Statistics\" CPI-U sourcelang:english",
+   "reference": {
+    "period": "2026-10",
+    "value": 0.4,
+    "as_of": "2026-11-15",
+    "source": "fred:CPIAUCSL",
+    "vintage": "latest"
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "macro-cpi-headline-mom-2026-11-gt",
+   "family": "macro",
+   "statement": "Will the first-published value of the CPI-U all items 1-month percent change (seasonally adjusted) for November 2026, released by the U.S. Bureau of Labor Statistics on December 10, 2026, be strictly greater than 0.0 percent?",
+   "output_type": "binary",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-10",
+   "threshold": 0.0,
+   "threshold_offset": -0.4,
+   "baseline": {
+    "p": 0.95
+   },
+   "resolution": {
+    "primary_source": "https://www.bls.gov/cpi/",
+    "provisional_rule": "first_print:mom:CUSR0000SA0:2026-11",
+    "final_rule": "first_print_is_final; later revisions are ignored",
+    "vintage_rule": "first_release",
+    "expected_resolution_date": "2026-12-10",
+    "fallback_sources": [
+     "FRED/ALFRED CPIAUCSL initial release (output_type=4)",
+     "agency news release table",
+     "council"
+    ],
+    "void_if": [
+     "release delayed more than 14 days past expected_resolution_date",
+     "series discontinued, rebased or redefined before the release",
+     "agency announces a methodology change affecting this period before the release"
+    ],
+    "T_final": "2026-12-31",
+    "resolver": "automated",
+    "resolver_id": "fc.macro",
+    "schedule_source": "https://www.bls.gov/schedule/news_release/cpi.htm"
+   },
+   "track": "ranked",
+   "cluster": "macro/2026-12",
+   "template": {
+    "name": "macro",
+    "series_id": "cpi-headline-mom",
+    "release": "cpi",
+    "period": "2026-11"
+   },
+   "unit": "percent",
+   "gdelt_query": "\"U.S. Bureau of Labor Statistics\" CPI-U sourcelang:english",
+   "reference": {
+    "period": "2026-10",
+    "value": 0.4,
+    "as_of": "2026-11-15",
+    "source": "fred:CPIAUCSL",
+    "vintage": "latest"
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "macro-cpi-headline-yoy-2026-11",
+   "family": "macro",
+   "statement": "What will the first-published value of the CPI-U all items 12-month percent change (not seasonally adjusted) for November 2026 be, as released by the U.S. Bureau of Labor Statistics on December 10, 2026? Answer in percent.",
+   "output_type": "quantile",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-10",
+   "quantile_levels": [
+    0.025,
+    0.1,
+    0.25,
+    0.4,
+    0.5,
+    0.6,
+    0.75,
+    0.9,
+    0.975
+   ],
+   "bounds": [
+    -3.0,
+    12.0
+   ],
+   "baseline": {
+    "centre": 3.7,
+    "spread": 0.3,
+    "integer": false
+   },
+   "headline": true,
+   "resolution": {
+    "primary_source": "https://www.bls.gov/cpi/",
+    "provisional_rule": "first_print:yoy:CUUR0000SA0:2026-11",
+    "final_rule": "first_print_is_final; later revisions are ignored",
+    "vintage_rule": "first_release",
+    "expected_resolution_date": "2026-12-10",
+    "fallback_sources": [
+     "FRED/ALFRED CPIAUCNS initial release (output_type=4)",
+     "agency news release table",
+     "council"
+    ],
+    "void_if": [
+     "release delayed more than 14 days past expected_resolution_date",
+     "series discontinued, rebased or redefined before the release",
+     "agency announces a methodology change affecting this period before the release"
+    ],
+    "T_final": "2026-12-31",
+    "resolver": "automated",
+    "resolver_id": "fc.macro",
+    "schedule_source": "https://www.bls.gov/schedule/news_release/cpi.htm"
+   },
+   "track": "ranked",
+   "cluster": "macro/2026-12",
+   "template": {
+    "name": "macro",
+    "series_id": "cpi-headline-yoy",
+    "release": "cpi",
+    "period": "2026-11"
+   },
+   "unit": "percent",
+   "gdelt_query": "\"U.S. Bureau of Labor Statistics\" CPI-U sourcelang:english",
+   "reference": {
+    "period": "2026-10",
+    "value": 3.7,
+    "as_of": "2026-11-15",
+    "source": "fred:CPIAUCNS",
+    "vintage": "latest"
+   },
+   "headline_label": "US CPI YoY (median)"
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "macro-cpi-headline-yoy-2026-11-gt",
+   "family": "macro",
+   "statement": "Will the first-published value of the CPI-U all items 12-month percent change (not seasonally adjusted) for November 2026, released by the U.S. Bureau of Labor Statistics on December 10, 2026, be strictly greater than 3.4 percent?",
+   "output_type": "binary",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-10",
+   "threshold": 3.4,
+   "threshold_offset": -0.3,
+   "baseline": {
+    "p": 0.861
+   },
+   "resolution": {
+    "primary_source": "https://www.bls.gov/cpi/",
+    "provisional_rule": "first_print:yoy:CUUR0000SA0:2026-11",
+    "final_rule": "first_print_is_final; later revisions are ignored",
+    "vintage_rule": "first_release",
+    "expected_resolution_date": "2026-12-10",
+    "fallback_sources": [
+     "FRED/ALFRED CPIAUCNS initial release (output_type=4)",
+     "agency news release table",
+     "council"
+    ],
+    "void_if": [
+     "release delayed more than 14 days past expected_resolution_date",
+     "series discontinued, rebased or redefined before the release",
+     "agency announces a methodology change affecting this period before the release"
+    ],
+    "T_final": "2026-12-31",
+    "resolver": "automated",
+    "resolver_id": "fc.macro",
+    "schedule_source": "https://www.bls.gov/schedule/news_release/cpi.htm"
+   },
+   "track": "ranked",
+   "cluster": "macro/2026-12",
+   "template": {
+    "name": "macro",
+    "series_id": "cpi-headline-yoy",
+    "release": "cpi",
+    "period": "2026-11"
+   },
+   "unit": "percent",
+   "gdelt_query": "\"U.S. Bureau of Labor Statistics\" CPI-U sourcelang:english",
+   "reference": {
+    "period": "2026-10",
+    "value": 3.7,
+    "as_of": "2026-11-15",
+    "source": "fred:CPIAUCNS",
+    "vintage": "latest"
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "macro-fomc-2026-12",
+   "family": "macro",
+   "statement": "At its December 8–9, 2026 meeting, how will the FOMC change the federal funds target range relative to the range in force before the meeting? (cut_50bp_or_more, cut_25bp, hold, hike)",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-09",
+   "categories": [
+    "cut_50bp_or_more",
+    "cut_25bp",
+    "hold",
+    "hike"
+   ],
+   "baseline": {
+    "probabilities": {
+     "cut_50bp_or_more": 0.03,
+     "cut_25bp": 0.27,
+     "hold": 0.62,
+     "hike": 0.08
+    },
+    "fav": "hold"
+   },
+   "headline": true,
+   "fomc": {
+    "meeting_start": "2026-12-08",
+    "meeting_end": "2026-12-09"
+   },
+   "resolution": {
+    "primary_source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+    "provisional_rule": "first_print:fomc:DFEDTARU:2026-12",
+    "final_rule": "first_print_is_final; later revisions are ignored",
+    "vintage_rule": "first_release",
+    "expected_resolution_date": "2026-12-09",
+    "fallback_sources": [
+     "FRED/ALFRED DFEDTARU initial release (output_type=4)",
+     "agency news release table",
+     "council"
+    ],
+    "void_if": [
+     "release delayed more than 14 days past expected_resolution_date",
+     "series discontinued, rebased or redefined before the release",
+     "agency announces a methodology change affecting this period before the release"
+    ],
+    "T_final": "2026-12-30",
+    "resolver": "automated",
+    "resolver_id": "fc.macro",
+    "schedule_source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
+   },
+   "track": "ranked",
+   "cluster": "macro/2026-12",
+   "template": {
+    "name": "macro",
+    "series_id": "fomc-decision",
+    "release": "fomc",
+    "period": "2026-12"
+   },
+   "unit": "category",
+   "gdelt_query": "\"Federal Open Market Committee\" FOMC sourcelang:english",
+   "headline_label": "P(FOMC holds)"
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "macro-payrolls-change-2026-11",
+   "family": "macro",
+   "statement": "What will the first-published value of the Total nonfarm payroll employment 1-month change in thousands (seasonally adjusted) for November 2026 be, as released by the U.S. Bureau of Labor Statistics on December 4, 2026? Answer in thousands.",
+   "output_type": "quantile",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-04",
+   "quantile_levels": [
+    0.025,
+    0.1,
+    0.25,
+    0.4,
+    0.5,
+    0.6,
+    0.75,
+    0.9,
+    0.975
+   ],
+   "bounds": [
+    -1000.0,
+    1000.0
+   ],
+   "baseline": {
+    "centre": 165.0,
+    "spread": 136.4,
+    "integer": true
+   },
+   "headline": false,
+   "resolution": {
+    "primary_source": "https://www.bls.gov/ces/",
+    "provisional_rule": "first_print:diff:CES0000000001:2026-11",
+    "final_rule": "first_print_is_final; later revisions are ignored",
+    "vintage_rule": "first_release",
+    "expected_resolution_date": "2026-12-04",
+    "fallback_sources": [
+     "FRED/ALFRED PAYEMS initial release (output_type=4)",
+     "agency news release table",
+     "council"
+    ],
+    "void_if": [
+     "release delayed more than 14 days past expected_resolution_date",
+     "series discontinued, rebased or redefined before the release",
+     "agency announces a methodology change affecting this period before the release"
+    ],
+    "T_final": "2026-12-25",
+    "resolver": "automated",
+    "resolver_id": "fc.macro",
+    "schedule_source": "https://www.bls.gov/schedule/news_release/empsit.htm"
+   },
+   "track": "ranked",
+   "cluster": "macro/2026-12",
+   "template": {
+    "name": "macro",
+    "series_id": "payrolls-change",
+    "release": "empsit",
+    "period": "2026-11"
+   },
+   "unit": "thousands",
+   "gdelt_query": "\"U.S. Bureau of Labor Statistics\" Total sourcelang:english",
+   "reference": {
+    "period": "2026-10",
+    "value": 165.0,
+    "as_of": "2026-11-15",
+    "source": "fred:PAYEMS",
+    "vintage": "latest"
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "macro-payrolls-change-2026-11-gt",
+   "family": "macro",
+   "statement": "Will the first-published value of the Total nonfarm payroll employment 1-month change in thousands (seasonally adjusted) for November 2026, released by the U.S. Bureau of Labor Statistics on December 4, 2026, be strictly greater than 301 thousands?",
+   "output_type": "binary",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-04",
+   "threshold": 301.0,
+   "threshold_offset": 136.0,
+   "baseline": {
+    "p": 0.167
+   },
+   "resolution": {
+    "primary_source": "https://www.bls.gov/ces/",
+    "provisional_rule": "first_print:diff:CES0000000001:2026-11",
+    "final_rule": "first_print_is_final; later revisions are ignored",
+    "vintage_rule": "first_release",
+    "expected_resolution_date": "2026-12-04",
+    "fallback_sources": [
+     "FRED/ALFRED PAYEMS initial release (output_type=4)",
+     "agency news release table",
+     "council"
+    ],
+    "void_if": [
+     "release delayed more than 14 days past expected_resolution_date",
+     "series discontinued, rebased or redefined before the release",
+     "agency announces a methodology change affecting this period before the release"
+    ],
+    "T_final": "2026-12-25",
+    "resolver": "automated",
+    "resolver_id": "fc.macro",
+    "schedule_source": "https://www.bls.gov/schedule/news_release/empsit.htm"
+   },
+   "track": "ranked",
+   "cluster": "macro/2026-12",
+   "template": {
+    "name": "macro",
+    "series_id": "payrolls-change",
+    "release": "empsit",
+    "period": "2026-11"
+   },
+   "unit": "thousands",
+   "gdelt_query": "\"U.S. Bureau of Labor Statistics\" Total sourcelang:english",
+   "reference": {
+    "period": "2026-10",
+    "value": 165.0,
+    "as_of": "2026-11-15",
+    "source": "fred:PAYEMS",
+    "vintage": "latest"
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "macro-pce-core-yoy-2026-11",
+   "family": "macro",
+   "statement": "What will the first-published value of the PCE price index excluding food and energy 12-month percent change for November 2026 be, as released by the U.S. Bureau of Economic Analysis on December 23, 2026? Answer in percent.",
+   "output_type": "quantile",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-23",
+   "quantile_levels": [
+    0.025,
+    0.1,
+    0.25,
+    0.4,
+    0.5,
+    0.6,
+    0.75,
+    0.9,
+    0.975
+   ],
+   "bounds": [
+    -3.0,
+    12.0
+   ],
+   "baseline": {
+    "centre": 3.1,
+    "spread": 0.1,
+    "integer": false
+   },
+   "headline": false,
+   "resolution": {
+    "primary_source": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
+    "provisional_rule": "first_print:yoy:PCEPILFE:2026-11",
+    "final_rule": "first_print_is_final; later revisions are ignored",
+    "vintage_rule": "first_release",
+    "expected_resolution_date": "2026-12-23",
+    "fallback_sources": [
+     "FRED/ALFRED PCEPILFE initial release (output_type=4)",
+     "agency news release table",
+     "council"
+    ],
+    "void_if": [
+     "release delayed more than 14 days past expected_resolution_date",
+     "series discontinued, rebased or redefined before the release",
+     "agency announces a methodology change affecting this period before the release"
+    ],
+    "T_final": "2027-01-13",
+    "resolver": "automated",
+    "resolver_id": "fc.macro",
+    "schedule_source": "https://www.bea.gov/news/schedule"
+   },
+   "track": "ranked",
+   "cluster": "macro/2026-12",
+   "template": {
+    "name": "macro",
+    "series_id": "pce-core-yoy",
+    "release": "pio",
+    "period": "2026-11"
+   },
+   "unit": "percent",
+   "gdelt_query": "\"U.S. Bureau of Economic Analysis\" PCE sourcelang:english",
+   "reference": {
+    "period": "2026-10",
+    "value": 3.1,
+    "as_of": "2026-11-15",
+    "source": "fred:PCEPILFE",
+    "vintage": "latest"
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "macro-pce-core-yoy-2026-11-gt",
+   "family": "macro",
+   "statement": "Will the first-published value of the PCE price index excluding food and energy 12-month percent change for November 2026, released by the U.S. Bureau of Economic Analysis on December 23, 2026, be strictly greater than 3.5 percent?",
+   "output_type": "binary",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-23",
+   "threshold": 3.5,
+   "threshold_offset": 0.4,
+   "baseline": {
+    "p": 0.05
+   },
+   "resolution": {
+    "primary_source": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
+    "provisional_rule": "first_print:yoy:PCEPILFE:2026-11",
+    "final_rule": "first_print_is_final; later revisions are ignored",
+    "vintage_rule": "first_release",
+    "expected_resolution_date": "2026-12-23",
+    "fallback_sources": [
+     "FRED/ALFRED PCEPILFE initial release (output_type=4)",
+     "agency news release table",
+     "council"
+    ],
+    "void_if": [
+     "release delayed more than 14 days past expected_resolution_date",
+     "series discontinued, rebased or redefined before the release",
+     "agency announces a methodology change affecting this period before the release"
+    ],
+    "T_final": "2027-01-13",
+    "resolver": "automated",
+    "resolver_id": "fc.macro",
+    "schedule_source": "https://www.bea.gov/news/schedule"
+   },
+   "track": "ranked",
+   "cluster": "macro/2026-12",
+   "template": {
+    "name": "macro",
+    "series_id": "pce-core-yoy",
+    "release": "pio",
+    "period": "2026-11"
+   },
+   "unit": "percent",
+   "gdelt_query": "\"U.S. Bureau of Economic Analysis\" PCE sourcelang:english",
+   "reference": {
+    "period": "2026-10",
+    "value": 3.1,
+    "as_of": "2026-11-15",
+    "source": "fred:PCEPILFE",
+    "vintage": "latest"
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "macro-unemployment-rate-2026-11",
+   "family": "macro",
+   "statement": "What will the first-published value of the Unemployment rate U-3 (seasonally adjusted) for November 2026 be, as released by the U.S. Bureau of Labor Statistics on December 4, 2026? Answer in percent.",
+   "output_type": "quantile",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-04",
+   "quantile_levels": [
+    0.025,
+    0.1,
+    0.25,
+    0.4,
+    0.5,
+    0.6,
+    0.75,
+    0.9,
+    0.975
+   ],
+   "bounds": [
+    2.0,
+    15.0
+   ],
+   "baseline": {
+    "centre": 4.1,
+    "spread": 0.11,
+    "integer": false
+   },
+   "headline": true,
+   "resolution": {
+    "primary_source": "https://www.bls.gov/ces/",
+    "provisional_rule": "first_print:level:LNS14000000:2026-11",
+    "final_rule": "first_print_is_final; later revisions are ignored",
+    "vintage_rule": "first_release",
+    "expected_resolution_date": "2026-12-04",
+    "fallback_sources": [
+     "FRED/ALFRED UNRATE initial release (output_type=4)",
+     "agency news release table",
+     "council"
+    ],
+    "void_if": [
+     "release delayed more than 14 days past expected_resolution_date",
+     "series discontinued, rebased or redefined before the release",
+     "agency announces a methodology change affecting this period before the release"
+    ],
+    "T_final": "2026-12-25",
+    "resolver": "automated",
+    "resolver_id": "fc.macro",
+    "schedule_source": "https://www.bls.gov/schedule/news_release/empsit.htm"
+   },
+   "track": "ranked",
+   "cluster": "macro/2026-12",
+   "template": {
+    "name": "macro",
+    "series_id": "unemployment-rate",
+    "release": "empsit",
+    "period": "2026-11"
+   },
+   "unit": "percent",
+   "gdelt_query": "\"U.S. Bureau of Labor Statistics\" Unemployment sourcelang:english",
+   "reference": {
+    "period": "2026-10",
+    "value": 4.1,
+    "as_of": "2026-11-15",
+    "source": "fred:UNRATE",
+    "vintage": "latest"
+   },
+   "headline_label": "US unemployment rate (median)"
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "macro-unemployment-rate-2026-11-gt",
+   "family": "macro",
+   "statement": "Will the first-published value of the Unemployment rate U-3 (seasonally adjusted) for November 2026, released by the U.S. Bureau of Labor Statistics on December 4, 2026, be strictly greater than 3.9 percent?",
+   "output_type": "binary",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-04",
+   "threshold": 3.9,
+   "threshold_offset": -0.2,
+   "baseline": {
+    "p": 0.95
+   },
+   "resolution": {
+    "primary_source": "https://www.bls.gov/ces/",
+    "provisional_rule": "first_print:level:LNS14000000:2026-11",
+    "final_rule": "first_print_is_final; later revisions are ignored",
+    "vintage_rule": "first_release",
+    "expected_resolution_date": "2026-12-04",
+    "fallback_sources": [
+     "FRED/ALFRED UNRATE initial release (output_type=4)",
+     "agency news release table",
+     "council"
+    ],
+    "void_if": [
+     "release delayed more than 14 days past expected_resolution_date",
+     "series discontinued, rebased or redefined before the release",
+     "agency announces a methodology change affecting this period before the release"
+    ],
+    "T_final": "2026-12-25",
+    "resolver": "automated",
+    "resolver_id": "fc.macro",
+    "schedule_source": "https://www.bls.gov/schedule/news_release/empsit.htm"
+   },
+   "track": "ranked",
+   "cluster": "macro/2026-12",
+   "template": {
+    "name": "macro",
+    "series_id": "unemployment-rate",
+    "release": "empsit",
+    "period": "2026-11"
+   },
+   "unit": "percent",
+   "gdelt_query": "\"U.S. Bureau of Labor Statistics\" Unemployment sourcelang:english",
+   "reference": {
+    "period": "2026-10",
+    "value": 4.1,
+    "as_of": "2026-11-15",
+    "source": "fred:UNRATE",
+    "vintage": "latest"
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "macro-ust10y-month-end-2026-12",
+   "family": "macro",
+   "statement": "What will the first-published value of the 10-year Treasury constant-maturity yield on the last business day of the month (H.15) for the end of December 2026 be, as released by the Federal Reserve Board on December 31, 2026? Answer in percent.",
+   "output_type": "quantile",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-31",
+   "quantile_levels": [
+    0.025,
+    0.1,
+    0.25,
+    0.4,
+    0.5,
+    0.6,
+    0.75,
+    0.9,
+    0.975
+   ],
+   "bounds": [
+    0.0,
+    12.0
+   ],
+   "baseline": {
+    "centre": 5.1,
+    "spread": 0.244,
+    "integer": false
+   },
+   "headline": false,
+   "resolution": {
+    "primary_source": "https://www.federalreserve.gov/releases/h15/",
+    "provisional_rule": "first_print:month_end:DGS10:2026-12",
+    "final_rule": "first_print_is_final; later revisions are ignored",
+    "vintage_rule": "first_release",
+    "expected_resolution_date": "2026-12-31",
+    "fallback_sources": [
+     "FRED/ALFRED DGS10 initial release (output_type=4)",
+     "agency news release table",
+     "council"
+    ],
+    "void_if": [
+     "release delayed more than 14 days past expected_resolution_date",
+     "series discontinued, rebased or redefined before the release",
+     "agency announces a methodology change affecting this period before the release"
+    ],
+    "T_final": "2027-01-21",
+    "resolver": "automated",
+    "resolver_id": "fc.macro",
+    "schedule_source": "https://www.federalreserve.gov/releases/h15/"
+   },
+   "track": "ranked",
+   "cluster": "macro/2026-12",
+   "template": {
+    "name": "macro",
+    "series_id": "ust10y-month-end",
+    "release": "month-end",
+    "period": "2026-12"
+   },
+   "unit": "percent",
+   "gdelt_query": "\"Federal Reserve Board\" 10-year sourcelang:english",
+   "reference": {
+    "period": "2026-11",
+    "value": 5.1,
+    "as_of": "2026-11-15",
+    "source": "fred:DGS10",
+    "vintage": "latest"
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "macro-ust10y-month-end-2026-12-gt",
+   "family": "macro",
+   "statement": "Will the first-published value of the 10-year Treasury constant-maturity yield on the last business day of the month (H.15) for the end of December 2026, released by the Federal Reserve Board on December 31, 2026, be strictly greater than 5.34 percent?",
+   "output_type": "binary",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-31",
+   "threshold": 5.34,
+   "threshold_offset": 0.24,
+   "baseline": {
+    "p": 0.222
+   },
+   "resolution": {
+    "primary_source": "https://www.federalreserve.gov/releases/h15/",
+    "provisional_rule": "first_print:month_end:DGS10:2026-12",
+    "final_rule": "first_print_is_final; later revisions are ignored",
+    "vintage_rule": "first_release",
+    "expected_resolution_date": "2026-12-31",
+    "fallback_sources": [
+     "FRED/ALFRED DGS10 initial release (output_type=4)",
+     "agency news release table",
+     "council"
+    ],
+    "void_if": [
+     "release delayed more than 14 days past expected_resolution_date",
+     "series discontinued, rebased or redefined before the release",
+     "agency announces a methodology change affecting this period before the release"
+    ],
+    "T_final": "2027-01-21",
+    "resolver": "automated",
+    "resolver_id": "fc.macro",
+    "schedule_source": "https://www.federalreserve.gov/releases/h15/"
+   },
+   "track": "ranked",
+   "cluster": "macro/2026-12",
+   "template": {
+    "name": "macro",
+    "series_id": "ust10y-month-end",
+    "release": "month-end",
+    "period": "2026-12"
+   },
+   "unit": "percent",
+   "gdelt_query": "\"Federal Reserve Board\" 10-year sourcelang:english",
+   "reference": {
+    "period": "2026-11",
+    "value": 5.1,
+    "as_of": "2026-11-15",
+    "source": "fred:DGS10",
+    "vintage": "latest"
+   }
+  }
+ ]
+}

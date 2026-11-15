@@ -213,9 +213,55 @@ def _questions(a):
             print(rep); sys.exit(1)
         h = Q.write_question_set(Path(a.out), qs, season=a.season)
         print(f"{len(qs)} questions  hash {h}\nwrote {a.out}")
+    elif a.questions_cmd == "assemble":
+        sdir = Path("questions") / a.season
+        qs = Q.assemble_season(sdir)
+        rep = Q.validate_questions(qs)
+        print(rep)
+        if not rep.ok:
+            sys.exit(1)
+        out = Path(a.out) if a.out else sdir / "questions.json"
+        h = Q.write_question_set(out, qs, season=a.season)
+        tracks = {t: sum(1 for q in qs if q.get("track", "ranked") == t) for t in Q.TRACKS}
+        print(f"{len(qs)} questions {tracks}  hash {h}\nwrote {out}")
     else:
         rep = Q.validate_questions(Q.load_questions(a.file), event_date=a.event_date)
         print(rep); sys.exit(0 if rep.ok else 1)
+
+
+def _macro(a):
+    import csv as _csv
+    from datetime import date as _date
+
+    from . import macro as M
+    from . import questions as Q
+    from .packet import urllib_http
+    if a.macro_cmd == "generate":
+        qs = M.generate_month(a.season, a.month, http=urllib_http)
+        rep = Q.validate_questions(qs)
+        print(rep)
+        if not rep.ok:
+            sys.exit(1)
+        out = Path(a.out) if a.out else Path("questions") / a.season / "macro" / f"{a.month}.json"
+        h = Q.write_question_set(out, qs, season=a.season)
+        print(f"{len(qs)} macro questions for releases in {a.month}  hash {h}\nwrote {out}")
+    elif a.macro_cmd == "dry-run":
+        sb = {s.series_id: s for s in M.load_series()}
+        s = sb[a.series_id]
+        rows = M.dry_run(s, M.history(s, urllib_http), n=a.months)
+        w = _csv.DictWriter(sys.stdout, fieldnames=list(rows[0].keys()))
+        w.writeheader(); w.writerows(rows)
+    else:  # resolve
+        qs = Q.load_questions(a.questions)
+        today = _date.fromisoformat(a.today) if a.today else None
+        rows = M.resolve_all(qs, http=urllib_http, today=today)
+        import pandas as pd
+        df = pd.DataFrame(rows)
+        if a.out:
+            Path(a.out).parent.mkdir(parents=True, exist_ok=True)
+            df.to_csv(a.out, index=False)
+            print(f"wrote {a.out}")
+        print(df.to_string(index=False))
 
 
 def _season_init(a):
@@ -372,6 +418,17 @@ def main(argv=None):
     g.set_defaults(fn=_questions)
     v = qs.add_parser("validate"); v.add_argument("file"); v.add_argument("--event-date")
     v.set_defaults(fn=_questions)
+    asm = qs.add_parser("assemble"); asm.add_argument("--season", required=True)
+    asm.add_argument("--out"); asm.set_defaults(fn=_questions)
+    mc = qs.add_parser("macro")
+    mcs = mc.add_subparsers(dest="macro_cmd", required=True)
+    mg = mcs.add_parser("generate"); mg.add_argument("--season", required=True)
+    mg.add_argument("--month", required=True, help="YYYY-MM of the release dates")
+    mg.add_argument("--out"); mg.set_defaults(fn=_macro)
+    md = mcs.add_parser("dry-run"); md.add_argument("--series-id", required=True)
+    md.add_argument("--months", type=int, default=12); md.set_defaults(fn=_macro)
+    mr = mcs.add_parser("resolve"); mr.add_argument("--questions", required=True)
+    mr.add_argument("--out"); mr.add_argument("--today"); mr.set_defaults(fn=_macro)
 
     s = sp.add_parser("season")
     ss = s.add_subparsers(dest="season_cmd", required=True)
