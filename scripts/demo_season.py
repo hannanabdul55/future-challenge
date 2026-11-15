@@ -82,11 +82,25 @@ def main(root: Path, n_days: int) -> None:
         doc["freeze"]["sidecar"] = str(sidecar.relative_to(root))
         meta.write_text(yaml.safe_dump(doc, sort_keys=False))
         assert receipt is not None
-        root_doc = json.loads((freeze_dir / "roots" / f"{i}.json").read_text())
-        # Proof omitted in the demo: the board reads receipt time; `fc verify` needs the proof.
-        C.write_sidecar(sidecar, receipt, [], root_doc["root"],
+        root_file = freeze_dir / "roots" / f"{i}.json"
+        root_doc = json.loads(root_file.read_text())
+        accepted = [e["commit"] for e in SV.read_ledger(freeze_dir) if e["outcome"] == SV.ACCEPTED]
+        import hashlib
+        digest = hashlib.sha256(root_file.read_bytes()).hexdigest()
+        (freeze_dir / "roots" / f"{i}.anchor.json").write_text(
+            json.dumps({"schema_version": "2026.08", "status": "bitcoin",
+                        "bitcoin_block_height": 920000 + i, "digest": digest,
+                        "calendar_uris": ["https://alice.btc.calendar.opentimestamps.org"],
+                        "rekor": {"log_index": 185000000 + i}}, indent=2) + "\n"
+        )
+        C.write_sidecar(sidecar, receipt, C.merkle_proof(accepted, receipt.merkle_position),
+                        root_doc["root"],
                         team_signature=req.team_signature, nonce_hash=C.nonce_hash(nonce),
                         window_index=i)
+    (freeze_dir / "roots" / "bitcoin-headers.json").write_text(
+        json.dumps({str(920000 + i): f"2026-10-25T13:0{i}:00Z" for i in range(len(entries))},
+                   indent=2) + "\n"
+    )
 
     # Daily rounds with offline packets and synthetic forecasts.
     def http(url, params=None):

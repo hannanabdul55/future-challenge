@@ -83,10 +83,15 @@ def build(board_json: Path, out: Path) -> None:
 
     tr = b["trajectories"]
     if tr and days:
-        for key, ylab, ylim in (("p_house_d", "P(Democratic House majority)", (0, 1)),
-                                ("p_senate_d", "P(Democratic caucus ≥ 51 Senate seats)", (0, 1)),
-                                ("seats_house_d_median", "Median Democratic House seats", (180, 260)),
-                                ("seats_senate_dcaucus_median", "Median Democratic-caucus Senate seats", (40, 56))):
+        default_specs = [
+            {"key": "p_house_d", "label": "P(Democratic House majority)", "ylim": [0, 1]},
+            {"key": "p_senate_d", "label": "P(Democratic caucus ≥ 51 Senate seats)", "ylim": [0, 1]},
+            {"key": "seats_house_d_median", "label": "Median Democratic House seats", "ylim": [180, 260]},
+            {"key": "seats_senate_dcaucus_median", "label": "Median Democratic-caucus Senate seats", "ylim": [40, 56]},
+        ]
+        specs = b.get("headline_specs") or default_specs
+        for sp in specs:
+            key, ylab, ylim = sp["key"], sp["label"], tuple(sp["ylim"])
             series: dict[str, list[tuple[int, float]]] = {}
             for r in tr:
                 v = r.get(key)

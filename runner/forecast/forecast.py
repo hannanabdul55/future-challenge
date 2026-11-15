@@ -118,7 +118,9 @@ def main() -> int:
     missing: dict[str, str] = {}
     with (OUT / "transcript.jsonl").open("w") as tr:
         for i, qb in enumerate(F.batches(qs, max_per_batch=batch)):
-            prompt = F.build_prompt(template, packet_md=packet_md, questions=qb, day=day)
+            batch_packet = F.filter_packet_for_batch(packet_md, qb)
+            prompt = F.build_prompt(template, packet_md=batch_packet, questions=qb, day=day)
+            schema = F.batch_json_schema(qb)
             t0 = time.time()
             info: dict = {"mode": None, "think_prefill": False}
             try:

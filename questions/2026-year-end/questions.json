@@ -1,0 +1,427 @@
+{
+ "schema": "fc-question/2026.10",
+ "season": "2026-year-end",
+ "questions_hash": "9d86548e314cb4d985d6564ba26592bb21b88c37cbe0144e2d5d70a2a15904a1",
+ "questions": [
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "macro-cpi-nov-yoy-above-2p5",
+   "family": "macro",
+   "statement": "Will the U.S. Consumer Price Index (CPI-U, all items, unadjusted 12-month percent change) for November 2026 as first reported by BLS in December 2026 exceed 2.5%?",
+   "output_type": "binary",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-31",
+   "baseline": {
+    "p": 0.5
+   },
+   "headline": true,
+   "headline_label": "P(Nov 2026 US CPI YoY > 2.5%)",
+   "wikipedia_page": "United_States_Consumer_Price_Index",
+   "gdelt_query": "\"Consumer Price Index\" OR \"inflation report\" BLS sourcelang:english",
+   "resolution": {
+    "primary_source": "https://www.bls.gov/cpi/",
+    "provisional_rule": "bls_cpi_news_release_nov_2026_initial_print",
+    "final_rule": "bls_cpi_news_release_nov_2026_table_1",
+    "fallback_sources": [
+     "official agency release",
+     "council"
+    ],
+    "void_if": [
+     "source discontinued or event cancelled before T_final"
+    ],
+    "T_final": "2027-01-06",
+    "resolver": "automated"
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "macro-fomc-dec-2026",
+   "family": "macro",
+   "statement": "What action will the Federal Open Market Committee (FOMC) take on the federal funds target range at its December 2026 meeting?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-31",
+   "categories": [
+    "cut",
+    "hold",
+    "hike"
+   ],
+   "baseline": {
+    "probabilities": {
+     "cut": 0.55,
+     "hold": 0.4,
+     "hike": 0.05
+    },
+    "fav": "cut"
+   },
+   "headline": true,
+   "headline_label": "P(Dec 2026 FOMC rate cut)",
+   "wikipedia_page": "Federal_funds_rate",
+   "gdelt_query": "\"Federal Reserve\" OR \"FOMC\" interest rates sourcelang:english",
+   "resolution": {
+    "primary_source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+    "provisional_rule": "fomc_statement_published_dec_2026",
+    "final_rule": "official_fomc_implementation_note_dec_2026",
+    "fallback_sources": [
+     "official agency release",
+     "council"
+    ],
+    "void_if": [
+     "source discontinued or event cancelled before T_final"
+    ],
+    "T_final": "2027-01-06",
+    "resolver": "automated"
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "macro-unemployment-nov-at-least-4p3",
+   "family": "macro",
+   "statement": "Will the U.S. headline civilian unemployment rate (U-3, seasonally adjusted) for November 2026 as first reported by BLS in December 2026 be at least 4.3%?",
+   "output_type": "binary",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-31",
+   "baseline": {
+    "p": 0.4
+   },
+   "resolution": {
+    "primary_source": "https://www.bls.gov/news.release/empsit.toc.htm",
+    "provisional_rule": "bls_employment_situation_nov_2026_initial_print",
+    "final_rule": "bls_employment_situation_nov_2026_table_a1",
+    "fallback_sources": [
+     "official agency release",
+     "council"
+    ],
+    "void_if": [
+     "source discontinued or event cancelled before T_final"
+    ],
+    "T_final": "2027-01-06",
+    "resolver": "automated"
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "macro-ust10y-yearend-bps",
+   "family": "macro",
+   "statement": "What will the daily par yield on the 10-year U.S. Treasury security (in basis points, e.g. 425 for 4.25%) be on the final trading day of 2026?",
+   "output_type": "quantile",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-31",
+   "quantile_levels": [
+    0.025,
+    0.1,
+    0.25,
+    0.4,
+    0.5,
+    0.6,
+    0.75,
+    0.9,
+    0.975
+   ],
+   "bounds": [
+    200,
+    700
+   ],
+   "unit": "bps",
+   "baseline": {
+    "centre": 425,
+    "spread": 30,
+    "integer": true
+   },
+   "headline": true,
+   "headline_label": "Median 10Y US Treasury yield at year-end 2026 (bps)",
+   "resolution": {
+    "primary_source": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates",
+    "provisional_rule": "treasury_daily_par_yield_curve_last_trading_day_2026",
+    "final_rule": "treasury_final_published_2026_par_yield_table",
+    "fallback_sources": [
+     "official agency release",
+     "council"
+    ],
+    "void_if": [
+     "source discontinued or event cancelled before T_final"
+    ],
+    "T_final": "2027-01-06",
+    "resolver": "automated"
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "politics-gov-shutdown-dec-2026",
+   "family": "politics",
+   "statement": "Will the U.S. federal government experience a lapse in appropriations (partial or full government shutdown lasting at least 24 hours) between November 7 and December 31, 2026?",
+   "output_type": "binary",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-31",
+   "baseline": {
+    "p": 0.25
+   },
+   "wikipedia_page": "Government_shutdowns_in_the_United_States",
+   "gdelt_query": "\"government shutdown\" OR \"continuing resolution\" Congress sourcelang:english",
+   "resolution": {
+    "primary_source": "https://www.opm.gov/policy-data-oversight/snow-dismissal-procedures/status-operating-status/",
+    "provisional_rule": "opm_and_omb_lapse_in_appropriations_notice",
+    "final_rule": "crs_verified_appropriations_lapse_2026",
+    "fallback_sources": [
+     "official agency release",
+     "council"
+    ],
+    "void_if": [
+     "source discontinued or event cancelled before T_final"
+    ],
+    "T_final": "2027-01-06",
+    "resolver": "automated"
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "politics-house-d-seats-120th",
+   "family": "politics",
+   "statement": "How many seats will the Democratic Party hold in the U.S. House of Representatives when the 120th Congress convenes on January 3, 2027?",
+   "output_type": "quantile",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-31",
+   "quantile_levels": [
+    0.025,
+    0.1,
+    0.25,
+    0.4,
+    0.5,
+    0.6,
+    0.75,
+    0.9,
+    0.975
+   ],
+   "bounds": [
+    0,
+    435
+   ],
+   "unit": "seats",
+   "baseline": {
+    "centre": 215,
+    "spread": 6,
+    "integer": true
+   },
+   "wikipedia_page": "2026_United_States_House_of_Representatives_elections",
+   "resolution": {
+    "primary_source": "https://en.wikipedia.org/wiki/2026_United_States_House_of_Representatives_elections",
+    "provisional_rule": "seats_by_party_as_recorded_in_results_table_stable_72h",
+    "final_rule": "membership_at_seating_of_the_120th_congress_2027-01-03",
+    "fallback_sources": [
+     "house.gov / senate.gov official rosters",
+     "council"
+    ],
+    "void_if": [
+     "seating of the 120th Congress delayed beyond T_final"
+    ],
+    "T_final": "2027-01-06",
+    "resolver": "automated",
+    "notes": "Independents who caucus with the Democratic conference count toward the Democratic caucus for seat-count and control questions; vacancies at seating count for neither party."
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "politics-ndaa-fy2027-enacted-2026",
+   "family": "politics",
+   "statement": "Will the National Defense Authorization Act (NDAA) for Fiscal Year 2027 be signed into law on or before December 31, 2026?",
+   "output_type": "binary",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-31",
+   "baseline": {
+    "p": 0.75
+   },
+   "resolution": {
+    "primary_source": "https://www.congress.gov/",
+    "provisional_rule": "congress_gov_bill_status_became_public_law_by_2026-12-31",
+    "final_rule": "national_archives_public_law_number_assigned",
+    "fallback_sources": [
+     "official agency release",
+     "council"
+    ],
+    "void_if": [
+     "source discontinued or event cancelled before T_final"
+    ],
+    "T_final": "2027-01-06",
+    "resolver": "automated"
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "politics-speaker-first-ballot-120th",
+   "family": "politics",
+   "statement": "Will the Speaker of the U.S. House of Representatives for the 120th Congress be elected on the first roll-call ballot on January 3, 2027?",
+   "output_type": "binary",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-31",
+   "baseline": {
+    "p": 0.65
+   },
+   "headline": true,
+   "headline_label": "P(120th Congress House Speaker elected on 1st ballot)",
+   "wikipedia_page": "Speaker_of_the_United_States_House_of_Representatives",
+   "gdelt_query": "\"House Speaker\" OR \"120th Congress\" sourcelang:english",
+   "resolution": {
+    "primary_source": "https://clerk.house.gov/Votes",
+    "provisional_rule": "clerk_house_roll_call_speaker_election_2027-01-03",
+    "final_rule": "congressional_record_120th_congress_opening_day",
+    "fallback_sources": [
+     "official agency release",
+     "council"
+    ],
+    "void_if": [
+     "source discontinued or event cancelled before T_final"
+    ],
+    "T_final": "2027-01-06",
+    "resolver": "automated"
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "tech-arena-leader-yearend-2026",
+   "family": "tech",
+   "statement": "Which organization's model will hold the #1 rank on the LMSYS Chatbot Arena (Overall Elo, English/default leaderboard) on December 31, 2026 at 23:59 UTC?",
+   "output_type": "categorical",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-31",
+   "categories": [
+    "Google",
+    "OpenAI",
+    "Anthropic",
+    "xAI",
+    "Other"
+   ],
+   "baseline": {
+    "probabilities": {
+     "Google": 0.35,
+     "OpenAI": 0.3,
+     "Anthropic": 0.2,
+     "xAI": 0.1,
+     "Other": 0.05
+    },
+    "fav": "Google"
+   },
+   "headline": true,
+   "headline_label": "P(Google #1 on LMSYS Chatbot Arena at year-end 2026)",
+   "wikipedia_page": "Large_language_model",
+   "gdelt_query": "\"Chatbot Arena\" OR \"frontier model\" OpenAI Google Anthropic sourcelang:english",
+   "resolution": {
+    "primary_source": "https://lmarena.ai/",
+    "provisional_rule": "lmarena_overall_leaderboard_snapshot_2026-12-31T23:59Z",
+    "final_rule": "lmarena_archived_leaderboard_release_2027-01-03",
+    "fallback_sources": [
+     "official agency release",
+     "council"
+    ],
+    "void_if": [
+     "source discontinued or event cancelled before T_final"
+    ],
+    "T_final": "2027-01-06",
+    "resolver": "automated"
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "tech-frontier-1m-ctx-release-yearend",
+   "family": "tech",
+   "statement": "Will OpenAI, Anthropic, Google DeepMind, or Meta release a new general-purpose model (API or open weights) supporting a context window of at least 1,000,000 tokens between November 7 and December 31, 2026?",
+   "output_type": "binary",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-31",
+   "baseline": {
+    "p": 0.5
+   },
+   "resolution": {
+    "primary_source": "https://huggingface.co/models",
+    "provisional_rule": "official_lab_announcement_and_public_api_or_weights_docs",
+    "final_rule": "verified_public_model_card_or_api_documentation_by_2026-12-31",
+    "fallback_sources": [
+     "official agency release",
+     "council"
+    ],
+    "void_if": [
+     "source discontinued or event cancelled before T_final"
+    ],
+    "T_final": "2027-01-06",
+    "resolver": "automated"
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "tech-nvda-mcap-above-4t-yearend",
+   "family": "tech",
+   "statement": "Will NVIDIA Corporation (NASDAQ: NVDA) have a closing market capitalization of at least $4.0 trillion USD on the final NASDAQ trading day of 2026?",
+   "output_type": "binary",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-31",
+   "baseline": {
+    "p": 0.45
+   },
+   "wikipedia_page": "Nvidia",
+   "gdelt_query": "\"Nvidia\" market cap OR earnings sourcelang:english",
+   "resolution": {
+    "primary_source": "https://www.nasdaq.com/market-activity/stocks/nvda",
+    "provisional_rule": "nasdaq_official_close_times_latest_10q_diluted_shares_2026-12-31",
+    "final_rule": "sec_edgar_shares_outstanding_times_nasdaq_last_close_2026",
+    "fallback_sources": [
+     "official agency release",
+     "council"
+    ],
+    "void_if": [
+     "source discontinued or event cancelled before T_final"
+    ],
+    "T_final": "2027-01-06",
+    "resolver": "automated"
+   }
+  },
+  {
+   "schema": "fc-question/2026.10",
+   "question_id": "tech-open-weight-top5-arena-2026",
+   "family": "tech",
+   "statement": "Will at least one open-weight model (weights publicly downloadable under an open or permissive/community license) rank in the top 5 overall on LMSYS Chatbot Arena on December 31, 2026?",
+   "output_type": "binary",
+   "core": true,
+   "manipulation_risk": "low",
+   "rules_version": "2026.10",
+   "event_date": "2026-12-31",
+   "baseline": {
+    "p": 0.35
+   },
+   "resolution": {
+    "primary_source": "https://lmarena.ai/",
+    "provisional_rule": "lmarena_overall_top5_license_check_2026-12-31",
+    "final_rule": "lmarena_archived_leaderboard_release_2027-01-03",
+    "fallback_sources": [
+     "official agency release",
+     "council"
+    ],
+    "void_if": [
+     "source discontinued or event cancelled before T_final"
+    ],
+    "T_final": "2027-01-06",
+    "resolver": "automated"
+   }
+  }
+ ]
+}

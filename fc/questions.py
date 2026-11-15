@@ -152,6 +152,8 @@ def validate_questions(questions: list[dict[str, Any]], *,
 
 SEASON = "2026-us-midterms"
 EVENT_DATE = "2026-11-03"
+YEAR_END_SEASON = "2026-year-end"
+YEAR_END_EVENT_DATE = "2026-12-31"
 RULES = "2026.10"
 T_FINAL_RACES = "2026-12-15"
 T_FINAL_CHAMBERS = "2027-01-06"
@@ -242,6 +244,223 @@ def generate_midterms(races_csv: Path) -> list[dict[str, Any]]:
                 open_seat=row["open_seat"].lower() == "true", pres_2024=row["pres_2024"],
                 resolution=_race_resolution(office)))
     return qs
+
+
+def _ye_res(source: str, provisional: str, final: str, t_final: str = "2027-01-15",
+            fallbacks: list[str] | None = None, void_if: list[str] | None = None) -> dict[str, Any]:
+    return {
+        "primary_source": source,
+        "provisional_rule": provisional,
+        "final_rule": final,
+        "fallback_sources": fallbacks or ["official agency release", "council"],
+        "void_if": void_if or ["source discontinued or event cancelled before T_final"],
+        "T_final": t_final,
+        "resolver": "automated",
+    }
+
+
+def generate_year_end() -> list[dict[str, Any]]:
+    """Generate the `2026-year-end` standalone short-horizon season across the three families:
+    Macro & Central Banks (`macro`), US Politics & Post-Election Transition (`politics`), and
+    AI & Tech Milestones (`tech`)."""
+    def qb(qid: str, family: str, statement: str, output_type: str, **kw) -> dict[str, Any]:
+        return _base(qid, family, statement, output_type, event_date=YEAR_END_EVENT_DATE, **kw)
+
+    return [
+        # ---- Macro & Central Banks (macro) ----
+        qb(
+            "macro-fomc-dec-2026", "macro",
+            "What action will the Federal Open Market Committee (FOMC) take on the federal funds "
+            "target range at its December 2026 meeting?",
+            "categorical",
+            categories=["cut", "hold", "hike"],
+            baseline={"probabilities": {"cut": 0.55, "hold": 0.40, "hike": 0.05}, "fav": "cut"},
+            headline=True,
+            headline_label="P(Dec 2026 FOMC rate cut)",
+            wikipedia_page="Federal_funds_rate",
+            gdelt_query='"Federal Reserve" OR "FOMC" interest rates sourcelang:english',
+            resolution=_ye_res(
+                "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+                "fomc_statement_published_dec_2026",
+                "official_fomc_implementation_note_dec_2026",
+                t_final="2027-01-06",
+            ),
+        ),
+        qb(
+            "macro-cpi-nov-yoy-above-2p5", "macro",
+            "Will the U.S. Consumer Price Index (CPI-U, all items, unadjusted 12-month percent "
+            "change) for November 2026 as first reported by BLS in December 2026 exceed 2.5%?",
+            "binary",
+            baseline={"p": 0.50},
+            headline=True,
+            headline_label="P(Nov 2026 US CPI YoY > 2.5%)",
+            wikipedia_page="United_States_Consumer_Price_Index",
+            gdelt_query='"Consumer Price Index" OR "inflation report" BLS sourcelang:english',
+            resolution=_ye_res(
+                "https://www.bls.gov/cpi/",
+                "bls_cpi_news_release_nov_2026_initial_print",
+                "bls_cpi_news_release_nov_2026_table_1",
+                t_final="2027-01-06",
+            ),
+        ),
+        qb(
+            "macro-unemployment-nov-at-least-4p3", "macro",
+            "Will the U.S. headline civilian unemployment rate (U-3, seasonally adjusted) for "
+            "November 2026 as first reported by BLS in December 2026 be at least 4.3%?",
+            "binary",
+            baseline={"p": 0.40},
+             resolution=_ye_res(
+                "https://www.bls.gov/news.release/empsit.toc.htm",
+                "bls_employment_situation_nov_2026_initial_print",
+                "bls_employment_situation_nov_2026_table_a1",
+                t_final="2027-01-06",
+            ),
+        ),
+        qb(
+            "macro-ust10y-yearend-bps", "macro",
+            "What will the daily par yield on the 10-year U.S. Treasury security (in basis points, "
+            "e.g. 425 for 4.25%) be on the final trading day of 2026?",
+            "quantile",
+            quantile_levels=SEAT_LEVELS,
+            bounds=[200, 700],
+            unit="bps",
+            baseline={"centre": 425, "spread": 30, "integer": True},
+            headline=True,
+            headline_label="Median 10Y US Treasury yield at year-end 2026 (bps)",
+            resolution=_ye_res(
+                "https://home.treasury.gov/resource-center/data-chart-center/interest-rates",
+                "treasury_daily_par_yield_curve_last_trading_day_2026",
+                "treasury_final_published_2026_par_yield_table",
+                t_final="2027-01-06",
+            ),
+        ),
+        # ---- US Politics & Post-Election Transition (politics) ----
+        qb(
+            "politics-speaker-first-ballot-120th", "politics",
+            "Will the Speaker of the U.S. House of Representatives for the 120th Congress be "
+            "elected on the first roll-call ballot on January 3, 2027?",
+            "binary",
+            baseline={"p": 0.65},
+            headline=True,
+            headline_label="P(120th Congress House Speaker elected on 1st ballot)",
+            wikipedia_page="Speaker_of_the_United_States_House_of_Representatives",
+            gdelt_query='"House Speaker" OR "120th Congress" sourcelang:english',
+            resolution=_ye_res(
+                "https://clerk.house.gov/Votes",
+                "clerk_house_roll_call_speaker_election_2027-01-03",
+                "congressional_record_120th_congress_opening_day",
+                t_final="2027-01-06",
+            ),
+        ),
+        qb(
+            "politics-gov-shutdown-dec-2026", "politics",
+            "Will the U.S. federal government experience a lapse in appropriations (partial or "
+            "full government shutdown lasting at least 24 hours) between November 7 and "
+            "December 31, 2026?",
+            "binary",
+            baseline={"p": 0.25},
+            wikipedia_page="Government_shutdowns_in_the_United_States",
+            gdelt_query='"government shutdown" OR "continuing resolution" Congress sourcelang:english',
+            resolution=_ye_res(
+                "https://www.opm.gov/policy-data-oversight/snow-dismissal-procedures/status-operating-status/",
+                "opm_and_omb_lapse_in_appropriations_notice",
+                "crs_verified_appropriations_lapse_2026",
+                t_final="2027-01-06",
+            ),
+        ),
+        qb(
+            "politics-ndaa-fy2027-enacted-2026", "politics",
+            "Will the National Defense Authorization Act (NDAA) for Fiscal Year 2027 be signed "
+            "into law on or before December 31, 2026?",
+            "binary",
+            baseline={"p": 0.75},
+            resolution=_ye_res(
+                "https://www.congress.gov/",
+                "congress_gov_bill_status_became_public_law_by_2026-12-31",
+                "national_archives_public_law_number_assigned",
+                t_final="2027-01-06",
+            ),
+        ),
+        qb(
+            "politics-house-d-seats-120th", "politics",
+            "How many seats will the Democratic Party hold in the U.S. House of Representatives "
+            "when the 120th Congress convenes on January 3, 2027?",
+            "quantile",
+            quantile_levels=SEAT_LEVELS,
+            bounds=[0, 435],
+            unit="seats",
+            baseline={"centre": 215, "spread": 6, "integer": True},
+            wikipedia_page="2026_United_States_House_of_Representatives_elections",
+            resolution=_chamber_resolution("house"),
+        ),
+        # ---- AI & Tech Milestones (tech) ----
+        qb(
+            "tech-arena-leader-yearend-2026", "tech",
+            "Which organization's model will hold the #1 rank on the LMSYS Chatbot Arena "
+            "(Overall Elo, English/default leaderboard) on December 31, 2026 at 23:59 UTC?",
+            "categorical",
+            categories=["Google", "OpenAI", "Anthropic", "xAI", "Other"],
+            baseline={
+                "probabilities": {
+                    "Google": 0.35, "OpenAI": 0.30, "Anthropic": 0.20, "xAI": 0.10, "Other": 0.05
+                },
+                "fav": "Google",
+            },
+            headline=True,
+            headline_label="P(Google #1 on LMSYS Chatbot Arena at year-end 2026)",
+            wikipedia_page="Large_language_model",
+            gdelt_query='"Chatbot Arena" OR "frontier model" OpenAI Google Anthropic sourcelang:english',
+            resolution=_ye_res(
+                "https://lmarena.ai/",
+                "lmarena_overall_leaderboard_snapshot_2026-12-31T23:59Z",
+                "lmarena_archived_leaderboard_release_2027-01-03",
+                t_final="2027-01-06",
+            ),
+        ),
+        qb(
+            "tech-open-weight-top5-arena-2026", "tech",
+            "Will at least one open-weight model (weights publicly downloadable under an open or "
+            "permissive/community license) rank in the top 5 overall on LMSYS Chatbot Arena on "
+            "December 31, 2026?",
+            "binary",
+            baseline={"p": 0.35},
+            resolution=_ye_res(
+                "https://lmarena.ai/",
+                "lmarena_overall_top5_license_check_2026-12-31",
+                "lmarena_archived_leaderboard_release_2027-01-03",
+                t_final="2027-01-06",
+            ),
+        ),
+        qb(
+            "tech-nvda-mcap-above-4t-yearend", "tech",
+            "Will NVIDIA Corporation (NASDAQ: NVDA) have a closing market capitalization of at "
+            "least $4.0 trillion USD on the final NASDAQ trading day of 2026?",
+            "binary",
+            baseline={"p": 0.45},
+            wikipedia_page="Nvidia",
+            gdelt_query='"Nvidia" market cap OR earnings sourcelang:english',
+            resolution=_ye_res(
+                "https://www.nasdaq.com/market-activity/stocks/nvda",
+                "nasdaq_official_close_times_latest_10q_diluted_shares_2026-12-31",
+                "sec_edgar_shares_outstanding_times_nasdaq_last_close_2026",
+                t_final="2027-01-06",
+            ),
+        ),
+        qb(
+            "tech-frontier-1m-ctx-release-yearend", "tech",
+            "Will OpenAI, Anthropic, Google DeepMind, or Meta release a new general-purpose "
+            "model (API or open weights) supporting a context window of at least 1,000,000 "
+            "tokens between November 7 and December 31, 2026?",
+            "binary",
+            baseline={"p": 0.50},
+            resolution=_ye_res(
+                "https://huggingface.co/models",
+                "official_lab_announcement_and_public_api_or_weights_docs",
+                "verified_public_model_card_or_api_documentation_by_2026-12-31",
+                t_final="2027-01-06",
+            ),
+        ),
+    ]
 
 
 # --------------------------------------------------------------------------- reduced tasks.json

@@ -84,3 +84,18 @@ def test_reduced_tasks_round_drives_validate():
     out_of_bounds = _rows("d1", "seats-house-d", "quantile",
                           [(str(lv), 400 + 100 * lv) for lv in levels])
     assert any("bounds" in e for e in validate_frame(pd.DataFrame(out_of_bounds), rc).errors)
+
+
+def test_generate_year_end_season_set_and_baselines():
+    from fc import baselines as B
+    qs = Q.generate_year_end()
+    fam = pd.Series([q["family"] for q in qs]).value_counts().to_dict()
+    assert fam == {"macro": 4, "politics": 4, "tech": 4}
+    assert Q.validate_questions(qs, event_date=Q.YEAR_END_EVENT_DATE).ok
+    rc = Q.to_tasks_round(qs, round_id="ye-d1", T_open="2026-11-10T00:00:00Z",
+                          T_commit="2026-11-10T12:00:00Z", T_reveal="2026-11-10T18:00:00Z")
+    base = B.season_baselines(qs, "ye-d1")
+    for m in ("fc-uniform", "fc-baseline"):
+        rep = validate_frame(base[base.model_id == m].drop(columns="model_id"), rc)
+        assert rep.ok, (m, str(rep))
+        assert not rep.warnings

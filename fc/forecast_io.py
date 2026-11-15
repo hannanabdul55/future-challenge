@@ -79,6 +79,91 @@ def batches(questions: list[dict[str, Any]], *, max_per_batch: int = 20) -> list
     return out
 
 
+def batch_json_schema(questions: list[dict[str, Any]]) -> dict[str, Any]:
+    """Build a strict JSON Schema for a question batch (used by llama.cpp grammar-constrained
+    decoding via ``response_format={"type": "json_object", "schema": ...}``)."""
+    props: dict[str, Any] = {}
+    req: list[str] = []
+    for q in questions:
+        qid, t = q["question_id"], q["output_type"]
+        req.append(qid)
+        if t == "binary":
+            props[qid] = {
+                "type": "object",
+                "properties": {"p": {"type": "number", "minimum": 0.0, "maximum": 1.0}},
+                "required": ["p"],
+                "additionalProperties": False,
+            }
+        elif t == "categorical":
+            cats = list(q["categories"])
+            props[qid] = {
+                "type": "object",
+                "properties": {c: {"type": "number", "minimum": 0.0, "maximum": 1.0} for c in cats},
+                "required": cats,
+                "additionalProperties": False,
+            }
+        else:
+            lvs = [str(x) for x in q["quantile_levels"]]
+            num_schema: dict[str, Any] = {"type": "number"}
+            if q.get("bounds"):
+                num_schema["minimum"] = q["bounds"][0]
+                num_schema["maximum"] = q["bounds"][1]
+            props[qid] = {
+                "type": "object",
+                "properties": {lv: dict(num_schema) for lv in lvs},
+                "required": lvs,
+                "additionalProperties": False,
+            }
+    return {
+        "type": "object",
+        "properties": props,
+        "required": req,
+        "additionalProperties": False,
+    }
+
+
+def filter_packet_for_batch(packet_md: str, questions: list[dict[str, Any]], *,
+                            max_rows_per_table: int = 8) -> str:
+    """Slice ``packet.md`` so a batch only receives its relevant ``### <key>`` tables (plus
+    national/family overview tables, markets, and headlines) and cap table rows."""
+    qids = {q["question_id"] for q in questions}
+    fams = {q.get("family", "") for q in questions}
+    always_keep = {"house", "senate", "national", "overview", *fams, *qids}
+
+    lines_out: list[str] = []
+    in_polls = False
+    keep_sub = True
+    table_rows = 0
+
+    for line in packet_md.splitlines():
+        if line.startswith("## "):
+            in_polls = line.startswith(("## Polls", "## Reference"))
+            keep_sub = True
+            table_rows = 0
+            lines_out.append(line)
+            continue
+        if in_polls and line.startswith("### "):
+            key = line[4:].strip()
+            keep_sub = (key in always_keep) or any(
+                key.startswith(f"{fam}-") and key in qids for fam in fams
+            )
+            table_rows = 0
+            if keep_sub:
+                lines_out.append(line)
+            continue
+        if not keep_sub:
+            continue
+        if line.lstrip().startswith("|"):
+            table_rows += 1
+            # Keep header row + optional separator + up to max_rows_per_table data rows
+            if table_rows <= max_rows_per_table + 1:
+                lines_out.append(line)
+        else:
+            table_rows = 0
+            lines_out.append(line)
+    return "\n".join(lines_out) + ("\n" if packet_md.endswith("\n") else "")
+
+
 # --------------------------------------------------------------------------- parse
 
 _NUM = re.compile(r"^\s*([-+]?\d+(?:\.\d+)?)\s*(%?)\s*$")

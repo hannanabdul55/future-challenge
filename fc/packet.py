@@ -222,11 +222,14 @@ class WikipediaPolls:
 
     @classmethod
     def from_questions(cls, questions: list[dict[str, Any]], **kw) -> WikipediaPolls:
-        pages = dict(WIKI_PAGES)
+        has_midterm = any(q.get("family") in ("control", "seats", "senate", "governor") for q in questions)
+        pages = dict(WIKI_PAGES) if has_midterm or not questions else {}
         for q in questions:
-            title = race_page_title(q)
+            title = q.get("wikipedia_page") or race_page_title(q)
             if title:
                 pages[q["question_id"]] = title
+        if not pages:
+            pages = dict(WIKI_PAGES)
         return cls(pages=pages, **kw)
 
     def _select(self, key: str, tables: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -497,7 +500,11 @@ class GdeltHeadlines:
 def default_sources(markets_mapping: dict[str, dict[str, str]] | None = None,
                     questions: list[dict[str, Any]] | None = None) -> list[Source]:
     polls = WikipediaPolls.from_questions(questions) if questions else WikipediaPolls()
-    return [polls, PredictionMarkets(markets_mapping or {}), GdeltHeadlines()]
+    custom_queries = list(dict.fromkeys(
+        q["gdelt_query"] for q in (questions or []) if q.get("gdelt_query")
+    ))
+    gdelt = GdeltHeadlines(queries=custom_queries) if custom_queries else GdeltHeadlines()
+    return [polls, PredictionMarkets(markets_mapping or {}), gdelt]
 
 
 def build(day: date, out_dir: Path, *, sources: list[Source], http: Http = urllib_http,

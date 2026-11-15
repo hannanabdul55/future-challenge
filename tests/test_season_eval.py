@@ -65,3 +65,28 @@ def test_missing_core_questions_are_imputed(tmp_path: Path):
     day = scores[(scores.day == "2026-10-26") & (scores.question_id == "senate-ga")
                  & ~scores.imputed]
     assert row.score.iloc[0] >= day.score.quantile(0.75) - 1e-12
+
+
+def test_full_day_dropout_imputes_all_core_questions(tmp_path: Path):
+    """An admitted entry that produces 0 rows on a day still gets all core questions imputed."""
+    from fc import season_eval
+    demo_season.main(tmp_path, 2)
+    f = tmp_path / "model-output" / "acme-small" / f"{Q.SEASON}-2026-10-27.csv"
+    f.unlink()
+    season_eval.run(tmp_path, Q.SEASON, n_boot=10, min_days=2)
+    scores = pd.read_csv(tmp_path / "eval" / "out" / Q.SEASON / "scores.csv")
+    d2 = scores[(scores.model_id == "acme-small") & (scores.day == "2026-10-27")]
+    assert len(d2) == 75
+    assert d2.imputed.all()
+
+
+def test_unanchored_entry_refused_unless_allow_unanchored(tmp_path: Path):
+    """Without a confirmed Bitcoin anchor on the freeze root, official scoring drops the entry."""
+    from fc import season_eval
+    demo_season.main(tmp_path, 2)
+    # Remove the anchor file for entry index 2 (zed-noisy)
+    (tmp_path / "rounds" / Q.SEASON / "season" / "roots" / "2.anchor.json").unlink()
+    board_strict = season_eval.run(tmp_path, Q.SEASON, n_boot=10, min_days=2, allow_unanchored=False)
+    assert "zed-noisy" not in board_strict["entries"]
+    board_dev = season_eval.run(tmp_path, Q.SEASON, n_boot=10, min_days=2, allow_unanchored=True)
+    assert "zed-noisy" in board_dev["entries"]

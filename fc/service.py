@@ -177,7 +177,124 @@ def publish_root(round_dir: str | Path, commits: list[str], hub_sk, *,
     doc.hub_signature = ""
     doc.hub_signature = C.sign(hub_sk, ROOT_DOMAIN_SEP + doc.payload())
     _write_json(path, asdict(doc))
+
+    all_roots = read_roots(round_dir)
+    indices = [r["window_index"] for r in all_roots]
+    gaps = [w for w in range(indices[-1] + 1) if w not in set(indices)] if indices else []
+    _write_json(
+        round_dir / "roots" / "cadence.json",
+        {
+            "schema_version": C.SCHEMA_VERSION,
+            "round_id": doc.round_id,
+            "window_count": len(all_roots),
+            "gaps": gaps,
+        },
+    )
     return doc
+
+
+def upgrade_pending_anchors(round_dir: str | Path, *, hub_sk=None,
+                            ots_parser=None) -> int:
+    """Sweep published roots in `round_dir`; promote `pending-calendar` to `bitcoin`
+    only when the detached OTS attestation confirms a Bitcoin block height."""
+    import hashlib
+
+    round_dir = Path(round_dir)
+    roots_dir = round_dir / "roots"
+    if not roots_dir.exists():
+        return 0
+    ots_parser = ots_parser or A.parse_detached_timestamp
+    upgraded = 0
+    for doc in read_roots(round_dir):
+        if doc.get("anchor_status") != A.PENDING_CALENDAR:
+            continue
+        w = doc["window_index"]
+        root_file = roots_dir / f"{w}.json"
+        digest = hashlib.sha256(root_file.read_bytes()).hexdigest()
+        ots_file = Path(doc["ots_proof"]) if doc.get("ots_proof") else roots_dir / f"{w}.json.ots"
+        ots_bytes = ots_file.read_bytes() if ots_file.exists() else b""
+        try:
+            att = ots_parser(ots_bytes, digest)
+        except Exception:  # noqa: BLE001, S112
+            continue
+        if att.confirmed:
+            doc["anchor_status"] = A.BITCOIN
+            if hub_sk is not None:
+                unsigned = {k: v for k, v in doc.items() if k != "hub_signature"}
+                doc["hub_signature"] = C.sign(hub_sk, ROOT_DOMAIN_SEP + C.canonical_json(unsigned))
+            _write_json(root_file, doc)
+            _write_json(
+                roots_dir / f"{w}.anchor.json",
+                {
+                    "schema_version": C.SCHEMA_VERSION,
+                    "status": A.BITCOIN,
+                    "bitcoin_block_height": att.bitcoin_block_height,
+                    "digest": digest,
+                    "calendar_uris": att.calendar_uris,
+                    "rekor": doc.get("rekor") or {},
+                },
+            )
+            upgraded += 1
+    return upgraded
+
+
+def record_reveal(round_dir: str | Path, model_id: str, submission: bytes,
+                  rationale: bytes, nonce: bytes, *,
+                  now: datetime | None = None) -> dict:
+    """Record a participant's reveal attempt in `reveals.json`."""
+    now = now or datetime.now(UTC)
+    round_dir = Path(round_dir)
+    reveals_path = round_dir / "reveals.json"
+    existing = json.loads(reveals_path.read_text())["reveals"] if reveals_path.exists() else []
+    rec = {
+        "model_id": model_id,
+        "revealed_commit": C.commitment(submission, rationale, nonce),
+        "nonce": nonce.hex(),
+        "received": C.iso_z(now),
+    }
+    existing = [r for r in existing if r["model_id"] != model_id]
+    existing.append(rec)
+    _write_json(reveals_path, {"schema_version": C.SCHEMA_VERSION, "reveals": existing})
+    return rec
+
+
+def close_reveals(round_dir: str | Path, *, now: datetime | None = None) -> dict:
+    """Partition every accepted commitment in `round_dir` into `matched`, `invalid`,
+    or `missing`, and write `reveal_report.json`."""
+    now = now or datetime.now(UTC)
+    round_dir = Path(round_dir)
+    t_reveal = deadline(load_manifest(round_dir), "T_reveal")
+    accepted = [e for e in read_ledger(round_dir) if e["outcome"] == ACCEPTED]
+    reveals_path = round_dir / "reveals.json"
+    reveals = (
+        {r["model_id"]: r for r in json.loads(reveals_path.read_text())["reveals"]}
+        if reveals_path.exists()
+        else {}
+    )
+    matched: list[str] = []
+    invalid: list[str] = []
+    missing: list[str] = []
+    for entry in accepted:
+        mid = entry["model_id"]
+        rev = reveals.get(mid)
+        if rev is None:
+            missing.append(mid)
+            continue
+        rev_time = datetime.fromisoformat(rev["received"])
+        if rev_time < t_reveal and secrets.compare_digest(rev["revealed_commit"], entry["commit"]):
+            matched.append(mid)
+        else:
+            invalid.append(mid)
+    report = {
+        "schema_version": C.SCHEMA_VERSION,
+        "round_id": load_manifest(round_dir)["round_id"],
+        "closed_at": C.iso_z(now),
+        "matched": matched,
+        "invalid": invalid,
+        "missing": missing,
+    }
+    _write_json(round_dir / "reveal_report.json", report)
+    return report
 
 
 def submit_commitment(req: C.CommitRequest, team_pk, hub_sk, round_dir: str | Path, *,
@@ -260,17 +377,28 @@ def root_for(round_dir: str | Path, root_hex: str) -> dict | None:
 # there is nothing that can drift between them.
 
 
-def load_team_key(model_id: str, metadata_dir: str | Path):
+def load_team_key(model_id: str, metadata_dir: str | Path, *,
+                  round_dir: str | Path | None = None,
+                  runner_pub_path: str | Path | None = None):
     """Resolve a team's Ed25519 public key from its registered entry metadata.
 
     The key comes from `model-metadata/<model_id>.yml` and nowhere else — never
     from the submitted request — so a request cannot nominate the key that will
-    be used to validate it.
+    be used to validate it. For hub-run Tier S entries on daily rounds, the hub
+    runner's public key (`runner_pub_path`) is authorized to sign daily output
+    commitments on the entry's behalf.
     """
     path = Path(metadata_dir) / f"{model_id}.yml"
     if not path.exists():
         raise ValueError(f"no registered entry metadata for model_id {model_id!r}")
     meta = yaml.safe_load(path.read_text()) or {}
+    if (
+        runner_pub_path is not None
+        and meta.get("tier") == "S"
+        and round_dir is not None
+        and load_manifest(round_dir).get("kind") == "daily"
+    ):
+        return C.load_public(Path(runner_pub_path).read_bytes())
     pem = meta.get("public_key_pem")
     if not pem:
         raise ValueError(f"entry {model_id!r} has no public_key_pem registered")
@@ -299,16 +427,20 @@ def _validated_request(payload: dict) -> C.CommitRequest:
 
 def submit_from_mapping(payload: dict, hub_sk, round_dir: str | Path, *,
                         metadata_dir: str | Path, now: datetime | None = None,
-                        anchor: A.Anchor | None = None) -> tuple[C.Receipt | None, str]:
+                        anchor: A.Anchor | None = None,
+                        runner_pub_path: str | Path | None = None) -> tuple[C.Receipt | None, str]:
     """API-shaped front end: parse a mapping, then delegate."""
     req = _validated_request(payload)
-    team_pk = load_team_key(req.model_id, metadata_dir)
+    team_pk = load_team_key(
+        req.model_id, metadata_dir, round_dir=round_dir, runner_pub_path=runner_pub_path
+    )
     return submit_commitment(req, team_pk, hub_sk, round_dir, now=now, anchor=anchor)
 
 
 def submit_from_sidecar_file(path: str | Path, hub_sk, round_dir: str | Path, *,
                              metadata_dir: str | Path, now: datetime | None = None,
-                             anchor: A.Anchor | None = None) -> tuple[C.Receipt | None, str]:
+                             anchor: A.Anchor | None = None,
+                             runner_pub_path: str | Path | None = None) -> tuple[C.Receipt | None, str]:
     """PR-path front end: read the participant's sidecar file, then delegate."""
     path = Path(path)
     if not path.exists():
@@ -318,7 +450,8 @@ def submit_from_sidecar_file(path: str | Path, hub_sk, round_dir: str | Path, *,
         raise ValueError(f"sidecar exceeds {MAX_SIDECAR_BYTES} bytes: {size}")
     payload = json.loads(path.read_text())
     receipt, outcome = submit_from_mapping(
-        payload, hub_sk, round_dir, metadata_dir=metadata_dir, now=now, anchor=anchor
+        payload, hub_sk, round_dir, metadata_dir=metadata_dir, now=now, anchor=anchor,
+        runner_pub_path=runner_pub_path,
     )
     if receipt is not None:
         # Write the hub receipt back into the participant's sidecar, preserving

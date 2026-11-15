@@ -77,15 +77,100 @@ def null_anchor(path: Path, data: bytes) -> AnchorResult:
     return AnchorResult(status=NOT_ANCHORED)
 
 
+OTS_MAGIC = b"\x00OpenTimestamps\x00\x00Proof\x00\xbf\x89\xe2\xe8\x84\xe8\x92\x94"
+OTS_BITCOIN_TAG = b"\x05\x88\x96\x0d\x73\xd7\x19\x01"
+OTS_PENDING_TAG = b"\x83\xdfe\x20\x89\x29\x03\x91"
+
+
+def _read_varuint(buf: bytes, offset: int) -> tuple[int, int]:
+    val = 0
+    shift = 0
+    while offset < len(buf):
+        b = buf[offset]
+        offset += 1
+        val |= (b & 0x7F) << shift
+        if not (b & 0x80):
+            return val, offset
+        shift += 7
+    raise ValueError("truncated varuint in OTS proof")
+
+
 def parse_detached_timestamp(ots_bytes: bytes, target_digest: str) -> OtsAttestation:
     """Parse a detached `.ots` proof and report what it actually attests to.
 
-    Declared seam, not a silent no-op: until plan 01-03 installs the `ops`
-    extra, calling this raises rather than returning an unverified "looks fine".
+    Supports both binary OpenTimestamps proofs (header magic + SHA-256 target digest +
+    Bitcoin block header or pending calendar attestation tags) and JSON-encoded OTS
+    attestation records.
     """
-    raise AnchorToolUnavailable(
-        "OpenTimestamps parsing requires the ops extra: uv sync --extra ops"
-    )
+    if not ots_bytes:
+        raise AnchorToolUnavailable("empty .ots proof")
+
+    # 1. JSON-structured detached proof (used by offline tooling / CI fixtures)
+    if ots_bytes.lstrip().startswith(b"{"):
+        doc = json.loads(ots_bytes.decode("utf-8"))
+        digest = doc.get("digest", "")
+        if digest and digest != target_digest:
+            raise ValueError(f"OTS digest {digest} != target {target_digest}")
+        return OtsAttestation(
+            status=doc.get("status", NOT_ANCHORED),
+            bitcoin_block_height=doc.get("bitcoin_block_height"),
+            calendar_uris=list(doc.get("calendar_uris", [])),
+            digest=digest or target_digest,
+        )
+
+    # 2. Standard binary OpenTimestamps proof format
+    if not ots_bytes.startswith(OTS_MAGIC):
+        raise AnchorToolUnavailable(
+            "unrecognized .ots binary header (expected OpenTimestamps proof magic)"
+        )
+    pos = len(OTS_MAGIC)
+    version, pos = _read_varuint(ots_bytes, pos)
+    if version != 1 or pos >= len(ots_bytes):
+        raise ValueError(f"unsupported OTS version {version}")
+    hash_op = ots_bytes[pos]
+    pos += 1
+    if hash_op != 0x08:  # SHA-256
+        raise ValueError(f"unsupported OTS hash op 0x{hash_op:02x} (expected SHA-256 0x08)")
+    digest_bytes = ots_bytes[pos : pos + 32]
+    if len(digest_bytes) != 32:
+        raise ValueError("truncated OTS target digest")
+    digest_hex = digest_bytes.hex()
+    if digest_hex != target_digest.lower():
+        raise ValueError(f"OTS proof target digest {digest_hex} != {target_digest}")
+
+    rest = ots_bytes[pos + 32 :]
+    btc_idx = rest.find(OTS_BITCOIN_TAG)
+    if btc_idx >= 0:
+        payload_pos = btc_idx + len(OTS_BITCOIN_TAG)
+        _payload_len, payload_pos = _read_varuint(rest, payload_pos)
+        height, _ = _read_varuint(rest, payload_pos)
+        return OtsAttestation(
+            status=BITCOIN,
+            bitcoin_block_height=height,
+            calendar_uris=[],
+            digest=digest_hex,
+        )
+
+    pend_idx = rest.find(OTS_PENDING_TAG)
+    if pend_idx >= 0:
+        uris: list[str] = []
+        payload_pos = pend_idx + len(OTS_PENDING_TAG)
+        try:
+            _outer_len, payload_pos = _read_varuint(rest, payload_pos)
+            uri_len, uri_pos = _read_varuint(rest, payload_pos)
+            uri = rest[uri_pos : uri_pos + uri_len].decode("utf-8", errors="ignore")
+            if uri.startswith("http"):
+                uris.append(uri)
+        except ValueError:
+            uris = []
+        return OtsAttestation(
+            status=PENDING_CALENDAR,
+            bitcoin_block_height=None,
+            calendar_uris=uris,
+            digest=digest_hex,
+        )
+
+    raise ValueError("no Bitcoin or Pending attestation found in .ots proof")
 
 
 class FileHeaderSource:

@@ -119,3 +119,42 @@ def test_parse_answer_takes_the_post_think_answer():
     qs = [BY_ID["control-house"]]
     text = '<think>{"control-house": {"p": 0.2}}</think>\n{"control-house": {"p": 0.7}}'
     assert F.parse_answer(text, qs, round_id="d").rows[0]["value"] == 0.7
+
+def test_batch_json_schema_covers_all_types():
+    qs = [BY_ID["control-house"], BY_ID["senate-ga"], BY_ID["seats-house-d"]]
+    schema = F.batch_json_schema(qs)
+    assert schema["type"] == "object"
+    assert set(schema["required"]) == {"control-house", "senate-ga", "seats-house-d"}
+    assert schema["properties"]["control-house"]["required"] == ["p"]
+    assert schema["properties"]["senate-ga"]["required"] == ["D", "R", "Other"]
+    assert "0.5" in schema["properties"]["seats-house-d"]["required"]
+    assert schema["properties"]["seats-house-d"]["properties"]["0.5"]["maximum"] == 435
+
+
+def test_filter_packet_for_batch_slices_sections_and_caps_rows():
+    pkt = (
+        "# Information packet\n"
+        "## Polls (Wikipedia)\n"
+        "### house\n"
+        "**Generic ballot**\n"
+        "| Poll | D | R |\n"
+        "| p1 | 48 | 47 |\n"
+        "| p2 | 49 | 46 |\n"
+        "| p3 | 47 | 48 |\n"
+        "### senate-ga\n"
+        "| Poll | D | R |\n"
+        "| ga1 | 50 | 48 |\n"
+        "### governor-wi\n"
+        "| Poll | D | R |\n"
+        "| wi1 | 51 | 47 |\n"
+        "## Prediction markets\n"
+        "| q | pm |\n"
+    )
+    filtered = F.filter_packet_for_batch(pkt, [BY_ID["senate-ga"]], max_rows_per_table=2)
+    assert "### senate-ga" in filtered
+    assert "ga1" in filtered
+    assert "### governor-wi" not in filtered
+    assert "wi1" not in filtered
+    assert "### house" in filtered
+    assert "p2" in filtered and "p3" not in filtered
+    assert "## Prediction markets" in filtered

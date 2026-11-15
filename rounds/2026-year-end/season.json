@@ -1,0 +1,27 @@
+{
+  "schema": "fc-season/2026.10",
+  "season": "2026-year-end",
+  "rules_version": "2026.10",
+  "questions_path": "questions/2026-year-end/questions.json",
+  "questions_sha256": "89e4690d06b6732554c3627510117349d5d35cffac2ab44f514916c02ebb461d",
+  "questions_hash": "9d86548e314cb4d985d6564ba26592bb21b88c37cbe0144e2d5d70a2a15904a1",
+  "question_count": 12,
+  "schedule": {
+    "open_utc": "00:00",
+    "commit_utc": "12:00",
+    "reveal_utc": "18:00"
+  },
+  "first_day": "2026-11-10",
+  "last_day": "2026-12-31",
+  "last_admission": "2026-12-31T12:00:00Z",
+  "T_final": {
+    "macro": "2027-01-06",
+    "politics": "2027-01-06",
+    "tech": "2027-01-06"
+  },
+  "runner_image_digest": null,
+  "evaluator_image_digest": null,
+  "min_scored_days_for_headline": 7,
+  "tier_s_sandbox": "docker --network none, read-only mounts, wall-clock quota; no gVisor (DESIGN.md \u00a73.4)",
+  "notes": ""
+}

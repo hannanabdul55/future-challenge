@@ -10,7 +10,6 @@ from __future__ import annotations
 import json
 from datetime import UTC, datetime
 
-import pytest
 from cryptography.hazmat.primitives import serialization
 
 from fc import commit as C
@@ -271,7 +270,6 @@ def test_late_bad_signature_recorded_as_bad_signature(fixture_round):
     assert entry["reason"] == "bad_signature"
 
 
-@pytest.mark.xfail(strict=True, reason="Wave 0 scaffold — implemented in plan 01-05")
 def test_reveal_close_report(fixture_round):
     """COMMIT-05 / ROUND-03: every commitment lands in exactly one of three lists."""
     from fc import service as S
@@ -305,3 +303,35 @@ def test_reveal_close_report(fixture_round):
     assert len(report["matched"]) + len(report["invalid"]) + len(report["missing"]) == len(
         accepted
     )
+
+
+def test_tier_s_daily_commit_with_runner_key(fixture_round):
+    """External Tier S entries do not share their private key with the hub; the runner key signs
+    their daily forecast commitments on daily rounds."""
+    from fc import service as S
+
+    fr = fixture_round
+    # Mark the round as a daily round and register a Tier S entry with no team private key held.
+    manifest = dict(fr.manifest, kind="daily")
+    (fr.round_dir / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    meta_dir = fr.root / "model-metadata"
+    meta_dir.mkdir(parents=True, exist_ok=True)
+    (meta_dir / "ext-tier-s.yml").write_text("model_id: ext-tier-s\ntier: S\nprimary: true\n")
+
+    runner_priv, runner_pub = C.generate_keypair()
+    runner_pub_path = fr.root / "runner_pub.pem"
+    runner_pub_path.write_bytes(runner_pub)
+
+    commit_hex = C.commitment(b"daily-forecast-csv", b"transcript-jsonl", C.new_nonce())
+    req = C.team_sign_request(C.load_private(runner_priv), fr.round_id, "ext-tier-s", commit_hex)
+    sidecar = fr.root / "sidecar" / "ext-tier-s" / f"{fr.round_id}.json"
+    sidecar.parent.mkdir(parents=True, exist_ok=True)
+    sidecar.write_text(json.dumps(_payload(req), indent=2) + "\n")
+
+    receipt, outcome = S.submit_from_sidecar_file(
+        sidecar, fr.hub_sk, fr.round_dir, metadata_dir=meta_dir,
+        now=BEFORE_COMMIT, runner_pub_path=runner_pub_path,
+    )
+    assert outcome == "accepted"
+    assert receipt is not None
+    assert receipt.model_id == "ext-tier-s"

@@ -20,7 +20,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  SEASON: 2026-us-midterms
+  SEASON: 2026-year-end
 
 jobs:
   open:

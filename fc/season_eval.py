@@ -30,8 +30,11 @@ import numpy as np
 import pandas as pd
 import yaml
 
+from . import anchor as A
 from . import baselines as B
+from . import commit as C
 from . import questions as Q
+from . import service as S
 from .eval import bootstrap_relative_skill, ensemble_mean_probs, score_frame
 
 TIERS = ("S", "A", "B", "H")
@@ -48,9 +51,35 @@ def load_entries(root: Path) -> dict[str, dict[str, Any]]:
     return out
 
 
-def freeze_time(entry: dict[str, Any], root: Path) -> datetime | None:
-    """Anchor time if recorded on the sidecar's root, else the hub receipt time, else None.
-    (Receipt time is hub-asserted; the board labels it so until the anchor lands.)"""
+def _resolve_freeze_roots_dir(entry: dict[str, Any], sidecar_path: Path, root: Path) -> Path | None:
+    srid = (entry.get("freeze") or {}).get("season_round_id") or ""
+    if srid.endswith("-season"):
+        season = srid[: -len("-season")]
+        cand = root / "rounds" / season / "season" / "roots"
+        if cand.is_dir():
+            return cand
+    if srid:
+        cand = root / "rounds" / srid / "roots"
+        if cand.is_dir():
+            return cand
+    for p in (root / "rounds").glob("*/season/roots"):
+        if p.is_dir():
+            return p
+    cand = sidecar_path.parent / "roots"
+    return cand if cand.is_dir() else None
+
+
+def freeze_time(entry: dict[str, Any], root: Path, *,
+                allow_unanchored: bool = False) -> datetime | None:
+    """Resolve the verified freeze timestamp for an entry.
+
+    When `allow_unanchored=False` (the default for official scoring), requires a
+    confirmed Bitcoin anchor (`.anchor.json` or `.json.ots` + `bitcoin-headers.json`)
+    covering the entry's Merkle root, and returns `max(anchor_block_time, server_time)`
+    so neither the receipt nor the external anchor can post-date a round's `T_open`.
+    When `allow_unanchored=True` (for local/dev runs without Bitcoin anchoring), falls
+    back to `hub_receipt.server_time`.
+    """
     sc = (entry.get("freeze") or {}).get("sidecar")
     if not sc:
         return None
@@ -58,8 +87,50 @@ def freeze_time(entry: dict[str, Any], root: Path) -> datetime | None:
     if not p.is_file():
         return None
     rec = json.loads(p.read_text())
-    t = (rec.get("hub_receipt") or {}).get("server_time")
-    return datetime.fromisoformat(t) if t else None
+    receipt = rec.get("hub_receipt") or {}
+    t_str = receipt.get("server_time")
+    if not t_str:
+        return None
+    server_time = datetime.fromisoformat(t_str)
+
+    roots_dir = _resolve_freeze_roots_dir(entry, p, root)
+    if roots_dir is not None:
+        root_hex = receipt.get("merkle_root", "")
+        proof = [tuple(x) for x in receipt.get("merkle_path", [])]
+        if proof and not C.merkle_verify(rec.get("commit", ""), proof, root_hex):
+            return None
+        w = rec.get("window_index")
+        if w is None and root_hex:
+            rdoc = S.root_for(roots_dir.parent, root_hex)
+            w = rdoc["window_index"] if rdoc else None
+        if w is not None:
+            anchor_file = roots_dir / f"{w}.anchor.json"
+            ots_file = roots_dir / f"{w}.json.ots"
+            root_file = roots_dir / f"{w}.json"
+            height: int | None = None
+            status = A.NOT_ANCHORED
+            if ots_file.is_file() and root_file.is_file():
+                import hashlib
+                digest = hashlib.sha256(root_file.read_bytes()).hexdigest()
+                try:
+                    att = A.parse_detached_timestamp(ots_file.read_bytes(), digest)
+                    status, height = att.status, att.bitcoin_block_height
+                except Exception:  # noqa: BLE001
+                    status, height = A.NOT_ANCHORED, None
+            elif anchor_file.is_file() and root_file.is_file():
+                import hashlib
+                arec = json.loads(anchor_file.read_text())
+                digest = hashlib.sha256(root_file.read_bytes()).hexdigest()
+                if arec.get("digest") == digest:
+                    status = arec.get("status", A.NOT_ANCHORED)
+                    height = arec.get("bitcoin_block_height")
+            if status == A.BITCOIN and height is not None:
+                headers = A.FileHeaderSource(roots_dir / "bitcoin-headers.json")
+                block_time = headers.block_time(int(height))
+                if block_time is not None:
+                    return max(block_time, server_time)
+
+    return server_time if allow_unanchored else None
 
 
 def load_days(root: Path, season: str) -> dict[str, dict[str, Any]]:
@@ -92,8 +163,28 @@ def load_forecasts(root: Path, season: str, days: dict[str, Any],
     return out
 
 
+def admitted_schedule(entries: dict[str, Any], days: dict[str, Any], root: Path, *,
+                      allow_unanchored: bool = False) -> dict[str, list[str]]:
+    """Return `{model_id: [day, ...]}` for every registered entry on every round opening after
+    its verified freeze time."""
+    out: dict[str, list[str]] = {}
+    for m, doc in entries.items():
+        if m in BASELINE_IDS:
+            continue
+        ft = freeze_time(doc, root, allow_unanchored=allow_unanchored)
+        if ft is None:
+            continue
+        ok_days = [
+            d for d, dm in sorted(days.items())
+            if ft < datetime.fromisoformat(dm["T_open"])
+        ]
+        if ok_days:
+            out[m] = ok_days
+    return out
+
+
 def admitted(forecasts: pd.DataFrame, entries: dict[str, Any], days: dict[str, Any],
-             root: Path) -> pd.DataFrame:
+             root: Path, *, allow_unanchored: bool = False) -> pd.DataFrame:
     """FREEZE-05: drop (entry, day) pairs where the freeze did not precede T_open."""
     keep = []
     cache: dict[str, datetime | None] = {}
@@ -102,7 +193,10 @@ def admitted(forecasts: pd.DataFrame, entries: dict[str, Any], days: dict[str, A
             keep.append(g)
             continue
         if m not in cache:
-            cache[m] = freeze_time(entries.get(m, {}), root) if m in entries else None
+            cache[m] = (
+                freeze_time(entries.get(m, {}), root, allow_unanchored=allow_unanchored)
+                if m in entries else None
+            )
         ft = cache[m]
         t_open = datetime.fromisoformat(days[d]["T_open"])
         if ft is not None and ft < t_open:
@@ -177,15 +271,28 @@ def market_baseline(questions: list[dict], round_id: str,
 
 
 def impute_missing(scores: pd.DataFrame, forecasts: pd.DataFrame, questions: list[dict],
-                   truth: pd.DataFrame) -> pd.DataFrame:
-    """SCORE-05: for every (entry, day) with a resolved core question it did not answer,
-    impute the worse of the baseline score and the 75th percentile of submitted scores."""
+                   truth: pd.DataFrame, *,
+                   admitted_days: dict[str, list[str]] | None = None,
+                   days: dict[str, dict[str, Any]] | None = None) -> pd.DataFrame:
+    """SCORE-05: for every admitted (entry, day) — including full-day dropouts with 0 submitted
+    rows — impute every resolved core question it did not answer using the worse of the baseline
+    score and the 75th percentile of submitted scores."""
     core = {q["question_id"] for q in questions if q.get("core", True)}
     resolved = set(truth[truth["status"] != "void"]["question_id"])
     out = scores.copy()
     out["imputed"] = False
     extra = []
+
+    target_pairs: dict[tuple[str, str], str] = {}
     for (m, d), g in forecasts.groupby(["model_id", "day"]):
+        target_pairs[(str(m), str(d))] = str(g["round_id"].iloc[0])
+    if admitted_days and days:
+        for m, ds in admitted_days.items():
+            for d in ds:
+                if d in days:
+                    target_pairs.setdefault((m, d), str(days[d]["round_id"]))
+
+    for (m, d), round_id in sorted(target_pairs.items()):
         answered = set(scores[(scores.model_id == m) & (scores.day == d)]["question_id"])
         for qid in sorted((core & resolved) - answered):
             day_scores = scores[(scores.day == d) & (scores.question_id == qid)]
@@ -194,7 +301,7 @@ def impute_missing(scores: pd.DataFrame, forecasts: pd.DataFrame, questions: lis
             base = day_scores[day_scores.model_id == BASELINE]["score"]
             q75 = float(day_scores["score"].quantile(0.75))
             val = max(q75, float(base.iloc[0])) if len(base) else q75
-            extra.append({"model_id": m, "day": d, "round_id": g["round_id"].iloc[0],
+            extra.append({"model_id": m, "day": d, "round_id": round_id,
                           "question_id": qid, "output_type": day_scores["output_type"].iloc[0],
                           "score": val, "imputed": True})
     if extra:
@@ -202,18 +309,67 @@ def impute_missing(scores: pd.DataFrame, forecasts: pd.DataFrame, questions: lis
     return out
 
 
-def trajectories(forecasts: pd.DataFrame) -> pd.DataFrame:
+def headline_specs(questions: list[dict] | None) -> list[dict[str, Any]]:
+    """Return trajectory chart definitions from `headline: true` questions, plus the legacy
+    Season 1 midterm keys when present."""
+    specs: list[dict[str, Any]] = []
+    if not questions:
+        return specs
+    by_id = {q["question_id"]: q for q in questions}
+    legacy = [
+        ("control-house", "p_house_d", "p", "P(Democratic House majority)", [0.0, 1.0]),
+        ("control-senate", "p_senate_d", "p", "P(Democratic caucus ≥ 51 Senate seats)", [0.0, 1.0]),
+        ("seats-house-d", "seats_house_d_median", "0.5", "Median Democratic House seats", [180.0, 260.0]),
+        ("seats-senate-dcaucus", "seats_senate_dcaucus_median", "0.5",
+         "Median Democratic-caucus Senate seats", [40.0, 56.0]),
+    ]
+    seen_qids: set[str] = set()
+    for qid, col, tid, label, ylim in legacy:
+        if qid in by_id:
+            specs.append({"question_id": qid, "key": col, "output_type_id": tid,
+                          "label": label, "ylim": ylim})
+            seen_qids.add(qid)
+    for q in questions:
+        qid = q["question_id"]
+        if not q.get("headline") or qid in seen_qids:
+            continue
+        t = q["output_type"]
+        if t == "binary":
+            specs.append({"question_id": qid, "key": qid, "output_type_id": "p",
+                          "label": q.get("headline_label") or q["statement"], "ylim": [0.0, 1.0]})
+        elif t == "quantile":
+            b = q.get("bounds") or [0.0, 100.0]
+            specs.append({"question_id": qid, "key": qid, "output_type_id": "0.5",
+                          "label": q.get("headline_label") or f"Median: {q['statement']}",
+                          "ylim": [float(b[0]), float(b[1])]})
+        elif t == "categorical" and q.get("categories"):
+            cat0 = str((q.get("baseline") or {}).get("fav") or q["categories"][0])
+            specs.append({"question_id": qid, "key": qid, "output_type_id": cat0,
+                          "label": q.get("headline_label") or f"P({cat0}): {q['statement']}",
+                          "ylim": [0.0, 1.0]})
+    return specs
+
+
+def trajectories(forecasts: pd.DataFrame,
+                 questions: list[dict] | None = None) -> pd.DataFrame:
     rows = []
+    specs = headline_specs(questions)
+
     def val(g, qid, tid):
         s = g[(g.question_id == qid) & (g.output_type_id.astype(str) == tid)]["value"]
         return float(s.iloc[0]) if len(s) else np.nan
 
     for (m, d), g in forecasts.groupby(["model_id", "day"]):
-        rows.append({"model_id": m, "day": d,
-                     "p_house_d": val(g, "control-house", "p"),
-                     "p_senate_d": val(g, "control-senate", "p"),
-                     "seats_house_d_median": val(g, "seats-house-d", "0.5"),
-                     "seats_senate_dcaucus_median": val(g, "seats-senate-dcaucus", "0.5")})
+        row: dict[str, Any] = {
+            "model_id": m, "day": d,
+            "p_house_d": val(g, "control-house", "p"),
+            "p_senate_d": val(g, "control-senate", "p"),
+            "seats_house_d_median": val(g, "seats-house-d", "0.5"),
+            "seats_senate_dcaucus_median": val(g, "seats-senate-dcaucus", "0.5"),
+        }
+        for sp in specs:
+            row[sp["key"]] = val(g, sp["question_id"], sp["output_type_id"])
+        rows.append(row)
     return pd.DataFrame(rows)
 
 
@@ -255,12 +411,14 @@ def calibration(forecasts: pd.DataFrame, truth: pd.DataFrame, bins: int = 5) -> 
 
 
 def run(root: Path, season: str, *, truth_path: Path | None = None, out_dir: Path | None = None,
-        n_boot: int = 200, min_days: int = 7, min_shared: int = 20) -> dict[str, Any]:
+        n_boot: int = 200, min_days: int = 7, min_shared: int = 20,
+        allow_unanchored: bool = False) -> dict[str, Any]:
     questions = Q.load_questions(root / "questions" / season / "questions.json")
     entries = load_entries(root)
     days = load_days(root, season)
+    adm_days = admitted_schedule(entries, days, root, allow_unanchored=allow_unanchored)
     fc = load_forecasts(root, season, days, entries)
-    fc = admitted(fc, entries, days, root)
+    fc = admitted(fc, entries, days, root, allow_unanchored=allow_unanchored)
     fc = add_baselines(fc, questions, days, root / "target-data" / "packets" / season)
     truth_path = truth_path or root / "target-data" / "truth" / season / "truth.csv"
     truth = pd.read_csv(truth_path) if truth_path.is_file() else pd.DataFrame(
@@ -272,7 +430,10 @@ def run(root: Path, season: str, *, truth_path: Path | None = None, out_dir: Pat
     sc = score_frame(fc, truth) if len(truth) else pd.DataFrame(
         columns=["round_id", "model_id", "question_id", "output_type", "score"])
     sc = sc.merge(fc[["round_id", "day"]].drop_duplicates(), on="round_id", how="left")
-    sc = impute_missing(sc, fc, questions, truth) if len(sc) else sc.assign(imputed=False)
+    sc = (
+        impute_missing(sc, fc, questions, truth, admitted_days=adm_days, days=days)
+        if len(sc) else sc.assign(imputed=False)
+    )
     sc["tier"] = sc["model_id"].map(lambda m: entries.get(m, {}).get("tier", BASELINE_IDS.get(m)))
 
     rel = []
@@ -301,7 +462,7 @@ def run(root: Path, season: str, *, truth_path: Path | None = None, out_dir: Pat
                                                       imputed=("imputed", "sum")).reset_index()
                   if len(sc) else pd.DataFrame(columns=["model_id", "day", "mean_score", "n",
                                                         "imputed"]))
-    traj = trajectories(fc)
+    traj = trajectories(fc, questions)
     cal = calibration(fc, truth) if len(truth) else pd.DataFrame(columns=["model_id"])
 
     fc.to_csv(out_dir / "forecasts.csv", index=False)
@@ -310,14 +471,17 @@ def run(root: Path, season: str, *, truth_path: Path | None = None, out_dir: Pat
     rel_df.to_csv(out_dir / "relative_skill.csv", index=False)
     traj.to_csv(out_dir / "trajectories.csv", index=False)
     cal.to_csv(out_dir / "calibration.csv", index=False)
+    all_models = sorted(set(fc["model_id"].unique()) | set(adm_days))
     board = {
         "season": season, "days": sorted(days), "n_questions": len(questions),
         "n_resolved": int(truth["question_id"].nunique()) if len(truth) else 0,
         "entries": {m: {"tier": entries.get(m, {}).get("tier", BASELINE_IDS.get(m)),
-                        "days": sorted(fc[fc.model_id == m]["day"].unique().tolist())}
-                    for m in sorted(fc["model_id"].unique())},
+                        "days": sorted(fc[fc.model_id == m]["day"].unique().tolist()
+                                       or adm_days.get(m, []))}
+                    for m in all_models},
         "relative_skill": json.loads(rel_df.to_json(orient="records")),
         "trajectories": json.loads(traj.to_json(orient="records")),
+        "headline_specs": headline_specs(questions),
         "calibration": json.loads(cal.to_json(orient="records")),
         "min_days_for_headline": min_days,
     }

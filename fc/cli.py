@@ -168,11 +168,19 @@ def _service_submit(a):
     from . import service
     hub_sk = C.load_private(C.file_bytes(a.hub_key))
     receipt, outcome = service.submit_from_sidecar_file(
-        a.sidecar, hub_sk, a.round_dir, metadata_dir=a.metadata_dir
+        a.sidecar, hub_sk, a.round_dir, metadata_dir=a.metadata_dir,
+        runner_pub_path=a.runner_pub,
     )
     # Print the outcome and the commitment only — never key material.
     print(f"{outcome} {receipt.commit if receipt else ''}".strip())
     sys.exit(0 if outcome == service.ACCEPTED else 1)
+
+
+def _service_close_reveals(a):
+    from . import service
+    rep = service.close_reveals(a.round_dir)
+    print(json.dumps(rep, indent=2))
+    sys.exit(0)
 
 
 def _entry_check(a):
@@ -194,8 +202,13 @@ def _entry_check(a):
 def _questions(a):
     from . import questions as Q
     if a.questions_cmd == "generate":
-        qs = Q.generate_midterms(Path(a.races))
-        rep = Q.validate_questions(qs, event_date=Q.EVENT_DATE)
+        if a.season == "2026-year-end":
+            qs = Q.generate_year_end()
+            ev_date = Q.YEAR_END_EVENT_DATE
+        else:
+            qs = Q.generate_midterms(Path(a.races))
+            ev_date = Q.EVENT_DATE
+        rep = Q.validate_questions(qs, event_date=ev_date)
         if not rep.ok:
             print(rep); sys.exit(1)
         h = Q.write_question_set(Path(a.out), qs, season=a.season)
@@ -220,7 +233,7 @@ def _season_score(a):
     from . import season_eval
     b = season_eval.run(Path(a.root), a.season, truth_path=Path(a.truth) if a.truth else None,
                         out_dir=Path(a.out) if a.out else None, n_boot=a.n_boot,
-                        min_days=a.min_days)
+                        min_days=a.min_days, allow_unanchored=a.allow_unanchored)
     rs = pd.DataFrame(b["relative_skill"])
     print(rs.to_string(index=False) if len(rs) else "no rankable entries yet")
 
@@ -340,7 +353,11 @@ def main(argv=None):
     for n in ("--sidecar", "--round-dir", "--hub-key"):
         sub.add_argument(n, required=True)
     sub.add_argument("--metadata-dir", default="model-metadata")
+    sub.add_argument("--runner-pub")
     sub.set_defaults(fn=_service_submit)
+    cr = ss.add_parser("close-reveals")
+    cr.add_argument("--round-dir", required=True)
+    cr.set_defaults(fn=_service_close_reveals)
 
     s = sp.add_parser("entry")
     es = s.add_subparsers(dest="entry_cmd", required=True)
@@ -350,7 +367,7 @@ def main(argv=None):
 
     s = sp.add_parser("questions")
     qs = s.add_subparsers(dest="questions_cmd", required=True)
-    g = qs.add_parser("generate"); g.add_argument("--races", required=True)
+    g = qs.add_parser("generate"); g.add_argument("--races")
     g.add_argument("--out", required=True); g.add_argument("--season", default="2026-us-midterms")
     g.set_defaults(fn=_questions)
     v = qs.add_parser("validate"); v.add_argument("file"); v.add_argument("--event-date")
@@ -366,6 +383,7 @@ def main(argv=None):
     sc = ss.add_parser("score"); sc.add_argument("--season", required=True)
     sc.add_argument("--root", default="."); sc.add_argument("--truth"); sc.add_argument("--out")
     sc.add_argument("--n-boot", type=int, default=200); sc.add_argument("--min-days", type=int, default=7)
+    sc.add_argument("--allow-unanchored", action="store_true")
     sc.set_defaults(fn=_season_score)
     sb = ss.add_parser("board"); sb.add_argument("--season", required=True)
     sb.add_argument("--root", default="."); sb.add_argument("--out"); sb.set_defaults(fn=_season_board)

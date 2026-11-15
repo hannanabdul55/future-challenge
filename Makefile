@@ -27,17 +27,27 @@ manifest:
 lint:
 	uv run ruff check .
 
-# ---- Season 1 (2026 US midterms) -------------------------------------------------------
-SEASON ?= 2026-us-midterms
+# ---- Active Season (default: 2026-year-end; also supports 2026-us-midterms) ------------
+SEASON ?= 2026-year-end
 DAY ?= $(shell date -u +%F)
 
 questions:
-	uv run fc questions generate --races questions/$(SEASON)/races.csv --out questions/$(SEASON)/questions.json
-	uv run fc questions validate questions/$(SEASON)/questions.json --event-date 2026-11-03
+	@if [ "$(SEASON)" = "2026-year-end" ]; then \
+	  uv run fc questions generate --season $(SEASON) --out questions/$(SEASON)/questions.json && \
+	  uv run fc questions validate questions/$(SEASON)/questions.json --event-date 2026-12-31; \
+	else \
+	  uv run fc questions generate --races questions/$(SEASON)/races.csv --out questions/$(SEASON)/questions.json && \
+	  uv run fc questions validate questions/$(SEASON)/questions.json --event-date 2026-11-03; \
+	fi
 
 season: questions
-	uv run fc season init --season $(SEASON) --questions questions/$(SEASON)/questions.json \
-	  --first-day 2026-10-26 --last-day 2026-11-03 --last-admission 2026-11-03T12:00:00Z
+	@if [ "$(SEASON)" = "2026-year-end" ]; then \
+	  uv run fc season init --season $(SEASON) --questions questions/$(SEASON)/questions.json \
+	    --first-day 2026-11-10 --last-day 2026-12-31 --last-admission 2026-12-31T12:00:00Z; \
+	else \
+	  uv run fc season init --season $(SEASON) --questions questions/$(SEASON)/questions.json \
+	    --first-day 2026-10-26 --last-day 2026-11-03 --last-admission 2026-11-03T12:00:00Z; \
+	fi
 
 packet:
 	uv run fc packet build --date $(DAY) --out target-data/packets/$(SEASON)/$(DAY) --season $(SEASON) \

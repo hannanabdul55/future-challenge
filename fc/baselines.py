@@ -58,27 +58,38 @@ def season_baselines(questions: list[dict], round_id: str, *,
     rows: list[dict] = []
     for q in questions:
         qid, t = q["question_id"], q["output_type"]
+        bcfg = q.get("baseline") or {}
         if t == "binary":
             rows += _rows("fc-uniform", round_id, qid, t, [("p", 0.5)])
-            # Both chambers are Republican-held going in; persistence says they stay so.
-            rows += _rows("fc-baseline", round_id, qid, t, [("p", 1 - persistence_p)])
+            # Use declarative baseline.p when present; default to 1 - persistence_p for 2026-us-midterms.
+            base_p = float(bcfg.get("p", 1 - persistence_p))
+            rows += _rows("fc-baseline", round_id, qid, t, [("p", base_p)])
         elif t == "categorical":
             cats = q["categories"]
             rows += _rows("fc-uniform", round_id, qid, t, [(c, 1 / len(cats)) for c in cats])
-            fav = q.get("pres_2024") or q.get("incumbent_party") or cats[0]
-            other = (1 - persistence_p) / (len(cats) - 1)
-            rows += _rows("fc-baseline", round_id, qid, t,
-                          [(c, persistence_p if c == fav else other) for c in cats])
+            if isinstance(bcfg.get("probabilities"), dict):
+                probs = bcfg["probabilities"]
+                tot = sum(float(probs.get(c, 0.0)) for c in cats) or 1.0
+                rows += _rows("fc-baseline", round_id, qid, t,
+                              [(c, float(probs.get(c, 0.0)) / tot) for c in cats])
+            else:
+                fav = bcfg.get("fav") or q.get("pres_2024") or q.get("incumbent_party") or cats[0]
+                p_fav = float(bcfg.get("persistence_p", persistence_p))
+                other = (1 - p_fav) / (len(cats) - 1)
+                rows += _rows("fc-baseline", round_id, qid, t,
+                              [(c, p_fav if c == fav else other) for c in cats])
         else:
             levels = [float(x) for x in q["quantile_levels"]]
             lo, hi = q.get("bounds", [0, 1])
             rows += _rows("fc-uniform", round_id, qid, t,
                           [(str(lv), lo + (hi - lo) * lv) for lv in levels])
-            centre = {"seats-house-d": 214, "seats-senate-dcaucus": 47}.get(qid, (lo + hi) / 2)
-            spread = {"seats-house-d": 12, "seats-senate-dcaucus": 2.5}.get(qid, (hi - lo) / 8)
+            centre = float(bcfg.get("centre", {"seats-house-d": 214, "seats-senate-dcaucus": 47}.get(qid, (lo + hi) / 2)))
+            spread = float(bcfg.get("spread", {"seats-house-d": 12, "seats-senate-dcaucus": 2.5}.get(qid, (hi - lo) / 8)))
+            is_int = bcfg.get("integer", True)
             z = {0.025: -1.96, 0.1: -1.28, 0.25: -0.67, 0.4: -0.25, 0.5: 0.0, 0.6: 0.25,
                  0.75: 0.67, 0.9: 1.28, 0.975: 1.96}
-            vals = [min(max(round(centre + spread * z.get(lv, 0.0)), lo), hi) for lv in levels]
+            raw_vals = [centre + spread * z.get(lv, 0.0) for lv in levels]
+            vals = [min(max(round(v) if is_int else round(v, 4), lo), hi) for v in raw_vals]
             vals = list(np.maximum.accumulate(np.array(vals, dtype=float)))
             rows += _rows("fc-baseline", round_id, qid, t, list(zip(map(str, levels), vals)))
     return pd.DataFrame(rows)

@@ -1,0 +1,10 @@
+{
+  "round_id": "2026-year-end-season",
+  "kind": "freeze",
+  "rules_version": "2026.10",
+  "T_open": "2026-11-06T23:25:23Z",
+  "T_commit": "2026-12-31T12:00:00Z",
+  "T_reveal": "2026-12-31T12:00:00Z",
+  "season_manifest_sha256": "263178ce57bbee0d51a42048a51c6838da230ea568e67346c3c2cec0fdd522c8",
+  "notes": "Entries commit model identities here (rules 2026.10 \u00a72). An entry is scored on a daily round only if its anchor precedes that round's T_open."
+}

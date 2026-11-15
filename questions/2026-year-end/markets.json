@@ -1,0 +1,26 @@
+{
+  "macro-fomc-dec-2026": {
+    "polymarket_slug": "fed-interest-rates-december-2026",
+    "kalshi_ticker": "KXFEDDEC26"
+  },
+  "macro-cpi-nov-yoy-above-2p5": {
+    "polymarket_slug": "us-cpi-november-2026-yoy",
+    "kalshi_ticker": "KXCPIYOY-26NOV"
+  },
+  "politics-speaker-first-ballot-120th": {
+    "polymarket_slug": "house-speaker-elected-first-ballot-120th-congress",
+    "kalshi_ticker": "KXSPEAKER120-B1"
+  },
+  "politics-gov-shutdown-dec-2026": {
+    "polymarket_slug": "government-shutdown-in-2026",
+    "kalshi_ticker": "KXGOVSHUT-26DEC31"
+  },
+  "tech-arena-leader-yearend-2026": {
+    "polymarket_slug": "which-company-has-best-ai-model-end-of-2026",
+    "kalshi_ticker": "KXTOPMODEL-26DEC31"
+  },
+  "tech-nvda-mcap-above-4t-yearend": {
+    "polymarket_slug": "nvidia-market-cap-above-4t-end-of-2026",
+    "kalshi_ticker": "KXNVDA4T-26DEC31"
+  }
+}

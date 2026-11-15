@@ -165,3 +165,43 @@ def test_rekor_is_reported_but_not_load_bearing(fixture_round):
     # The verdict rests on the trustless checks alone.
     assert rep.ok is True
     assert all(c.trust == "trustless" for c in rep.checks if c.required)
+
+
+def test_binary_ots_proof_parsed_offline(fixture_round):
+    """A real binary OpenTimestamps proof (.json.ots) is parsed directly without external tools."""
+    from fc import anchor as A
+    from fc import verify_cli as V
+
+    sidecar = _submit_one(fixture_round)
+    roots = fixture_round.round_dir / "roots"
+    root_file = roots / "0.json"
+    digest_bytes = hashlib.sha256(root_file.read_bytes()).digest()
+
+    # Construct a valid binary OTS proof: magic + version(1) + op_sha256(0x08) + digest +
+    # bitcoin_tag + varuint(payload_len=3) + varuint(BLOCK_HEIGHT=912345 -> 0xd9 0xd7 0x37)
+    def _varuint(n: int) -> bytes:
+        out = bytearray()
+        while True:
+            b = n & 0x7F
+            n >>= 7
+            if n:
+                out.append(b | 0x80)
+            else:
+                out.append(b)
+                break
+        return bytes(out)
+
+    h_bytes = _varuint(BLOCK_HEIGHT)
+    ots_bytes = (
+        A.OTS_MAGIC
+        + b"\x01\x08"
+        + digest_bytes
+        + A.OTS_BITCOIN_TAG
+        + _varuint(len(h_bytes))
+        + h_bytes
+    )
+    (roots / "0.json.ots").write_bytes(ots_bytes)
+    rep = V.verify(sidecar, roots_dir=roots, headers_path=roots / "bitcoin-headers.json")
+    assert rep.ok is True
+    att = next(c for c in rep.checks if c.name == "anchor attests to root")
+    assert "parsed from the detached .ots proof" in att.detail

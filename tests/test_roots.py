@@ -11,12 +11,9 @@ import json
 from datetime import UTC, datetime, timedelta
 from itertools import pairwise
 
-import pytest
-
 BEFORE_COMMIT = datetime(2026, 9, 9, 12, 0, 0, tzinfo=UTC)
 
 
-@pytest.mark.xfail(strict=True, reason="Wave 0 scaffold — implemented in plan 01-04")
 def test_root_chain_integrity(fixture_round):
     """COMMIT-02: roots chain contiguously, so a dropped root is detectable."""
     from fc import service as S
@@ -45,7 +42,6 @@ def test_root_chain_integrity(fixture_round):
     assert "gaps" in cadence
 
 
-@pytest.mark.xfail(strict=True, reason="Wave 0 scaffold — implemented in plan 01-03")
 def test_anchor_status_transition(fixture_round):
     """COMMIT-03: pending-calendar becomes bitcoin only when the attestation says so."""
     from fc import anchor as A
