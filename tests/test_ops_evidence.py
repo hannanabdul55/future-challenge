@@ -197,7 +197,9 @@ def test_missing_reveal_record_fails_the_day(world):
 def test_job_record_for_the_wrong_day_fails_the_day(world):
     window_of_eight(world)
     d = days()[2]
-    world.job(d, "reveal", day="2026-11-25")
+    rec = json.loads(world.job(d, "reveal").read_text())
+    rec["day"] = "2026-11-25"
+    (world.root / "runs" / SEASON / d / "job-reveal.json").write_text(json.dumps(rec))
     row = world.evaluate()["days"][2]
     assert not row["ok"] and "job-reveal.json" in row["reason"]
 
