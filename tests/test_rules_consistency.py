@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+from datetime import date, timedelta
 from pathlib import Path
 
 from fc import macro
@@ -42,3 +43,21 @@ def test_rules_describe_tracks_house_and_anchoring():
     assert rekor_lines, "rules should say Rekor is deferred"
     for ln in rekor_lines:
         assert "deferred" in ln, ln
+
+
+def test_scope_md_pins_cadence_freeze_and_fallback():
+    scope = _read("SCOPE.md")
+    for token in (
+        "weekly", "2026-11-24", "2027-02-21", "90-day", "parse_rate", "liveness floor",
+        "0.95", "job-commit.json", "18:30 UTC", "declared dead", "fc.ops_evidence",
+        "RUN-06", "NOT MET", "Anchoring status", "ENTRY-01", "house-", "2027-02-12",
+        "Changes during the freeze",
+    ):
+        assert token in scope, token
+    assert "7 of 10" in scope or "at least 7" in scope
+    # the 90-day freeze is first_day + 89 days inclusive; an off-by-one end date fails here
+    first = date.fromisoformat("2026-11-24")
+    assert (first + timedelta(days=89)).isoformat() == "2027-02-21"
+    assert "2026-11-24 through 2027-02-21 inclusive (90 days)" in scope
+    assert "2027-02-22" not in scope
+    assert "2027-02-22" not in _read("docs/rules.md")
