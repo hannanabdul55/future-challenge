@@ -80,13 +80,67 @@ def test_full_day_dropout_imputes_all_core_questions(tmp_path: Path):
     assert d2.imputed.all()
 
 
+def _roots(tmp_path: Path) -> Path:
+    return tmp_path / "rounds" / Q.SEASON / "season" / "roots"
+
+
 def test_unanchored_entry_refused_unless_allow_unanchored(tmp_path: Path):
-    """Without a confirmed Bitcoin anchor on the freeze root, official scoring drops the entry."""
+    """Without a verifiable proof on the freeze root, official scoring drops the entry."""
     from fc import season_eval
     demo_season.main(tmp_path, 2)
-    # Remove the anchor file for entry index 2 (zed-noisy)
-    (tmp_path / "rounds" / Q.SEASON / "season" / "roots" / "2.anchor.json").unlink()
+    # Remove the proof for entry index 2 (zed-noisy)
+    (_roots(tmp_path) / "2.root.ots").unlink()
     board_strict = season_eval.run(tmp_path, Q.SEASON, n_boot=10, min_days=2, allow_unanchored=False)
     assert "zed-noisy" not in board_strict["entries"]
     board_dev = season_eval.run(tmp_path, Q.SEASON, n_boot=10, min_days=2, allow_unanchored=True)
     assert "zed-noisy" in board_dev["entries"]
+
+
+def test_anchor_record_alone_does_not_admit(tmp_path: Path):
+    """T-06-44: an anchor.json saying `bitcoin` is a claim; without the proof it admits nothing."""
+    from fc import season_eval
+    demo_season.main(tmp_path, 2)
+    roots = _roots(tmp_path)
+    (roots / "2.root.ots").unlink()
+    arec = json.loads((roots / "2.anchor.json").read_text())
+    assert arec["status"] == "bitcoin"  # the record is still there and still claims bitcoin
+    board = season_eval.run(tmp_path, Q.SEASON, n_boot=10, min_days=2, allow_unanchored=False)
+    assert "zed-noisy" not in board["entries"]
+    assert {"acme-small", "acme-sharp"} <= set(board["entries"])
+
+
+def test_claimed_block_time_does_not_admit(tmp_path: Path):
+    """A bare `height: time string` header file (the legacy shape) is a claim, not evidence."""
+    from fc import season_eval
+    demo_season.main(tmp_path, 2)
+    headers = _roots(tmp_path) / "bitcoin-headers.json"
+    doc = json.loads(headers.read_text())
+    headers.write_text(json.dumps({h: "2026-10-25T13:00:00Z" for h in doc}) + "\n")
+    board = season_eval.run(tmp_path, Q.SEASON, n_boot=10, min_days=2, allow_unanchored=False)
+    assert not (set(board["entries"]) & {"acme-small", "acme-sharp", "zed-noisy"})
+
+
+def test_demo_anchors_are_regtest_proofs_rejected_by_the_production_floor(tmp_path: Path, monkeypatch):
+    """The demo's synthetic headers carry ~1 bit of work; production verification refuses them."""
+    from fc import anchor as A
+    from fc import season_eval
+    demo_season.main(tmp_path, 2)
+    assert (_roots(tmp_path) / "0.root.ots").is_file()
+    monkeypatch.setattr(A, "MIN_HEADER_WORK_BITS", 70)  # what production runs with
+    board = season_eval.run(tmp_path, Q.SEASON, n_boot=10, min_days=2, allow_unanchored=False)
+    assert not (set(board["entries"]) & {"acme-small", "acme-sharp", "zed-noisy"})
+
+
+def test_season_score_makes_no_network_call(tmp_path: Path, monkeypatch):
+    """T-06-45: admission reads committed headers only; scoring never opens a socket."""
+    import urllib.request
+
+    from fc import season_eval
+    demo_season.main(tmp_path, 2)
+
+    def boom(*_a, **_k):
+        raise AssertionError("scoring touched the network")
+
+    monkeypatch.setattr(urllib.request, "urlopen", boom)
+    board = season_eval.run(tmp_path, Q.SEASON, n_boot=10, min_days=2, allow_unanchored=False)
+    assert {"acme-small", "acme-sharp", "zed-noisy"} <= set(board["entries"])
