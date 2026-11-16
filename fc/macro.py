@@ -45,8 +45,9 @@ FOMC_CATEGORIES = ["cut_50bp_or_more", "cut_25bp", "hold", "hike"]
 FOMC_BASELINE = {"cut_50bp_or_more": 0.03, "cut_25bp": 0.27, "hold": 0.62, "hike": 0.08}
 FAMILY = "macro"
 RESOLVER_ID = "fc.macro"
+VOID_AFTER_DAYS = 14       # rules.md "void-after-14-days"; tests/test_rules_consistency.py binds it
 VOID_IF = [
-    "release delayed more than 14 days past expected_resolution_date",
+    f"release delayed more than {VOID_AFTER_DAYS} days past expected_resolution_date",
     "series discontinued, rebased or redefined before the release",
     "agency announces a methodology change affecting this period before the release",
 ]
@@ -425,7 +426,7 @@ def resolve_question(q: dict[str, Any], *, http: Http, today: date | None = None
 
 
 def _maybe_void(row: dict[str, Any], today: date, exp: date) -> dict[str, Any]:
-    if (today - exp).days > 14:
+    if (today - exp).days > VOID_AFTER_DAYS:
         row["status"] = "void"
     return row
 
