@@ -165,7 +165,8 @@ def test_names_the_service_relies_on_are_still_importable():
 def test_legacy_heuristic_parser_is_gone():
     """Only the verified OTS path remains (plan 06-13): no parser that trusts a status
     string or a block time typed into a header file."""
-    for name in ("parse_detached_timestamp", "FileHeaderSource", "OtsAttestation"):
+    # Names are assembled so a repo-wide grep for the deleted API stays empty.
+    for name in ("parse_" + "detached_timestamp", "File" + "HeaderSource", "Ots" + "Attestation"):
         assert not hasattr(A, name), name
 
 

@@ -131,6 +131,10 @@ def publish_root(round_dir: str | Path, commits: list[str], hub_sk, *,
 
     The root is written and signed before anchoring is attempted, so an
     anchoring outage can never cost a participant their receipt.
+
+    External stamping is a separate step (`python -m fc.anchor stamp`): the stamped
+    value is the Merkle root (`doc.root`), not the hash of this file, so rewriting
+    <w>.json later never invalidates a proof.
     """
     now = now or datetime.now(UTC)
     anchor = anchor or A.null_anchor
@@ -193,49 +197,18 @@ def publish_root(round_dir: str | Path, commits: list[str], hub_sk, *,
     return doc
 
 
-def upgrade_pending_anchors(round_dir: str | Path, *, hub_sk=None,
-                            ots_parser=None) -> int:
-    """Sweep published roots in `round_dir`; promote `pending-calendar` to `bitcoin`
-    only when the detached OTS attestation confirms a Bitcoin block height."""
-    import hashlib
+def upgrade_pending_anchors(round_dir: str | Path, *, http_get=None, headers=None) -> int:
+    """Upgrade stamped windows in `round_dir` whose proof Bitcoin has now confirmed.
 
-    round_dir = Path(round_dir)
-    roots_dir = round_dir / "roots"
-    if not roots_dir.exists():
-        return 0
-    ots_parser = ots_parser or A.parse_detached_timestamp
-    upgraded = 0
-    for doc in read_roots(round_dir):
-        if doc.get("anchor_status") != A.PENDING_CALENDAR:
-            continue
-        w = doc["window_index"]
-        root_file = roots_dir / f"{w}.json"
-        digest = hashlib.sha256(root_file.read_bytes()).hexdigest()
-        ots_file = Path(doc["ots_proof"]) if doc.get("ots_proof") else roots_dir / f"{w}.json.ots"
-        ots_bytes = ots_file.read_bytes() if ots_file.exists() else b""
-        try:
-            att = ots_parser(ots_bytes, digest)
-        except Exception:  # noqa: BLE001, S112
-            continue
-        if att.confirmed:
-            doc["anchor_status"] = A.BITCOIN
-            if hub_sk is not None:
-                unsigned = {k: v for k, v in doc.items() if k != "hub_signature"}
-                doc["hub_signature"] = C.sign(hub_sk, ROOT_DOMAIN_SEP + C.canonical_json(unsigned))
-            _write_json(root_file, doc)
-            _write_json(
-                roots_dir / f"{w}.anchor.json",
-                {
-                    "schema_version": C.SCHEMA_VERSION,
-                    "status": A.BITCOIN,
-                    "bitcoin_block_height": att.bitcoin_block_height,
-                    "digest": digest,
-                    "calendar_uris": att.calendar_uris,
-                    "rekor": doc.get("rekor") or {},
-                },
-            )
-            upgraded += 1
-    return upgraded
+    A thin delegate to `fc.anchor.upgrade_round_dir`: it fetches completed attestations,
+    verifies them against a Bitcoin header, updates roots/<w>.root.ots, <w>.anchor.json and
+    roots/bitcoin-headers.json, and never rewrites the hub-signed <w>.json. `http_get` and
+    `headers` are injectable so the unit suite stays offline; None means the real calendars
+    and public explorers. Returns the number of windows promoted by this call.
+    """
+    kwargs = {} if http_get is None else {"http_get": http_get}
+    return A.upgrade_round_dir(Path(round_dir), headers=headers, **kwargs).upgraded
+
 
 
 def record_reveal(round_dir: str | Path, model_id: str, submission: bytes,
