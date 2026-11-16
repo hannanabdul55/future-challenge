@@ -26,6 +26,7 @@ from fc import ops_evidence
 
 REPO = Path(__file__).resolve().parents[1]
 SCRIPT = REPO / "scripts" / "run_day.sh"
+BASH = os.environ.get("RUN_DAY_BASH", "bash")  # RUN_DAY_BASH=/bin/bash checks macOS bash 3.2
 SEASON = "2026-27-rolling"
 DAY = "2026-12-01"
 TOKEN = "s3cr3t-token"
@@ -200,7 +201,7 @@ class Box:
             e["MODE"] = mode
         e.update(self.extra_env)
         e.update(env)
-        return subprocess.run(["bash", "scripts/run_day.sh", day], cwd=self.work, env=e,
+        return subprocess.run([BASH, "scripts/run_day.sh", day], cwd=self.work, env=e,
                               capture_output=True, text=True, timeout=120, check=False)
 
     # --- views ---
