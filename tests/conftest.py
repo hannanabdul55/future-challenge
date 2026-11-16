@@ -14,7 +14,27 @@ from typing import Any
 
 import pytest
 
+from fc import anchor as A
 from fc import commit as C
+
+def pytest_configure(config: pytest.Config) -> None:
+    config.addinivalue_line(
+        "markers",
+        "real_work_floor: keep fc.anchor.MIN_HEADER_WORK_BITS at its production value "
+        "(synthetic regtest anchors are then rejected)",
+    )
+
+
+@pytest.fixture(autouse=True)
+def _synthetic_header_work_floor(request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch):
+    """Lower the header work floor to 0 so synthetic regtest anchors verify in tests.
+
+    Production keeps 2^70; a test that wants the real floor carries `real_work_floor`.
+    """
+    if request.node.get_closest_marker("real_work_floor") is None:
+        monkeypatch.setattr(A, "MIN_HEADER_WORK_BITS", 0)
+    yield
+
 
 ROUND_ID = "2026-w37"
 T_COMMIT = "2026-09-09T23:59:00Z"

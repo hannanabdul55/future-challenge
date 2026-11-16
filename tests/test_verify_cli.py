@@ -7,7 +7,6 @@ and they never touch the network.
 
 from __future__ import annotations
 
-import hashlib
 import json
 import socket
 from datetime import UTC, datetime
@@ -15,6 +14,7 @@ from pathlib import Path
 
 import pytest
 
+from fc import anchor as A
 from fc import cli
 from fc import commit as C
 
@@ -27,29 +27,39 @@ BLOCK_TIME_LATE = "2026-09-10T00:30:00Z"
 def _anchor_the_root(round_dir: Path, window_index: int, block_time: str) -> None:
     """Write the artifacts a completed anchoring job would leave beside a root.
 
-    The OpenTimestamps proof attests to the digest of the published root document
-    file; the Bitcoin header source maps that block height to a time, offline.
+    A synthetic (regtest) proof that the window's Merkle root is in a block mined at
+    `block_time`, the block header in the {height: {hash, header}} file a third party
+    verifies against offline, and the fc-ots/v1 anchor record. The header is cheap, so
+    verification needs the autouse floor fixture in conftest.py.
     """
     roots = round_dir / "roots"
-    root_file = roots / f"{window_index}.json"
-    digest = hashlib.sha256(root_file.read_bytes()).hexdigest()
+    root_hex = json.loads((roots / f"{window_index}.json").read_text())["root"]
+    when = datetime.fromisoformat(block_time)
+    ots, header_hex = A.regtest_anchor(root_hex, when, BLOCK_HEIGHT)
+    (roots / f"{window_index}.root.ots").write_bytes(ots)
+
+    headers_file = roots / "bitcoin-headers.json"
+    headers = json.loads(headers_file.read_text()) if headers_file.exists() else {}
+    headers[str(BLOCK_HEIGHT)] = {
+        "hash": A.BlockHeader.from_bytes(bytes.fromhex(header_hex)).block_hash_hex,
+        "header": header_hex,
+    }
+    headers_file.write_text(json.dumps(headers, indent=2) + "\n")
 
     (roots / f"{window_index}.anchor.json").write_text(
         json.dumps(
             {
                 "schema_version": "2026.08",
+                "scheme": A.ANCHOR_SCHEME,
                 "status": "bitcoin",
                 "bitcoin_block_height": BLOCK_HEIGHT,
-                "digest": digest,
+                "digest": root_hex,
                 "calendar_uris": ["https://alice.btc.calendar.opentimestamps.org"],
                 "rekor": {"log_index": 184223991, "integratedTime": 1789000000},
             },
             indent=2,
         )
         + "\n"
-    )
-    (roots / "bitcoin-headers.json").write_text(
-        json.dumps({str(BLOCK_HEIGHT): block_time}, indent=2) + "\n"
     )
 
 
@@ -167,41 +177,125 @@ def test_rekor_is_reported_but_not_load_bearing(fixture_round):
     assert all(c.trust == "trustless" for c in rep.checks if c.required)
 
 
-def test_binary_ots_proof_parsed_offline(fixture_round):
-    """A real binary OpenTimestamps proof (.json.ots) is parsed directly without external tools."""
-    from fc import anchor as A
+def _verify(sidecar, roots, **kw):
     from fc import verify_cli as V
 
+    return V.verify(sidecar, roots_dir=roots, headers_path=roots / "bitcoin-headers.json", **kw)
+
+
+def _check(rep, name):
+    return next(c for c in rep.checks if c.name == name)
+
+
+def test_anchor_passes_only_through_a_proof_verified_against_a_header(fixture_round):
+    sidecar = _submit_one(fixture_round)
+    rep = _verify(sidecar, fixture_round.round_dir / "roots")
+    att = _check(rep, "anchor attests to root")
+    assert att.ok and att.state == "PASS"
+    assert "verified against the block header" in att.detail
+    assert f"Bitcoin block {BLOCK_HEIGHT}" in att.detail
+    assert "header file bitcoin-headers.json" in att.detail
+    assert _check(rep, "anchor precedes T_commit").ok
+    assert rep.ok is True
+
+
+def test_anchor_record_without_a_proof_is_not_evidence(fixture_round):
     sidecar = _submit_one(fixture_round)
     roots = fixture_round.round_dir / "roots"
-    root_file = roots / "0.json"
-    digest_bytes = hashlib.sha256(root_file.read_bytes()).digest()
+    (roots / "0.root.ots").unlink()
+    assert (roots / "0.anchor.json").exists()  # still claims status: bitcoin
+    rep = _verify(sidecar, roots)
+    att = _check(rep, "anchor attests to root")
+    assert not att.ok and att.state == "FAIL"
+    assert "not evidence" in att.detail
+    assert rep.ok is False
 
-    # Construct a valid binary OTS proof: magic + version(1) + op_sha256(0x08) + digest +
-    # bitcoin_tag + varuint(payload_len=3) + varuint(BLOCK_HEIGHT=912345 -> 0xd9 0xd7 0x37)
-    def _varuint(n: int) -> bytes:
-        out = bytearray()
-        while True:
-            b = n & 0x7F
-            n >>= 7
-            if n:
-                out.append(b | 0x80)
-            else:
-                out.append(b)
-                break
-        return bytes(out)
 
-    h_bytes = _varuint(BLOCK_HEIGHT)
-    ots_bytes = (
-        A.OTS_MAGIC
-        + b"\x01\x08"
-        + digest_bytes
-        + A.OTS_BITCOIN_TAG
-        + _varuint(len(h_bytes))
-        + h_bytes
-    )
-    (roots / "0.json.ots").write_bytes(ots_bytes)
-    rep = V.verify(sidecar, roots_dir=roots, headers_path=roots / "bitcoin-headers.json")
+def test_legacy_height_to_time_headers_are_a_claim_not_a_header(fixture_round):
+    sidecar = _submit_one(fixture_round)
+    roots = fixture_round.round_dir / "roots"
+    (roots / "bitcoin-headers.json").write_text(json.dumps({str(BLOCK_HEIGHT): BLOCK_TIME_OK}))
+    rep = _verify(sidecar, roots)
+    assert not _check(rep, "anchor attests to root").ok
+    assert not _check(rep, "anchor precedes T_commit").ok
+    assert rep.ok is False
+
+
+def test_a_flipped_proof_byte_fails(fixture_round):
+    sidecar = _submit_one(fixture_round)
+    roots = fixture_round.round_dir / "roots"
+    ots = bytearray((roots / "0.root.ots").read_bytes())
+    ots[len(A.OTS_MAGIC) + 2] ^= 0x01  # first byte of the digest the proof is for
+    (roots / "0.root.ots").write_bytes(bytes(ots))
+    rep = _verify(sidecar, roots)
+    att = _check(rep, "anchor attests to root")
+    assert not att.ok and att.state == "FAIL"
+    assert rep.ok is False
+
+
+def test_two_hour_margin_counts_against_the_deadline(fixture_round):
+    """Block time 22:30Z is before T_commit 23:59Z, but 22:30 + 2 h is not."""
+    sidecar = _submit_one(fixture_round, block_time="2026-09-09T22:30:00Z")
+    rep = _verify(sidecar, fixture_round.round_dir / "roots")
+    assert _check(rep, "anchor attests to root").ok
+    late = _check(rep, "anchor precedes T_commit")
+    assert not late.ok
+    assert "2 h margin" in late.detail
+    assert rep.ok is False
+
+
+@pytest.mark.real_work_floor
+def test_cheap_regtest_header_is_rejected_under_the_production_floor(fixture_round):
+    assert A.MIN_HEADER_WORK_BITS == 70
+    sidecar = _submit_one(fixture_round)
+    rep = _verify(sidecar, fixture_round.round_dir / "roots")
+    att = _check(rep, "anchor attests to root")
+    assert not att.ok and att.state != "PASS"
+    assert rep.ok is False
+
+
+def test_fetch_takes_a_header_from_two_agreeing_explorers(fixture_round, monkeypatch):
+    sidecar = _submit_one(fixture_round)
+    roots = fixture_round.round_dir / "roots"
+    entry = json.loads((roots / "bitcoin-headers.json").read_text())[str(BLOCK_HEIGHT)]
+    (roots / "bitcoin-headers.json").write_text("{}")  # nothing offline
+    assert not _check(_verify(sidecar, roots), "anchor attests to root").ok
+
+    def fake_http_get(url, timeout, max_bytes):
+        if "/block-height/" in url:
+            return entry["hash"].encode()
+        if url.endswith(f"/block/{entry['hash']}/header"):
+            return entry["header"].encode()
+        raise OSError(url)
+
+    real = A.ExplorerHeaders
+    monkeypatch.setattr(A, "ExplorerHeaders", lambda: real(http_get=fake_http_get))
+    rep = _verify(sidecar, roots, fetch=True)
+    att = _check(rep, "anchor attests to root")
+    assert att.ok
+    assert "blockstream.info" in att.detail and "mempool.space" in att.detail
     assert rep.ok is True
-    att = next(c for c in rep.checks if c.name == "anchor attests to root")
-    assert "parsed from the detached .ots proof" in att.detail
+
+
+def test_entry_verify_passes_fetch_through(fixture_round, monkeypatch):
+    from fc import freeze as F
+    from fc import verify_cli as V
+
+    seen = {}
+
+    def fake_verify_entry(path, **kw):
+        seen.update(kw)
+        rep = V.VerifyReport()
+        rep.add("merkle inclusion", True, "stub", V.TRUSTLESS)
+        return rep
+
+    monkeypatch.setattr(F, "verify_entry", fake_verify_entry)
+    with pytest.raises(SystemExit) as exc:
+        cli.main(["verify", "--entry", "m.yml", "--season-dir", "s",
+                  "--before", "2026-09-10T00:00:00+00:00", "--fetch"])
+    assert exc.value.code == 0
+    assert seen["fetch"] is True
+    with pytest.raises(SystemExit):
+        cli.main(["verify", "--entry", "m.yml", "--season-dir", "s",
+                  "--before", "2026-09-10T00:00:00+00:00"])
+    assert seen["fetch"] is False
