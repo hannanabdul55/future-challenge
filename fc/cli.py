@@ -54,8 +54,18 @@ def _freeze(a):
 
     from . import freeze as F
     from . import model_identity as M
+    for problem in (
+        "--context-length must be at least 2048" if a.context_length < 2048 else None,
+        "--max-tokens must be at least 64" if a.max_tokens < 64 else None,
+        "--max-tokens must be smaller than --context-length"
+        if a.max_tokens >= a.context_length else None,
+    ):
+        if problem:
+            print(f"fc freeze: error: {problem}", file=sys.stderr)
+            sys.exit(2)
     template = Path(a.prompt_template).read_bytes() if a.prompt_template else b""
-    inf = M.Inference(weights_file=a.weights_file, thinking=a.thinking)
+    inf = M.Inference(weights_file=a.weights_file, thinking=a.thinking,
+                      context_length=a.context_length, max_tokens=a.max_tokens)
     ident = M.resolve(a.repo, a.revision, api=HfApi(), inference=inf, prompt_template=template)
     gate = M.check_entry(ident, a.tier, budget_bytes=int(a.budget_gib * 1024**3))
     for w in gate.warnings:
@@ -362,6 +372,12 @@ def main(argv=None):
     s.add_argument("--weights-file"); s.add_argument("--public-key")
     s.add_argument("--thinking", action="store_true",
                    help="run the model with its thinking/reasoning mode ON; default OFF (rules 2026.10)")
+    s.add_argument("--context-length", type=int, default=16384,
+                   help="frozen into the identity; choose so the largest per-question prompt "
+                        "plus max tokens fits the context")
+    s.add_argument("--max-tokens", type=int, default=4096,
+                   help="frozen into the identity; choose so the largest per-question prompt "
+                        "plus max tokens fits the context")
     s.add_argument("--budget-gib", type=float, default=11.0); s.set_defaults(fn=_freeze)
 
     s = sp.add_parser("commit")
