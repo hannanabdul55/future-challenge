@@ -134,8 +134,8 @@ def score_frame(pred: pd.DataFrame, truth: pd.DataFrame, *, clip: float = LOG_CL
 
 def ensemble_mean_probs(pred: pd.DataFrame, exclude: str | None = None,
                         model_id: str = "hub-ensemble") -> pd.DataFrame:
-    """Hub ensemble for mixed types: mean of probabilities (binary/categorical, renormalised
-    per question) and quantile-wise median (quantile)."""
+    """Hub ensemble for mixed types: mean of probabilities (binary as is, categorical
+    renormalised per question) and quantile-wise median (quantile)."""
     p = pred if exclude is None else pred[pred["model_id"] != exclude]
     probs = p[p["output_type"].isin(["binary", "categorical"])]
     quants = p[p["output_type"] == "quantile"]
@@ -144,7 +144,9 @@ def ensemble_mean_probs(pred: pd.DataFrame, exclude: str | None = None,
     if len(probs):
         m = probs.groupby(keys, as_index=False)["value"].mean()
         gk = [k for k in keys if k != "output_type_id"]
-        m["value"] = m["value"] / m.groupby(gk)["value"].transform("sum")
+        # Only categorical outcomes sum to 1; a binary question is a single "p" row.
+        cat = m["output_type"] == "categorical"
+        m.loc[cat, "value"] = m.loc[cat, "value"] / m[cat].groupby(gk)["value"].transform("sum")
         parts.append(m)
     if len(quants):
         parts.append(quants.groupby(keys, as_index=False)["value"].median())

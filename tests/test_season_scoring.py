@@ -7,6 +7,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from fc import baselines as B
 from fc import questions as Q
@@ -79,3 +80,13 @@ def test_probability_ensemble_renormalises():
     e = ensemble_mean_probs(b)
     rep = validate_frame(e.drop(columns="model_id"), RC)
     assert rep.ok, str(rep)
+
+
+def test_ensemble_binary_is_plain_mean():
+    # A binary question has one "p" row; renormalising per question would force it to 1.0.
+    pred = pd.DataFrame({
+        "model_id": ["a", "b"], "round_id": ["r1", "r1"], "question_id": ["q", "q"],
+        "output_type": ["binary", "binary"], "output_type_id": ["p", "p"], "value": [0.2, 0.4],
+    })
+    e = ensemble_mean_probs(pred)
+    assert e["value"].tolist() == [pytest.approx(0.3)]

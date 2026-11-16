@@ -204,12 +204,10 @@ def test_ensemble_excludes_house(work: Path, tmp_path: Path):
     score(work)
     fcs = pd.read_csv(work / "eval" / "out" / SEASON / "forecasts.csv")
     key = ["day", "question_id", "output_type", "output_type_id"]
-    # Binary rows are left out: ensemble_mean_probs renormalises a lone binary "p" to 1.0
-    # (pre-existing, logged in deferred-items.md; outside this plan's files).
-    fcs = fcs[fcs.output_type != "binary"]
     ext = fcs[fcs.model_id.isin(["acme-small", "acme-sharp", "zed-noisy"])]
-    # categoricals: mean of the externals; quantiles: their quantile-wise median
-    want = pd.concat([ext[ext.output_type == "categorical"].groupby(key)["value"].mean(),
+    # binary/categorical: mean of the externals; quantiles: their quantile-wise median
+    want = pd.concat([ext[ext.output_type.isin(["binary", "categorical"])]
+                      .groupby(key)["value"].mean(),
                       ext[ext.output_type == "quantile"].groupby(key)["value"].median()])
     got = fcs[fcs.model_id == "hub-ensemble"].set_index(key)["value"]
     assert len(got) == len(want)
