@@ -349,7 +349,7 @@ def _verify(a):
         rep = F.verify_entry(Path(a.entry), season_round_dir=Path(a.season_dir), before=before,
                              snapshot=Path(a.snapshot) if a.snapshot else None,
                              hub_key_path=a.hub_key, headers_path=a.bitcoin_headers,
-                             allow_pending=a.allow_pending)
+                             allow_pending=a.allow_pending, fetch=a.fetch)
         print(json.dumps(rep.to_dict(), indent=2) if a.json else str(rep))
         sys.exit(0 if rep.ok else 1)
     rep = verify_cli.verify(a.sidecar, roots_dir=a.roots, manifest_path=a.manifest,
@@ -493,7 +493,9 @@ def main(argv=None):
     s.add_argument("--roots"); s.add_argument("--manifest"); s.add_argument("--hub-key")
     s.add_argument("--bitcoin-headers")
     s.add_argument("--allow-pending", action="store_true")
-    s.add_argument("--fetch", action="store_true")
+    s.add_argument("--fetch", action="store_true",
+                   help="fetch missing Bitcoin block headers from blockstream.info and "
+                        "mempool.space (both must agree)")
     s.add_argument("--json", action="store_true"); s.set_defaults(fn=_verify)
 
     a = p.parse_args(argv)

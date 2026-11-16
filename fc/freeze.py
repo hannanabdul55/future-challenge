@@ -87,7 +87,8 @@ def commit_identity(metadata_path: Path, *, season_round_id: str, team_sk,
 def verify_entry(metadata_path: Path, *, season_round_dir: Path, before: datetime | None,
                  before_label: str = "T_open", snapshot: Path | None = None,
                  hub_key_path: Path | None = None, headers_path: Path | None = None,
-                 allow_pending: bool = False, ots_parser=None) -> V.VerifyReport:
+                 allow_pending: bool = False, headers=None,
+                 fetch: bool = False) -> V.VerifyReport:
     """FREEZE-03: the entry's identity hash is in an anchored root whose anchor precedes
     `before` (a daily round's `T_open`), the commitment opens to the identity record, and
     (optionally) a local snapshot matches the pinned hashes of the weights file and of any
@@ -100,7 +101,7 @@ def verify_entry(metadata_path: Path, *, season_round_dir: Path, before: datetim
     rep = V.verify(sidecar, roots_dir=season_round_dir / "roots",
                    manifest_path=season_round_dir / "manifest.json",
                    hub_key_path=hub_key_path, headers_path=headers_path,
-                   allow_pending=allow_pending, ots_parser=ots_parser,
+                   allow_pending=allow_pending, headers=headers, fetch=fetch,
                    before=before, before_label=before_label)
 
     try:

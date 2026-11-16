@@ -17,6 +17,7 @@ import pytest
 from fc import anchor as A
 from fc import commit as C
 
+
 def pytest_configure(config: pytest.Config) -> None:
     config.addinivalue_line(
         "markers",

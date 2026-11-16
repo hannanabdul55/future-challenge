@@ -8,10 +8,9 @@ hub signature nor a Rekor timestamp can carry the verdict by itself.
 
 from __future__ import annotations
 
-import hashlib
 import json
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from secrets import compare_digest
 
@@ -93,19 +92,49 @@ def _read_json(path: Path, what: str) -> dict:
     return json.loads(path.read_text())
 
 
+class _TracedHeaders:
+    """Header sources tried in order (injected, or file then explorers), remembering which
+    one answered for each height so the report can name where the evidence came from."""
+
+    def __init__(self, injected, headers_path, fetch: bool) -> None:
+        if injected is not None:
+            self.sources = [("injected header source", injected)]
+        else:
+            self.sources = [(f"header file {Path(headers_path).name}", A.HeaderFile(headers_path))]
+            if fetch:
+                self.sources.append(("blockstream.info + mempool.space, hashes agreed",
+                                     A.ExplorerHeaders()))
+        self.answered: dict[int, str] = {}
+
+    def header(self, height: int):
+        for label, source in self.sources:
+            hdr = source.header(height)
+            if hdr is not None:
+                self.answered[height] = label
+                return hdr
+        return None
+
+    def source_for(self, height) -> str:
+        return self.answered.get(height, "unknown source")
+
+
 def verify(sidecar_path: str | Path, *, roots_dir=None, manifest_path=None,
            hub_key_path=None, headers_path=None, allow_pending: bool = False,
-           ots_parser=None, fetch: bool = False,
+           headers=None, fetch: bool = False,
            before: datetime | None = None, before_label: str = "T_commit") -> VerifyReport:
     """Build the verification report for one commitment record.
 
     `before` overrides the instant the anchor must precede (default: the round
     manifest's `T_commit`). A frozen-model entry passes a daily round's `T_open`
     here (rules 2026.10 §3) and `before_label` names it in the report.
+
+    Anchoring is decided by `roots/<w>.root.ots` alone: the proof must verify against a
+    real Bitcoin block header (`headers_path`, default `roots/bitcoin-headers.json`, then
+    two public explorers when `fetch`). `headers` injects a header source (tests). An
+    anchor record without a verifiable proof, or its status string, is never evidence.
     """
     rep = VerifyReport()
     sidecar_path = Path(sidecar_path)
-    ots_parser = ots_parser or A.parse_detached_timestamp
     anchor_check = f"anchor precedes {before_label}"
     receipt_check = f"receipt server_time precedes {before_label}"
 
@@ -161,63 +190,61 @@ def verify(sidecar_path: str | Path, *, roots_dir=None, manifest_path=None,
         return rep
 
     window = root_doc["window_index"]
-    root_file = roots_dir / f"{window}.json"
 
     # ------------------------------------------------ OpenTimestamps attestation
-    attestation = None
     anchor_rec: dict = {}
+    verdict: A.AnchorVerdict | None = None
     try:
-        anchor_rec = _read_json(roots_dir / f"{window}.anchor.json", "anchor record")
-        file_digest = hashlib.sha256(root_file.read_bytes()).hexdigest()
-        digest_ok = compare_digest(anchor_rec.get("digest", ""), file_digest)
-
-        ots_file = roots_dir / f"{window}.json.ots"
-        if ots_file.exists():
-            # Byte-level proof present: it, not the record's own claim, decides.
-            attestation = ots_parser(ots_file.read_bytes(), file_digest)
-            status = attestation.status
-            height = attestation.bitcoin_block_height
-            provenance = "parsed from the detached .ots proof"
-        else:
-            status = anchor_rec.get("status", A.NOT_ANCHORED)
-            height = anchor_rec.get("bitcoin_block_height")
-            provenance = ("as recorded beside the root; the .ots proof itself was not "
-                          "parsed, so only the digest binding is cryptographic here")
-
-        if not digest_ok:
+        try:
+            anchor_rec = _read_json(roots_dir / f"{window}.anchor.json", "anchor record")
+        except ArtifactError:
+            anchor_rec = {}  # advisory only: the proof, not the record, decides
+        ots_file = roots_dir / f"{window}.root.ots"
+        trace = _TracedHeaders(headers, headers_path or roots_dir / "bitcoin-headers.json",
+                               fetch)
+        if not ots_file.exists():
             rep.add("anchor attests to root", False,
-                    "anchor record digest does not match the published root document",
-                    TRUSTLESS)
-        elif status == A.BITCOIN:
-            rep.add("anchor attests to root", True,
-                    f"Bitcoin block {height} — {provenance}", TRUSTLESS)
-        elif status == A.PENDING_CALENDAR:
-            rep.add("anchor attests to root", bool(allow_pending),
-                    f"calendar accepted the digest, Bitcoin confirmation pending "
-                    f"({provenance})", TRUSTLESS, state=PENDING)
+                    "no .root.ots proof beside the root; a recorded anchor status is not "
+                    "evidence", TRUSTLESS)
         else:
-            rep.add("anchor attests to root", False,
-                    f"root is not anchored (status: {status})", TRUSTLESS)
-    except (ArtifactError, A.AnchorToolUnavailable, ValueError, OSError,
-            json.JSONDecodeError) as exc:
+            if ots_file.stat().st_size > MAX_ARTIFACT_BYTES:
+                raise ArtifactError(f"proof exceeds {MAX_ARTIFACT_BYTES} bytes")
+            proof = A.parse_ots(ots_file.read_bytes())
+            verdict = A.verify_digest_anchor(bytes.fromhex(root_hex), proof, trace)
+            if verdict.status == A.BITCOIN:
+                rep.add("anchor attests to root", True,
+                        f"Bitcoin block {verdict.height} ({(verdict.block_hash or '')[:16]}…), "
+                        f"OTS path verified against the block header "
+                        f"({trace.source_for(verdict.height)}, "
+                        f"work 2^{verdict.header_work_bits:.0f})", TRUSTLESS)
+            elif verdict.status == A.PENDING_CALENDAR:
+                rep.add("anchor attests to root", bool(allow_pending),
+                        f"Bitcoin confirmation not yet verifiable: {verdict.detail}",
+                        TRUSTLESS, state=PENDING)
+            else:
+                rep.add("anchor attests to root", False,
+                        f"{verdict.status}: {verdict.detail}", TRUSTLESS)
+    except (ArtifactError, ValueError, OSError, json.JSONDecodeError) as exc:
         rep.add("anchor attests to root", False, str(exc), TRUSTLESS)
-        height, status = None, A.NOT_ANCHORED
+        verdict = None
 
     # --------------------------------------------- anchor time precedes the deadline
     try:
         t_commit = before or datetime.fromisoformat(
             _read_json(manifest_path, "manifest")["T_commit"])
-        headers = A.FileHeaderSource(headers_path or roots_dir / "bitcoin-headers.json")
-        block_time = headers.block_time(height) if height is not None else None
-        if block_time is None:
-            rep.add(anchor_check, False,
-                    "no block time available for the anchoring block — cannot place the "
-                    "commitment in time", TRUSTLESS, state=PENDING)
-        else:
-            precedes = block_time < t_commit
+        if t_commit.tzinfo is None:
+            t_commit = t_commit.replace(tzinfo=UTC)
+        if verdict is not None and verdict.status == A.BITCOIN and verdict.anchored_before:
+            precedes = verdict.anchored_before < t_commit
             rep.add(anchor_check, precedes,
-                    f"anchored {block_time.isoformat()} vs {before_label} "
+                    f"Bitcoin block time {verdict.block_time.isoformat()} + "
+                    f"{A.BLOCK_TIME_MARGIN_S // 3600} h margin vs {before_label} "
                     f"{t_commit.isoformat()}", TRUSTLESS)
+        else:
+            pending = verdict is not None and verdict.status == A.PENDING_CALENDAR
+            rep.add(anchor_check, False,
+                    "no verified Bitcoin block time — cannot place the commitment in time",
+                    TRUSTLESS, state=PENDING if pending else FAIL)
     except (ArtifactError, ValueError, OSError, KeyError, json.JSONDecodeError) as exc:
         rep.add(anchor_check, False, str(exc), TRUSTLESS)
 
