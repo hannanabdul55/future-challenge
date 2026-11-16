@@ -89,7 +89,7 @@ class _MainLlama:
         self.metadata = {}
 
     def create_chat_completion(self, *, messages, **kw):
-        ids = re.findall(r'^- "([^"]+)":', messages[0]["content"], flags=re.M)
+        ids = re.findall(r'^- "([^"]+)":', messages[0]["content"], flags=re.MULTILINE)
         body = {i: {"p": 0.5} for i in ids}
         return {"choices": [{"message": {"content": json.dumps(body)}}], "usage": {}}
 

@@ -3,12 +3,12 @@
 Contract (all paths fixed; the host mounts them):
   /model/<weights_file>      read-only GGUF, already hash-verified by the host
   /packet/packet.md          the day's packet (read-only)
-  /questions/questions.json  the season question set (read-only)
+  /questions/questions.json  the questions still active on the run day (read-only)
   /prompt/template.md        the pinned prompt template (read-only)
   /out/                      forecast.csv, transcript.jsonl, status.json
 
 Environment: FC_ROUND_ID, FC_DAY, FC_SEED (int), FC_WEIGHTS_FILE, FC_CTX (context length),
-FC_MAX_TOKENS, FC_BATCH (questions per prompt), FC_THREADS, FC_GPU_LAYERS, FC_THINKING
+FC_MAX_TOKENS, FC_BATCH (questions per prompt; default 1), FC_THREADS, FC_GPU_LAYERS, FC_THINKING
 ("1" = thinking ON; default "0", copied from the frozen identity record).
 
 Thinking OFF: llama-cpp-python 0.3.35's create_chat_completion has no chat_template_kwargs,
@@ -90,14 +90,15 @@ def main() -> int:
     weights = MODEL_DIR / os.environ["FC_WEIGHTS_FILE"]
     ctx = int(os.environ.get("FC_CTX", "16384"))
     max_tokens = int(os.environ.get("FC_MAX_TOKENS", "4096"))
-    batch = int(os.environ.get("FC_BATCH", "20"))
+    batch = int(os.environ.get("FC_BATCH", str(F.DEFAULT_QUESTIONS_PER_PROMPT)))
     threads = int(os.environ.get("FC_THREADS", "8"))
     gpu_layers = int(os.environ.get("FC_GPU_LAYERS", "-1"))
     thinking = os.environ.get("FC_THINKING", "0") == "1"
 
     OUT.mkdir(parents=True, exist_ok=True)
     status = {"round_id": round_id, "day": day, "seed": seed, "weights_file": weights.name,
-              "started": time.time(), "thinking": thinking, "batches": []}
+              "started": time.time(), "thinking": thinking, "questions_per_prompt": batch,
+              "batches": []}
     try:
         from llama_cpp import Llama
     except ImportError as exc:  # pragma: no cover - only in a broken image

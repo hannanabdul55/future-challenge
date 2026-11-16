@@ -5,7 +5,8 @@ Both halves live here so Tier S (reference image) and Tier A (self-run) use the 
 prompt bytes and the same parser, and so the prompt template's hash can be pinned in an
 identity record (`model_identity.prompt_template_sha256`).
 
-Output contract: the model answers with one JSON object per question batch:
+Output contract: the model answers with one JSON object per prompt (one question per prompt
+by default; see DEFAULT_QUESTIONS_PER_PROMPT):
 
     {"control-house": {"p": 0.42},
      "senate-ga":     {"D": 0.55, "R": 0.43, "Other": 0.02},
@@ -32,6 +33,13 @@ import numpy as np
 import pandas as pd
 
 TEMPLATE_PATH = Path(__file__).parent / "prompts" / "forecaster-v1.md"
+
+# A categorical answer whose probabilities sum within 1 +/- this is accepted and normalised;
+# outside the band it is missing (a model that cannot add is not guessed at).
+CATEGORICAL_SUM_TOLERANCE = 0.10
+# One question per prompt: a mid-size model answers one small JSON object reliably where a
+# 20-question family batch fails to parse. FC_BATCH=N restores N-question family batches.
+DEFAULT_QUESTIONS_PER_PROMPT = 1
 
 OUTPUT_COLS = ["round_id", "question_id", "output_type", "output_type_id", "value"]
 
@@ -69,7 +77,8 @@ def build_prompt(template: str, *, packet_md: str, questions: list[dict[str, Any
             .replace("{{QUESTIONS}}", qtext))
 
 
-def batches(questions: list[dict[str, Any]], *, max_per_batch: int = 20) -> list[list[dict]]:
+def batches(questions: list[dict[str, Any]], *,
+            max_per_batch: int = DEFAULT_QUESTIONS_PER_PROMPT) -> list[list[dict]]:
     """Group by family so a batch is homogeneous and fits a small context."""
     out: list[list[dict]] = []
     for fam in sorted({q["family"] for q in questions}):
@@ -280,8 +289,9 @@ def parse_answer(text: str, questions: list[dict[str, Any]], *, round_id: str) -
                 out.missing[qid] = "categorical probabilities missing or negative"
                 continue
             tot = sum(vals.values())  # type: ignore[arg-type]
-            if tot <= 0 or abs(tot - 1) > 0.05:
-                out.missing[qid] = f"categorical probabilities sum to {tot:.3f}"
+            if tot <= 0 or abs(tot - 1) > CATEGORICAL_SUM_TOLERANCE + 1e-9:
+                out.missing[qid] = (f"categorical probabilities sum to {tot:.3f} "
+                                    f"(outside 1 ± {CATEGORICAL_SUM_TOLERANCE:.2f})")
                 continue
             for c in cats:
                 out.rows.append(_row(round_id, qid, t, c, vals[c] / tot))  # type: ignore[operator]
