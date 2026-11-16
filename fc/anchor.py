@@ -18,11 +18,17 @@ behind these same seams without changing a caller.
 
 from __future__ import annotations
 
+import argparse
+import contextlib
 import hashlib
 import http.client
 import json
 import math
+import os
+import re
 import struct
+import sys
+import tempfile
 import urllib.error
 import urllib.request
 from collections.abc import Callable, Iterator
@@ -31,6 +37,7 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from fc import __version__
+from fc import commit as C
 
 # Anchor status vocabulary. "failed" records a broken anchoring attempt without
 # ever blocking receipt issuance.
@@ -967,3 +974,298 @@ def regtest_anchor(root_hex: str, block_time: datetime | int, height: int) -> tu
             break
         nonce += 1
     return serialize_ots(DetachedProof(digest, ts)), raw.hex()
+
+
+# ===========================================================================
+# Calendar stamping and the operator CLI (plan 06-16, FREEZE-03 / D-01).
+#
+# Scheme `fc-ots/v1`: what is stamped is the round's Merkle root (the `root` field
+# of roots/<w>.json), not the hash of that file. fc/service.py rewrites <w>.json
+# after anchoring, so a file hash would change under the proof; the Merkle root
+# does not. Per window the operator keeps:
+#   roots/<w>.root.ots     the proof (grows an upgraded Bitcoin attestation later)
+#   roots/<w>.anchor.json  its status, the calendars used and, once confirmed, the block
+#   roots/bitcoin-headers.json  verified headers, so a third party verifies offline
+# ===========================================================================
+
+DEFAULT_CALENDARS = (
+    "https://a.pool.opentimestamps.org",
+    "https://b.pool.opentimestamps.org",
+    "https://a.pool.eternitywall.com",
+    "https://ots.btc.catallaxy.com",
+)
+# Hosts a calendar URI may name: *.calendar.opentimestamps.org, ?.pool.opentimestamps.org,
+# *.calendar.eternitywall.com, ?.pool.eternitywall.com, ots.btc.catallaxy.com.
+CALENDAR_HOST_ALLOWLIST = re.compile(
+    r"(?:[a-z0-9-]+\.)+calendar\.opentimestamps\.org"
+    r"|[a-z0-9]\.pool\.opentimestamps\.org"
+    r"|(?:[a-z0-9-]+\.)+calendar\.eternitywall\.com"
+    r"|[a-z0-9]\.pool\.eternitywall\.com"
+    r"|ots\.btc\.catallaxy\.com"
+)
+# https only, no userinfo, no query or fragment, port 443 at most: anything else fails closed.
+_CALENDAR_URI = re.compile(r"https://(?P<host>[A-Za-z0-9.-]+)(?::443)?(?:/[A-Za-z0-9._~-]*)*")
+CALENDAR_ACCEPT = "application/vnd.opentimestamps.v1"
+CALENDAR_MAX_BYTES = 10240
+DEFAULT_MIN_CALENDARS = 2
+
+
+class StampError(RuntimeError):
+    """Too few calendars accepted a digest, or a window could not be stamped."""
+
+
+class CalendarNotAllowed(ValueError):
+    """A calendar URI outside the allowlist, or not https (T-06-10)."""
+
+
+def calendar_allowed(uri: str) -> bool:
+    """True only for an https URI whose host is a known public OpenTimestamps calendar.
+
+    Pending attestations inside a proof can name any URI, so following one blindly is
+    SSRF; every network call to a calendar passes through this check.
+    """
+    if not isinstance(uri, str) or len(uri) > MAX_URI_BYTES:
+        return False
+    m = _CALENDAR_URI.fullmatch(uri)
+    return m is not None and CALENDAR_HOST_ALLOWLIST.fullmatch(m.group("host").lower()) is not None
+
+
+class _CalendarRedirects(urllib.request.HTTPRedirectHandler):
+    """Follow a redirect only to another allow-listed calendar URL."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        if not calendar_allowed(newurl):
+            raise urllib.error.URLError(
+                f"refusing redirect outside the calendar allowlist: {newurl!r}")
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+def _calendar_request(url: str, data: bytes | None, timeout: float, max_bytes: int) -> bytes:
+    if not calendar_allowed(url):
+        raise CalendarNotAllowed(f"refusing calendar URL {url!r}")
+    req = urllib.request.Request(
+        url, data=data,
+        headers={"User-Agent": f"future-challenge-fc/{__version__}", "Accept": CALENDAR_ACCEPT},
+    )
+    opener = urllib.request.build_opener(_CalendarRedirects)
+    with opener.open(req, timeout=timeout) as resp:
+        body = resp.read(max_bytes + 1)
+    if len(body) > max_bytes:
+        raise ValueError(f"response from {url} exceeds {max_bytes} bytes")
+    return body
+
+
+def http_post(url: str, body: bytes, timeout: float = 20.0,
+              max_bytes: int = CALENDAR_MAX_BYTES) -> bytes:
+    """POST `body` to an allow-listed https calendar; oversize raises, never truncates."""
+    return _calendar_request(url, body, timeout, max_bytes)
+
+
+def calendar_get(url: str, timeout: float = 20.0, max_bytes: int = CALENDAR_MAX_BYTES) -> bytes:
+    """GET from an allow-listed https calendar, sending the OpenTimestamps Accept header."""
+    return _calendar_request(url, None, timeout, max_bytes)
+
+
+def _validated_calendars(calendars, min_calendars: int) -> tuple[str, ...]:
+    """Normalise, dedupe and check the calendar list before any request is made."""
+    cleaned = tuple(dict.fromkeys(str(c).rstrip("/") for c in calendars))
+    refused = [c for c in cleaned if not calendar_allowed(c)]
+    if refused:
+        raise CalendarNotAllowed("refusing calendar(s) outside the https allowlist: "
+                                 + ", ".join(refused))
+    if min_calendars < 1:
+        raise StampError("min_calendars must be at least 1")
+    if len(cleaned) < min_calendars:
+        raise StampError(f"{len(cleaned)} calendar(s) given but {min_calendars} are required")
+    return cleaned
+
+
+@dataclass
+class StampedDigest:
+    """A digest's merged calendar timestamp and the calendars that produced it."""
+
+    timestamp: Timestamp
+    calendars: list[str]
+
+
+def _parse_calendar_timestamp(body: bytes, msg: bytes) -> Timestamp:
+    r = _Reader(body)
+    ts = Timestamp.parse(r, msg)
+    if not r.done:
+        raise ValueError("trailing bytes after the calendar timestamp")
+    if not any(isinstance(att, Pending | Bitcoin) for _m, att in ts.walk()):
+        raise ValueError("calendar timestamp carries no pending or Bitcoin attestation")
+    return ts
+
+
+def stamp_digest(digest: bytes, calendars=DEFAULT_CALENDARS,
+                 min_calendars: int = DEFAULT_MIN_CALENDARS, http_post=http_post,
+                 timeout: float = 20.0) -> StampedDigest:
+    """Submit `digest` to every calendar and merge the timestamps they return.
+
+    Raises StampError unless at least `min_calendars` accepted it. A calendar that is
+    down, slow or answers with garbage is skipped, never trusted blindly: the response
+    is parsed under the same bounds as any proof.
+    """
+    if len(digest) != 32:
+        raise ValueError("a digest to stamp must be 32 bytes")
+    cals = _validated_calendars(calendars, min_calendars)
+    root = Timestamp(bytes(digest))
+    accepted: list[str] = []
+    failures: list[str] = []
+    for cal in cals:
+        try:
+            body = http_post(f"{cal}/digest", bytes(digest), timeout, CALENDAR_MAX_BYTES)
+            ts = _parse_calendar_timestamp(body, bytes(digest))
+        except (OSError, ValueError, http.client.HTTPException) as exc:
+            failures.append(f"{cal} ({type(exc).__name__})")
+            continue
+        root.merge(ts)
+        accepted.append(cal)
+    if len(accepted) < min_calendars:
+        raise StampError(
+            f"only {len(accepted)} of {min_calendars} required calendars accepted the digest; "
+            "failed: " + ", ".join(failures))
+    return StampedDigest(root, accepted)
+
+
+# ------------------------------------------------------------------ round directories
+
+
+def _json_bytes(obj) -> bytes:
+    return (json.dumps(obj, indent=2, sort_keys=True) + "\n").encode()
+
+
+def _atomic_write(path: Path, data: bytes) -> None:
+    """Write beside the target then rename, so a crash never leaves a torn file."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(dir=path.parent, prefix=f".{path.name}.", suffix=".tmp")
+    try:
+        with os.fdopen(fd, "wb") as fh:
+            fh.write(data)
+        os.chmod(tmp, 0o644)
+        os.replace(tmp, path)
+    except BaseException:
+        with contextlib.suppress(OSError):
+            os.unlink(tmp)
+        raise
+
+
+def _window_indices(roots_dir: Path) -> list[int]:
+    found = []
+    for p in roots_dir.glob("*.json"):
+        if p.stem.isdigit() and p.stem == str(int(p.stem)):
+            found.append(int(p.stem))
+    return sorted(found)
+
+
+def _window_root(roots_dir: Path, window: int) -> bytes:
+    """The Merkle root of roots/<window>.json, the value that is stamped."""
+    try:
+        doc = json.loads((roots_dir / f"{window}.json").read_text())
+        root = bytes.fromhex(doc["root"])
+    except (KeyError, TypeError, AttributeError) as exc:
+        raise ValueError(f"roots/{window}.json has no usable 'root' field") from exc
+    if len(root) != 32:
+        raise ValueError(f"roots/{window}.json 'root' is not 32 bytes")
+    return root
+
+
+def stamp_round_dir(round_dir, calendars=DEFAULT_CALENDARS,
+                    min_calendars: int = DEFAULT_MIN_CALENDARS, http_post=http_post,
+                    timeout: float = 20.0, now: datetime | None = None) -> list[int]:
+    """Stamp every roots/<w>.json that has no roots/<w>.root.ots yet.
+
+    Writes roots/<w>.anchor.json first, then roots/<w>.root.ots (a window counts as
+    stamped only once the .ots exists, so a crash between the two is retried) and
+    never rewrites <w>.json. Returns the windows stamped by this call. Windows that
+    could not be stamped are reported together in a StampError after the others
+    were still attempted; a disallowed calendar raises CalendarNotAllowed first.
+    """
+    roots_dir = Path(round_dir) / "roots"
+    cals = _validated_calendars(calendars, min_calendars)
+    stamped: list[int] = []
+    failures: list[str] = []
+    for window in _window_indices(roots_dir):
+        ots_path = roots_dir / f"{window}.root.ots"
+        if ots_path.exists():
+            continue
+        try:
+            root = _window_root(roots_dir, window)
+            result = stamp_digest(root, cals, min_calendars, http_post, timeout)
+            proof = serialize_ots(DetachedProof(root, result.timestamp))
+        except (StampError, ValueError, OSError) as exc:
+            failures.append(f"window {window}: {exc}")
+            continue
+        anchor = {
+            "schema_version": C.SCHEMA_VERSION,
+            "scheme": ANCHOR_SCHEME,
+            "digest": root.hex(),
+            "status": PENDING_CALENDAR,
+            "calendar_uris": result.calendars,
+            "stamped_at": C.iso_z(now or datetime.now(UTC)),
+        }
+        _atomic_write(roots_dir / f"{window}.anchor.json", _json_bytes(anchor))
+        _atomic_write(ots_path, proof)
+        stamped.append(window)
+    if failures:
+        raise StampError("; ".join(failures))
+    return stamped
+
+
+# ------------------------------------------------------------------------------ CLI
+
+
+def _build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="python -m fc.anchor",
+        description="Stamp, upgrade and verify the Merkle roots of a round (scheme fc-ots/v1).")
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    stamp = sub.add_parser("stamp", help="submit each unstamped root to public calendars")
+    stamp.add_argument("--round-dir", nargs="+", required=True, metavar="DIR")
+    stamp.add_argument("--calendar", action="append", metavar="URL",
+                       help="https calendar URL (repeatable); default: the four public calendars")
+    stamp.add_argument("--min-calendars", type=int, default=DEFAULT_MIN_CALENDARS)
+    stamp.add_argument("--timeout", type=float, default=20.0)
+    return parser
+
+
+def _cmd_stamp(args, http_post) -> int:
+    calendars = tuple(args.calendar) if args.calendar else DEFAULT_CALENDARS
+    try:
+        _validated_calendars(calendars, args.min_calendars)
+    except (CalendarNotAllowed, StampError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+    failed = False
+    for round_dir in args.round_dir:
+        roots_dir = Path(round_dir) / "roots"
+        if not roots_dir.is_dir():
+            print(f"error: {roots_dir}: no such directory", file=sys.stderr)
+            failed = True
+            continue
+        try:
+            stamped = stamp_round_dir(round_dir, calendars, args.min_calendars, http_post,
+                                      args.timeout)
+        except StampError as exc:
+            print(f"unstamped {roots_dir}: {exc}", file=sys.stderr)
+            failed = True
+            continue
+        for window in stamped:
+            print(f"stamped {roots_dir / f'{window}.root.ots'} {PENDING_CALENDAR}")
+        if not stamped:
+            print(f"nothing to stamp in {roots_dir}")
+    return 1 if failed else 0
+
+
+def main(argv: list[str] | None = None, *, http_post=http_post) -> int:
+    """`python -m fc.anchor stamp|upgrade|verify`; HTTP is injectable for tests."""
+    args = _build_parser().parse_args(argv)
+    if args.command == "stamp":
+        return _cmd_stamp(args, http_post)
+    return 2  # pragma: no cover - argparse rejects unknown subcommands
+
+
+if __name__ == "__main__":  # pragma: no cover
+    sys.exit(main())
