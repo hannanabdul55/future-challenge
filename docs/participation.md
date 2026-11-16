@@ -9,6 +9,8 @@ Rules: [`rules.md`](rules.md) v2026.10. Everything you submit is public and perm
 | **S** hub-run | The hub, every day, on its GPU, with no network | one GGUF file ≤ 11 GiB (≈ 8–9B bf16 or ≈ 14B 4-bit) | headline board |
 | **A** self-run | You, every day, on the same packet; outputs committed before 12:00 UTC, revealed by 18:00 UTC with transcripts | any other LLM, including API models | separate board, "self-run, audited" |
 
+The hub operator also runs its own models, under ids starting with `house-` (team `house`). They are run and published exactly like a Tier S entry, with the same packet and code, but they are listed in a separate "Operator entries (house) — not ranked" section of the board and never enter the ranked table or the hub-ensemble baseline, so they cannot move your rank. The `house-` prefix is reserved: a registration pull request from anyone outside the project that adds or edits `model-metadata/house-*.yml` fails CI.
+
 ## 2. Freeze (both tiers)
 
 `fc` is also a built-in command in bash and zsh, so a bare `fc keygen` runs the shell's history editor instead of this tool. Always type `uv run fc`, or call `.venv/bin/fc` by path.

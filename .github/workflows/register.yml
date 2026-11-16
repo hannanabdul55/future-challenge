@@ -11,8 +11,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # the base ref must be present for the three-dot diffs below
       - uses: astral-sh/setup-uv@v5
       - run: uv sync --extra dev --extra hf
+      - name: Reserve the house- prefix for operator entries
+        # D-11: house-* ids are the hub operator's own entries (unranked on the board). Only the
+        # owner, members and collaborators may add or edit them. Event data reaches the script
+        # through env, never through ${{ }} inside the script body.
+        env:
+          AUTHOR_ASSOCIATION: ${{ github.event.pull_request.author_association }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          set -eu
+          files=$(git diff --no-renames --name-only "origin/$BASE_REF...HEAD" -- 'model-metadata/house-*.yml' || true)
+          [ -z "$files" ] && { echo "no house- entry files changed"; exit 0; }
+          case "$AUTHOR_ASSOCIATION" in
+            OWNER|MEMBER|COLLABORATOR) echo "operator PR ($AUTHOR_ASSOCIATION) may change: $files"; exit 0 ;;
+          esac
+          echo "::error::model ids starting with house- are reserved for operator entries"
+          echo "$files"
+          exit 1
       - name: Check changed entries
         run: |
           set -e
