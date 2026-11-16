@@ -221,10 +221,12 @@ def add_baselines(forecasts: pd.DataFrame, questions: list[dict], days: dict[str
             mk["tier"] = "H"
             parts.append(mk)
     all_ = pd.concat(parts, ignore_index=True)
-    # Ensemble over non-baseline entries only, per day.
+    # Ensemble over external entries only, per day: not baselines, and not operator (house-*)
+    # entries — a hub-run model inside the hub's own reference baseline would let the operator
+    # move every ranked entry's hub-ensemble comparison.
     ens = []
     for d, g in all_.groupby("day"):
-        real = g[~g["model_id"].isin(BASELINE_IDS)]
+        real = g[~g["model_id"].isin(BASELINE_IDS) & ~g["model_id"].map(is_house)]
         if real["model_id"].nunique() >= 2:
             e = ensemble_mean_probs(real[["round_id", "question_id", "output_type",
                                           "output_type_id", "value"]])

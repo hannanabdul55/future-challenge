@@ -208,7 +208,9 @@ def test_ensemble_excludes_house(work: Path, tmp_path: Path):
     # (pre-existing, logged in deferred-items.md; outside this plan's files).
     fcs = fcs[fcs.output_type != "binary"]
     ext = fcs[fcs.model_id.isin(["acme-small", "acme-sharp", "zed-noisy"])]
-    want = ext.groupby(key)["value"].mean()
+    # categoricals: mean of the externals; quantiles: their quantile-wise median
+    want = pd.concat([ext[ext.output_type == "categorical"].groupby(key)["value"].mean(),
+                      ext[ext.output_type == "quantile"].groupby(key)["value"].median()])
     got = fcs[fcs.model_id == "hub-ensemble"].set_index(key)["value"]
     assert len(got) == len(want)
     pd.testing.assert_series_equal(got.sort_index(), want.sort_index(), check_names=False,
