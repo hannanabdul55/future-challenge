@@ -1,4 +1,4 @@
-# Future Challenge — an open, contamination-proof evaluation hub for AI models
+# Future Challenge — an open, contamination-resistant evaluation hub for AI models
 
 *Design document, v0.1 — 2026-08-28*
 
@@ -378,7 +378,7 @@ POST /rounds/{r}/commit  { model_id, commit, signature_over(commit ‖ r ‖ mod
 
 - Team keys: Ed25519, registered at onboarding; public key in `model-metadata`.
 - Hub signs every receipt. Team retains it. A receipt is proof against the hub later "losing" a submission.
-- Every 10 minutes the hub publishes a Merkle root of all commits received so far, and anchors it via **OpenTimestamps** (Bitcoin) and appends it to **Sigstore Rekor** (public transparency log). Roots are also posted to the repo and a social account, giving independent witnesses.
+- Every 10 minutes the hub publishes a Merkle root of all commits received so far, and anchors it via **OpenTimestamps** (Bitcoin); appending it to **Sigstore Rekor** (public transparency log) is deferred. Roots are also posted to the repo and a social account, giving independent witnesses.
 - At `T_reveal`, plaintext + nonce arrive; hub recomputes and checks. Matching submissions are merged; mismatches are published as invalid.
 
 Consequence: neither the team nor the hub can alter, backdate, or suppress a submission after `T_commit`, and no party sees any plaintext before `T_commit`.
@@ -537,7 +537,7 @@ Attack → mitigation → residual. "Closed" means the mechanism removes the att
 
 | # | Attack | Mitigation | Residual |
 |---|---|---|---|
-| B1 | Late submission, clock manipulation, backdating | Server time on receipt; Merkle root every 10 min anchored to Bitcoin + Rekor; receipts signed | Closed |
+| B1 | Late submission, clock manipulation, backdating | Server time on receipt; Merkle root every 10 min anchored to Bitcoin via OpenTimestamps (Rekor deferred); receipts signed | Closed |
 | B2 | Post-deadline edit | Hash commitment; reveal must match | Closed |
 | B3 | Hub operator alters or drops a submission | Signed receipt held by team; public Merkle proof; anyone can verify inclusion | Closed (detectable and provable) |
 | B4 | Hub operator reads submissions before deadline and tips a colluder | Operator only sees hashes before `T_commit` | Closed |
@@ -614,7 +614,7 @@ future-challenge/
 ├── rounds/<round_id>/
 │   ├── manifest.json     questions, task families, data vintage hash, rules version, drand round R, H(S)
 │   ├── entropy.json      β_R, S, E   (after T_entropy)
-│   └── roots/            Merkle roots + OTS proofs + Rekor entries
+│   └── roots/            Merkle roots + OTS proofs (Rekor entries deferred)
 ├── model-metadata/       one YAML per entry (identity, tier, keys)
 ├── model-output/         hubverse parquet
 ├── rationale/            per-entry, per-round
@@ -632,7 +632,7 @@ future-challenge/
 Components:
 
 - **Submission API + PR bot**: teams may use either; the bot just wraps the API. Validation via `hubValidations` in CI.
-- **Commitment service**: receipts, Merkle roots, OpenTimestamps + Rekor anchoring, root mirroring to repo and social.
+- **Commitment service**: receipts, Merkle roots, OpenTimestamps anchoring (Rekor deferred), root mirroring to repo and social.
 - **Entropy service**: drand client (League of Entropy, quicknet); hub secret commit/reveal; seed derivation; publishes `entropy.json`.
 - **Sealed runner**: Kubernetes jobs on gVisor (CPU) / Firecracker (GPU) with egress through an mitmproxy-based logging proxy applying the entry's policy; results signed with the runner key.
 - **Evaluator**: R/Python package built on `hubEvals`/`scoringutils`; containerized; digest in the round manifest.
@@ -673,7 +673,7 @@ The forecast paradigm (F) can run entirely on existing hubverse tooling plus the
 ## 14. Cadence and launch plan
 
 **Phase 0 — Forecast MVP (months 1–2)**
-Weekly rounds on the §4.5 starter set: epi (existing hub targets), macro, weather stations, HPAI + egg-price chain, KEV vulnerability exploitation, overdose nowcast, ACLED conflict events, adoption panel; event-triggered outage and aftershock rounds added once the trigger definitions have been dry-run. Commitment service with OTS/Rekor anchoring. Hubverse tooling for validation and scoring. Leaderboard with relative skill, CIs, coverage, contribution. Tiers A and B only. Rules v2026.10.
+Weekly rounds on the §4.5 starter set: epi (existing hub targets), macro, weather stations, HPAI + egg-price chain, KEV vulnerability exploitation, overdose nowcast, ACLED conflict events, adoption panel; event-triggered outage and aftershock rounds added once the trigger definitions have been dry-run. Commitment service with OTS anchoring (Rekor deferred). Hubverse tooling for validation and scoring. Leaderboard with relative skill, CIs, coverage, contribution. Tiers A and B only. Rules v2026.10.
 
 **Phase 1 — Fresh tasks (months 3–4)**
 Entropy service. Three families (symbolic math, program synthesis, grid puzzles) with verifiers and novelty checks. Monthly G rounds; Tier A with audits; API fingerprinting.
@@ -727,9 +727,9 @@ The published bytes are what `fc/commit.py` emits and compares directly —
 the artifacts and the cryptography, and there is nowhere for a prefix-stripping
 bug to silently weaken a comparison. The algorithm is fixed by `schema_version`.
 
-This shape is frozen: these exact bytes are what an OpenTimestamps proof and a
-Rekor entry attest to, so changing a field name or a value encoding after a root
-has been anchored invalidates every proof already published, with no recoverable
+This shape is frozen: these exact bytes are what an OpenTimestamps proof, and a
+Rekor entry once that deferred anchoring is enabled, attest to, so changing a field name or a value encoding after a root has been
+anchored invalidates every proof already published, with no recoverable
 migration. `schema_version` exists so a later reader detects such a change rather
 than silently misparsing it.
 
