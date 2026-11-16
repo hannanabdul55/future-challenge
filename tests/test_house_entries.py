@@ -112,3 +112,127 @@ def test_board_renders_house_group_separately(work: Path):
     assert "S (house, unranked)" in html
     house_section = tail.split("<h2>", 1)[0]
     assert "<th>#</th>" not in house_section
+
+
+# ----------------------------------------------------------------------------------- Task 2
+
+WORLD_QIDS = ["senate-al", "senate-ak", "senate-ga"]
+
+
+def mark_world(root: Path, qids=WORLD_QIDS) -> None:
+    rewrite_questions(root, lambda q: q.update(track="world") if q["question_id"] in qids else None)
+
+
+def scramble_forecasts(root: Path, qids=WORLD_QIDS) -> None:
+    """Change every entry's forecast on `qids` (rotate the category probabilities)."""
+    for p in sorted((root / "model-output").glob("*/*.csv")):
+        df = pd.read_csv(p)
+        m = df.question_id.isin(qids)
+        assert m.any()
+        df.loc[m, "value"] = df[m].groupby("question_id")["value"].transform(lambda v: v.to_numpy()[[1, 2, 0]])
+        df.to_csv(p, index=False)
+
+
+def test_world_track_scores_cannot_move_ranked_rows(work: Path, tmp_path: Path):
+    mark_world(work)
+    before = ranked_rows(score(work))
+    other = tmp_path / "other"
+    shutil.copytree(work, other)
+    scramble_forecasts(other)
+    after = ranked_rows(score(other))
+    # The world questions were scored (and so differ) ...
+    s0 = pd.read_csv(work / "eval" / "out" / SEASON / "scores.csv")
+    s1 = pd.read_csv(other / "eval" / "out" / SEASON / "scores.csv")
+    w = s0.question_id.isin(WORLD_QIDS)
+    assert w.any() and not s0[w].score.reset_index(drop=True).equals(s1[w].score.reset_index(drop=True))
+    # ... but the ranked table is bit-for-bit identical.
+    pd.testing.assert_frame_equal(before, after, check_exact=True)
+
+
+def test_adding_a_house_entry_leaves_every_ranked_row_identical(work: Path, tmp_path: Path):
+    without = ranked_rows(score(work))
+    withh = tmp_path / "withh"
+    shutil.copytree(work, withh)
+    add_house(withh)
+    with_house = ranked_rows(score(withh))
+    pd.testing.assert_frame_equal(without, with_house, check_exact=True)
+    assert "hub-ensemble" in set(with_house.model_id)  # the ensemble row is still compared
+
+
+def test_house_skill_does_not_depend_on_other_house_entries(work: Path, tmp_path: Path):
+    add_house(work)
+    alone = {h["model_id"]: h for h in score(work)["house_entries"]}[HOUSE]
+    two = tmp_path / "two"
+    shutil.copytree(work, two)
+    add_house(two, "house-other", source="zed-noisy")
+    both = {h["model_id"]: h for h in score(two)["house_entries"]}
+    assert set(both) == {HOUSE, "house-other"}
+    assert both[HOUSE]["rel_skill"] == alone["rel_skill"]
+
+
+def test_bootstrap_blocks_are_declared_clusters(work: Path, monkeypatch: pytest.MonkeyPatch):
+    clusters = {}
+
+    def tag(q):
+        if q["question_id"].startswith("senate-"):
+            q["cluster"] = f"senate-{q['question_id'][-1]}"
+            clusters[q["question_id"]] = q["cluster"]
+
+    rewrite_questions(work, tag)
+    assert clusters
+    seen: list[pd.Series] = []
+    real = season_eval.bootstrap_relative_skill
+
+    def spy(scores, baseline, **kw):
+        seen.append(kw["block"])
+        return real(scores, baseline, **kw)
+
+    monkeypatch.setattr(season_eval, "bootstrap_relative_skill", spy)
+    add_house(work)
+    score(work)
+    assert seen
+    for block in seen:
+        for key, blk in block.items():
+            day, qid = key.split("/", 1)
+            # a declared cluster where the question has one, the day otherwise
+            assert blk == clusters.get(qid, day)
+
+
+def test_ensemble_excludes_house(work: Path, tmp_path: Path):
+    # Two external entries + a house entry: the ensemble is the mean of the externals only.
+    add_house(work, source="zed-noisy")
+    score(work)
+    fcs = pd.read_csv(work / "eval" / "out" / SEASON / "forecasts.csv")
+    key = ["day", "question_id", "output_type", "output_type_id"]
+    # Binary rows are left out: ensemble_mean_probs renormalises a lone binary "p" to 1.0
+    # (pre-existing, logged in deferred-items.md; outside this plan's files).
+    fcs = fcs[fcs.output_type != "binary"]
+    ext = fcs[fcs.model_id.isin(["acme-small", "acme-sharp", "zed-noisy"])]
+    want = ext.groupby(key)["value"].mean()
+    got = fcs[fcs.model_id == "hub-ensemble"].set_index(key)["value"]
+    assert len(got) == len(want)
+    pd.testing.assert_series_equal(got.sort_index(), want.sort_index(), check_names=False,
+                                   atol=1e-9, rtol=0)
+    # One external entry + a house entry: not enough external entries, so no ensemble at all.
+    one = tmp_path / "one"
+    shutil.copytree(work, one)
+    for m in ("acme-sharp", "zed-noisy"):
+        (one / "model-metadata" / f"{m}.yml").unlink()
+        shutil.rmtree(one / "model-output" / m)
+    score(one)
+    fcs1 = pd.read_csv(one / "eval" / "out" / SEASON / "forecasts.csv")
+    assert {"acme-small", HOUSE} <= set(fcs1.model_id)
+    assert "hub-ensemble" not in set(fcs1.model_id)
+
+
+def test_imputation_covers_ranked_core_but_never_world(work: Path):
+    mark_world(work, ["senate-ak"])
+    f = work / "model-output" / "acme-small" / f"{SEASON}-2026-10-26.csv"
+    df = pd.read_csv(f)
+    df[~df.question_id.isin(["senate-ak", "senate-ga"])].to_csv(f, index=False)
+    score(work)
+    scores = pd.read_csv(work / "eval" / "out" / SEASON / "scores.csv")
+    mine = scores[(scores.model_id == "acme-small") & (scores.day == "2026-10-26")]
+    assert "senate-ak" not in set(mine.question_id)  # world-track gap is not imputed
+    row = mine[mine.question_id == "senate-ga"]
+    assert len(row) == 1 and bool(row.imputed.iloc[0])  # ranked core gap still is
