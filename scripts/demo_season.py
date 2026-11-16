@@ -21,6 +21,7 @@ import numpy as np
 import pandas as pd
 import yaml
 
+from fc import anchor as A
 from fc import baselines as B
 from fc import commit as C
 from fc import freeze as F
@@ -50,6 +51,17 @@ class FakeApi:
 
 
 def main(root: Path, n_days: int) -> None:
+    # Demo anchors are synthetic regtest headers (~1 bit of work) that production
+    # verification rejects. Lower the work floor for this run only, then put it back.
+    floor = A.MIN_HEADER_WORK_BITS
+    A.MIN_HEADER_WORK_BITS = 0
+    try:
+        _run(root, n_days)
+    finally:
+        A.MIN_HEADER_WORK_BITS = floor
+
+
+def _run(root: Path, n_days: int) -> None:
     season = Q.SEASON
     qs = Q.generate_midterms(HERE / "questions" / season / "races.csv")
     qpath = root / "questions" / season / "questions.json"
@@ -66,6 +78,7 @@ def main(root: Path, n_days: int) -> None:
     freeze_dir = root / "rounds" / season / "season"
     rng = np.random.default_rng(7)
     entries = {"acme-small": 0.05, "acme-sharp": 0.02, "zed-noisy": 0.15}
+    headers: dict[str, dict[str, str]] = {}
     for i, (mid, _) in enumerate(entries.items()):
         team_priv, team_pub = C.generate_keypair()
         ident = M.resolve(f"org/{mid}", "main", api=FakeApi(mid), prompt_template=template.read_bytes())
@@ -85,22 +98,28 @@ def main(root: Path, n_days: int) -> None:
         root_file = freeze_dir / "roots" / f"{i}.json"
         root_doc = json.loads(root_file.read_text())
         accepted = [e["commit"] for e in SV.read_ledger(freeze_dir) if e["outcome"] == SV.ACCEPTED]
-        import hashlib
-        digest = hashlib.sha256(root_file.read_bytes()).hexdigest()
+        # Synthetic regtest anchor: a real fc-ots/v1 proof over the window's Merkle root and a
+        # ~1-bit-work header. Production verification rejects it (work floor); see below.
+        height = 920000 + i
+        ots, header_hex = A.regtest_anchor(
+            root_doc["root"], datetime(2026, 10, 25, 13, i, tzinfo=UTC), height)
+        (freeze_dir / "roots" / f"{i}.root.ots").write_bytes(ots)
+        headers[str(height)] = {
+            "hash": A.BlockHeader.from_bytes(bytes.fromhex(header_hex)).block_hash_hex,
+            "header": header_hex,
+        }
         (freeze_dir / "roots" / f"{i}.anchor.json").write_text(
-            json.dumps({"schema_version": "2026.08", "status": "bitcoin",
-                        "bitcoin_block_height": 920000 + i, "digest": digest,
-                        "calendar_uris": ["https://alice.btc.calendar.opentimestamps.org"],
-                        "rekor": {"log_index": 185000000 + i}}, indent=2) + "\n"
+            json.dumps({"schema_version": "2026.08", "scheme": A.ANCHOR_SCHEME,
+                        "status": "bitcoin", "bitcoin_block_height": height,
+                        "digest": root_doc["root"],
+                        "calendar_uris": ["https://alice.btc.calendar.opentimestamps.org"]},
+                       indent=2) + "\n"
         )
         C.write_sidecar(sidecar, receipt, C.merkle_proof(accepted, receipt.merkle_position),
                         root_doc["root"],
                         team_signature=req.team_signature, nonce_hash=C.nonce_hash(nonce),
                         window_index=i)
-    (freeze_dir / "roots" / "bitcoin-headers.json").write_text(
-        json.dumps({str(920000 + i): f"2026-10-25T13:0{i}:00Z" for i in range(len(entries))},
-                   indent=2) + "\n"
-    )
+    (freeze_dir / "roots" / "bitcoin-headers.json").write_text(json.dumps(headers, indent=2) + "\n")
 
     # Daily rounds with offline packets and synthetic forecasts.
     def http(url, params=None):

@@ -73,10 +73,12 @@ def freeze_time(entry: dict[str, Any], root: Path, *,
                 allow_unanchored: bool = False) -> datetime | None:
     """Resolve the verified freeze timestamp for an entry.
 
-    When `allow_unanchored=False` (the default for official scoring), requires a
-    confirmed Bitcoin anchor (`.anchor.json` or `.json.ots` + `bitcoin-headers.json`)
-    covering the entry's Merkle root, and returns `max(anchor_block_time, server_time)`
-    so neither the receipt nor the external anchor can post-date a round's `T_open`.
+    When `allow_unanchored=False` (the default for official scoring), requires that the
+    window's `roots/<w>.root.ots` verifies offline against the committed
+    `roots/bitcoin-headers.json` (no network call) and returns
+    `max(block nTime + 2 h, server_time)`, so neither the receipt nor the external anchor
+    can post-date a round's `T_open`. A recorded status string or a claimed block time is
+    never evidence.
     When `allow_unanchored=True` (for local/dev runs without Bitcoin anchoring), falls
     back to `hub_receipt.server_time`.
     """
@@ -103,32 +105,22 @@ def freeze_time(entry: dict[str, Any], root: Path, *,
         if w is None and root_hex:
             rdoc = S.root_for(roots_dir.parent, root_hex)
             w = rdoc["window_index"] if rdoc else None
-        if w is not None:
-            anchor_file = roots_dir / f"{w}.anchor.json"
-            ots_file = roots_dir / f"{w}.json.ots"
-            root_file = roots_dir / f"{w}.json"
-            height: int | None = None
-            status = A.NOT_ANCHORED
-            if ots_file.is_file() and root_file.is_file():
-                import hashlib
-                digest = hashlib.sha256(root_file.read_bytes()).hexdigest()
+        if w is not None and root_hex:
+            # Admission trusts a proof, never a record: roots/<w>.root.ots must verify
+            # offline against a header committed in roots/bitcoin-headers.json (hash, PoW
+            # and work floor). <w>.anchor.json and any claimed block time are ignored.
+            ots_file = roots_dir / f"{w}.root.ots"
+            if ots_file.is_file():
                 try:
-                    att = A.parse_detached_timestamp(ots_file.read_bytes(), digest)
-                    status, height = att.status, att.bitcoin_block_height
-                except Exception:  # noqa: BLE001
-                    status, height = A.NOT_ANCHORED, None
-            elif anchor_file.is_file() and root_file.is_file():
-                import hashlib
-                arec = json.loads(anchor_file.read_text())
-                digest = hashlib.sha256(root_file.read_bytes()).hexdigest()
-                if arec.get("digest") == digest:
-                    status = arec.get("status", A.NOT_ANCHORED)
-                    height = arec.get("bitcoin_block_height")
-            if status == A.BITCOIN and height is not None:
-                headers = A.FileHeaderSource(roots_dir / "bitcoin-headers.json")
-                block_time = headers.block_time(int(height))
-                if block_time is not None:
-                    return max(block_time, server_time)
+                    verdict = A.verify_digest_anchor(
+                        bytes.fromhex(root_hex),
+                        A.parse_ots(ots_file.read_bytes()),
+                        A.HeaderFile(roots_dir / "bitcoin-headers.json"),
+                    )
+                except Exception:  # noqa: BLE001 - an unreadable proof admits nothing
+                    verdict = None
+                if verdict is not None and verdict.confirmed and verdict.anchored_before is not None:
+                    return max(verdict.anchored_before, server_time)
 
     return server_time if allow_unanchored else None
 
