@@ -1,0 +1,12 @@
+# Reveal schedule (D-06): 18:00 UTC. The calendar names UTC explicitly; the box TZ is US Pacific.
+[Unit]
+Description=Future Challenge daily job: reveal phase at 18:00 UTC
+
+[Timer]
+OnCalendar=*-*-* 18:00:00 UTC
+Persistent=true
+AccuracySec=1s
+Unit=fc-reveal.service
+
+[Install]
+WantedBy=timers.target

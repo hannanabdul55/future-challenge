@@ -181,6 +181,10 @@ class Box:
         self.bin = tmp_path / "bin"
         self.bin.mkdir()
         self.log = tmp_path / "argv.log"
+        # The dev checkout may live under a path with spaces, which the installer rightly
+        # refuses; a clean symlink stands in for the box's checkout.
+        self.fc_root = tmp_path / "checkout"
+        self.fc_root.symlink_to(ROOT)
         self.env_file = self.home / ".config" / "fc" / "env"
         self.user_dir = self.home / ".config" / "systemd" / "user"
         script = '#!/bin/sh\necho "{n} $*" >> "' + str(self.log) + '"\n{extra}\n'
@@ -205,6 +209,7 @@ class Box:
             "HOME": str(self.home),
             "USER": "tester",
             "PATH": f"{self.bin}:{os.environ['PATH']}",
+            "FC_ROOT": str(self.fc_root),
             **extra,
         }
         return subprocess.run(
@@ -259,7 +264,7 @@ def test_good_state_installs_verifies_then_enables(box: Box):
     ):
         text = (box.user_dir / name).read_text()
         assert "@FC_ROOT@" not in text
-    assert str(ROOT) in (box.user_dir / "fc-commit.service").read_text()
+    assert str(box.fc_root) in (box.user_dir / "fc-commit.service").read_text()
     calls = box.calls()
     verify = next(i for i, c in enumerate(calls) if c.startswith("systemd-analyze --user verify"))
     reload_ = calls.index("systemctl --user daemon-reload")
@@ -295,6 +300,7 @@ def test_refuses_a_checkout_path_systemd_cannot_hold(box: Box):
     box.write_env()
     res = box.run(FC_ROOT="/srv/has space/fc")
     assert res.returncode != 0
+    assert "whitespace" in res.stderr
     assert not any(c.startswith("systemctl") for c in box.calls())
 
 
