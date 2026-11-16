@@ -13,7 +13,10 @@ Outputs (all CSV/JSON, consumed by the static board)
   forecasts.csv       every row, with model_id, day, tier
   scores.csv          per (model_id, day, question_id): score, imputed flag, truth status
   entry_days.csv      per (model_id, day): mean score, n, parse coverage
-  relative_skill.csv  per tier: rel skill vs fc-baseline, 95 % CI by day block, N days
+  relative_skill.csv  per tier: rel skill vs fc-baseline, 95 % CI by outcome-cluster block,
+                      N days; ranked-track questions only, house-* entries excluded
+  house_skill.csv     the same figures for operator (house-*) entries, each against
+                      fc-baseline alone; published, never ranked
   trajectories.csv    per (model_id, day): P(D House), P(D Senate), seat medians
   calibration.csv     per (model_id, tier): reliability bins, Brier, interval coverage
   board.json          everything the HTML needs, including the provisional flag
@@ -40,6 +43,14 @@ from .eval import bootstrap_relative_skill, ensemble_mean_probs, score_frame
 TIERS = ("S", "A", "B", "H")
 BASELINE = "fc-baseline"
 BASELINE_IDS = {"fc-baseline": "H", "fc-uniform": "H", "fc-market": "H", "hub-ensemble": "H"}
+# Operator entries (D-11): run by the hub next to participants. Scored and published like any
+# entry, but never ranked and never part of a computation whose result depends on the compared
+# set (pairwise relative skill, the hub-ensemble baseline).
+HOUSE_PREFIX = "house-"
+
+
+def is_house(model_id: object) -> bool:
+    return str(model_id).startswith(HOUSE_PREFIX)
 
 
 def load_entries(root: Path) -> dict[str, dict[str, Any]]:
@@ -440,12 +451,11 @@ def run(root: Path, season: str, *, truth_path: Path | None = None, out_dir: Pat
     ranked = Q.ranked_ids(questions)
     by_id = {q["question_id"]: q for q in questions}
     sc_ranked = sc[sc.question_id.isin(ranked)] if len(sc) else sc
-    rel = []
-    for tier in TIERS:
-        sub = (sc_ranked[(sc_ranked.tier == tier) | (sc_ranked.model_id == BASELINE)]
-               if tier != "H" else sc_ranked[sc_ranked.tier == "H"])
+
+    def skill_vs_baseline(sub: pd.DataFrame, tier: str) -> pd.DataFrame | None:
+        """Bootstrapped relative skill of every model in `sub` against fc-baseline."""
         if sub.empty or sub.model_id.nunique() < 2:
-            continue
+            return None
         keyed = sub.copy()
         keyed["question_id"] = keyed["day"] + "/" + keyed["question_id"]
         # Block bootstrap over outcome clusters: the question's declared cluster when it has
@@ -456,14 +466,40 @@ def run(root: Path, season: str, *, truth_path: Path | None = None, out_dir: Pat
             rs = bootstrap_relative_skill(keyed, BASELINE, n_boot=n_boot, block=block,
                                           min_shared=min_shared)
         except ValueError:
-            continue
+            return None
         rs["tier"] = tier
         rs["n_days"] = keyed.groupby("model_id")["day"].nunique().reindex(rs.index)
         rs["provisional"] = rs["n_days"] < min_days
-        rel.append(rs.reset_index().rename(columns={"index": "model_id"}))
-    rel_df = pd.concat(rel, ignore_index=True) if rel else pd.DataFrame(
-        columns=["model_id", "rel_skill", "lo95", "hi95", "n_questions", "tier", "n_days",
-                 "provisional"])
+        return rs.reset_index().rename(columns={"index": "model_id"})
+
+    # Pairwise skill depends on the compared set, so house entries are removed BEFORE the
+    # bootstrap, never hidden at display time: adding or dropping one leaves every ranked row
+    # unchanged.
+    sc_ranked_pub = sc_ranked[~sc_ranked.model_id.map(is_house)] if len(sc_ranked) else sc_ranked
+    rel = []
+    for tier in TIERS:
+        sub = (sc_ranked_pub[(sc_ranked_pub.tier == tier) | (sc_ranked_pub.model_id == BASELINE)]
+               if tier != "H" else sc_ranked_pub[sc_ranked_pub.tier == "H"])
+        rs = skill_vs_baseline(sub, tier)
+        if rs is not None:
+            rel.append(rs)
+    rel_cols = ["model_id", "rel_skill", "lo95", "hi95", "n_questions", "tier", "n_days",
+                "provisional"]
+    rel_df = pd.concat(rel, ignore_index=True) if rel else pd.DataFrame(columns=rel_cols)
+
+    # Operator entries: same cluster blocks and ranked-track questions, but each one is set
+    # against fc-baseline alone so its number never depends on another house entry either.
+    house_rows = []
+    for hid in sorted(m for m in (sc_ranked.model_id.unique() if len(sc_ranked) else [])
+                      if is_house(m)):
+        hs = sc_ranked[sc_ranked.model_id == hid]
+        tier = hs["tier"].iloc[0]
+        rs = skill_vs_baseline(
+            pd.concat([hs, sc_ranked[sc_ranked.model_id == BASELINE]], ignore_index=True), tier)
+        if rs is not None:
+            house_rows.append(rs[rs.model_id == hid])
+    house_df = (pd.concat(house_rows, ignore_index=True).assign(ranked=False)
+                if house_rows else pd.DataFrame(columns=[*rel_cols, "ranked"]))
 
     entry_days = (sc.groupby(["model_id", "day"]).agg(mean_score=("score", "mean"),
                                                       n=("score", "size"),
@@ -477,6 +513,7 @@ def run(root: Path, season: str, *, truth_path: Path | None = None, out_dir: Pat
     sc.to_csv(out_dir / "scores.csv", index=False)
     entry_days.to_csv(out_dir / "entry_days.csv", index=False)
     rel_df.to_csv(out_dir / "relative_skill.csv", index=False)
+    house_df.to_csv(out_dir / "house_skill.csv", index=False)
     traj.to_csv(out_dir / "trajectories.csv", index=False)
     cal.to_csv(out_dir / "calibration.csv", index=False)
     all_models = sorted(set(fc["model_id"].unique()) | set(adm_days))
@@ -484,10 +521,12 @@ def run(root: Path, season: str, *, truth_path: Path | None = None, out_dir: Pat
         "season": season, "days": sorted(days), "n_questions": len(questions),
         "n_resolved": int(truth["question_id"].nunique()) if len(truth) else 0,
         "entries": {m: {"tier": entries.get(m, {}).get("tier", BASELINE_IDS.get(m)),
+                        "house": is_house(m),
                         "days": sorted(fc[fc.model_id == m]["day"].unique().tolist()
                                        or adm_days.get(m, []))}
                     for m in all_models},
         "relative_skill": json.loads(rel_df.to_json(orient="records")),
+        "house_entries": json.loads(house_df.to_json(orient="records")),
         "trajectories": json.loads(traj.to_json(orient="records")),
         "headline_specs": headline_specs(questions),
         "calibration": json.loads(cal.to_json(orient="records")),

@@ -1,7 +1,7 @@
 """Static season board (BOARD-01..05) rendered from eval/out/<season>/board.json.
 
-One self-contained HTML file: per-tier tables with relative skill and CIs, provisional
-flags, calibration summary, trajectory charts (inline SVG, no JS dependencies), and links
+One self-contained HTML file: per-tier tables with relative skill and CIs, an unranked
+operator (house-*) group, provisional flags, calibration summary, trajectory charts (inline SVG, no JS dependencies), and links
 from every entry to its identity record, receipt and daily run bundles.
 """
 
@@ -58,7 +58,8 @@ def build(board_json: Path, out: Path) -> None:
              ("<p class=note>Forecasts on this page are AI model outputs on a fixed daily "
               "information packet. They are not statements of fact or endorsements. "
               "Lower score is better; relative skill &lt; 1 beats the persistence baseline. "
-              "Intervals are 95 % block bootstrap by day. Entries with fewer than "
+              "Intervals are 95 % block bootstrap by outcome cluster (a question's declared "
+              "cluster, else the day). Entries with fewer than "
               f"{b['min_days_for_headline']} scored days are provisional.</p>"),
              (f"<p class=note>{len(days)} daily rounds · {b['n_questions']} questions · "
               f"{b['n_resolved']} resolved.</p>")]
@@ -75,6 +76,22 @@ def build(board_json: Path, out: Path) -> None:
         for i, r in enumerate(rows, 1):
             cls = ' class=prov' if r.get("provisional") else ""
             parts.append(f"<tr{cls}><td class=num>{i}</td><td>{html.escape(r['model_id'])}"
+                         f"{' (provisional)' if r.get('provisional') else ''}</td>"
+                         f"<td class=num>{r['rel_skill']:.3f}</td>"
+                         f"<td class=num>{r['lo95']:.3f} – {r['hi95']:.3f}</td>"
+                         f"<td class=num>{int(r['n_days'])}</td><td class=num>{int(r['n_questions'])}</td></tr>")
+        parts.append("</table>")
+
+    house = b.get("house_entries") or []
+    if house:
+        parts.append("<h2>Operator entries (house) — not ranked</h2>"
+                     "<p class=note>Run by the hub operator on the same packet and code as every "
+                     "Tier S entry; shown for reference and never ranked.</p>"
+                     "<table><tr><th>Entry</th><th>Rel. skill vs fc-baseline</th><th>95 % CI</th>"
+                     "<th>Days</th><th>N</th></tr>")
+        for r in sorted(house, key=lambda r: r["model_id"]):
+            cls = ' class=prov' if r.get("provisional") else ""
+            parts.append(f"<tr{cls}><td>{html.escape(r['model_id'])}"
                          f"{' (provisional)' if r.get('provisional') else ''}</td>"
                          f"<td class=num>{r['rel_skill']:.3f}</td>"
                          f"<td class=num>{r['lo95']:.3f} – {r['hi95']:.3f}</td>"
@@ -123,7 +140,8 @@ def build(board_json: Path, out: Path) -> None:
                  f'<a href="../sidecar/{html.escape(m)}/">receipts</a> · '
                  f'<a href="../runs/{html.escape(b["season"])}/">runs</a> · '
                  f'<a href="../model-output/{html.escape(m)}/">forecasts</a>')
-        parts.append(f"<tr><td>{html.escape(m)}</td><td>{html.escape(str(e['tier']))}</td>"
+        tier = f"{e['tier']} (house, unranked)" if e.get("house") else str(e["tier"])
+        parts.append(f"<tr><td>{html.escape(m)}</td><td>{html.escape(tier)}</td>"
                      f"<td class=num>{len(e['days'])}</td><td class=note>{links}</td></tr>")
     parts.append("</table>")
     parts.append("<h2>Rounds</h2><p class=note>" + " · ".join(
