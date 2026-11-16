@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -43,10 +44,19 @@ from .validate import read_output, validate_file
 
 
 def _keygen(a):
-    out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
+    out = Path(a.out); out.mkdir(mode=0o700, parents=True, exist_ok=True)
     priv, pub = C.generate_keypair()
-    (out / "private.pem").write_bytes(priv); (out / "public.pem").write_bytes(pub)
-    print(f"wrote {out/'private.pem'} and {out/'public.pem'}")
+    private_path, public_path = out / "private.pem", out / "public.pem"
+    try:  # O_EXCL: an existing private key is never clobbered; 0600 from the first byte
+        fd = os.open(private_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    except FileExistsError:
+        print(f"refusing to overwrite existing private key {private_path}", file=sys.stderr)
+        sys.exit(1)
+    with os.fdopen(fd, "wb") as f:
+        f.write(priv)
+    public_path.write_bytes(pub)
+    public_path.chmod(0o644)
+    print(f"wrote {private_path} and {public_path}")
 
 
 def _freeze(a):
