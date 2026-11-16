@@ -2,13 +2,15 @@
 
 Future Challenge is a forecasting challenge for frozen language models whose first season is the 2026 US midterm elections.
 
-An entrant pins a model before the season: its Hugging Face revision, the SHA-256 of every weights file, the prompt template and the decoding settings. I run each Tier S model daily on the same information packet, publish the forecasts, and score them when results arrive. Anyone can check the chain from public files, except the external timestamp, which is not live yet.
+An entrant pins a model before the season: its Hugging Face revision, the SHA-256 of every weights file, the prompt template and the decoding settings. I run each Tier S model daily on the same information packet, publish the forecasts, and score them when results arrive. Anyone can check the chain from public files; the external timestamp is pending until a Bitcoin-confirmed proof exists.
 
 As far as I know, the difference from other LLM forecasting benchmarks is that each model's exact identity is pinned in public before its first scored day, and every daily packet is published so anyone can replay a day. Entry is limited to language models that answer in text. One season is 75 outcomes that mostly move with one national swing, so it cannot separate close models.
 
 ## Season 1
 
 The election is on 2026-11-03; daily forecasts run from 2026-10-26 to 2026-11-03. The 75 questions are House and Senate control, the Democratic seat count in each chamber, all 35 Senate races and all 36 governor races, each by party. See [DESIGN.md](DESIGN.md) (section 3.4), [docs/rules.md](docs/rules.md) and [docs/legal-review.md](docs/legal-review.md).
+
+Season 2026-27-rolling: see [SCOPE.md](SCOPE.md).
 
 ## Layout
 
@@ -27,7 +29,7 @@ future-challenge/
 ```bash
 git clone https://github.com/hannanabdul55/future-challenge && cd future-challenge
 make setup
-make test                        # 281 tests
+make test
 make questions
 make packet DAY=2026-10-26       # fetches Wikipedia and GDELT data live
 make round-open DAY=2026-10-26
@@ -49,7 +51,7 @@ uv run fc verify --entry model-metadata/team-model.yml --season-dir rounds/2026-
    --round-manifest rounds/2026-us-midterms/2026-10-27/manifest.json
 ```
 
-Open a pull request with the YAML and the sidecar JSON, and I merge it and issue a receipt. OpenTimestamps and Rekor anchoring of the receipt root is not live yet, so the anchor check in `uv run fc verify` fails for now. The commitment and Merkle inclusion checks run offline today, and so does the file-hash check with a local snapshot.
+Open a pull request with the YAML and the sidecar JSON, and I merge it and issue a receipt. Receipt roots are stamped with OpenTimestamps, and `uv run fc verify` reports the anchor check as PENDING until a root's proof is Bitcoin-confirmed; Rekor is deferred. The commitment and Merkle inclusion checks run offline today, and so does the file-hash check with a local snapshot.
 
 Tier A is any other LLM, including API models. Entrants run their own frozen model on the same packet, commit before 12:00 UTC and reveal by 18:00 UTC, on a separate board. Full steps and the daily Tier A commands are in [docs/participation.md](docs/participation.md).
 
@@ -63,11 +65,11 @@ Tier A is any other LLM, including API models. Entrants run their own frozen mod
 | 18:00 | Reveal close: Tier S outputs and Tier A reveals are published. |
 | After 2026-11-03 | Provisional resolution once the race call is stable for 72 h, then final resolution on certified results or official seating. |
 
-## Status on 2026-10-17
+## Status on 2026-11-16
 
-Done: freeze, commit and verify for Hugging Face revisions; the 75-question set, season manifest, packet builder and daily-round workflow; the reference image and `uv run fc run`, whose container path is untested; and the scoring and board code. No entry is frozen yet. I am fine-tuning OLMo 3 7B Instruct in-house for a freeze before 2026-10-26.
+Season 1 daily rounds ran 2026-10-26 to 2026-11-03 with no model run; Season 1 resolves in Phase 8. Season 2026-27-rolling opens 2026-11-24 with 17 ranked macro questions and 7 unranked world questions (see [SCOPE.md](SCOPE.md)). The daily hub-run job is being brought up on the GPU box, with an unattended evidence window of 2026-11-24 to 2026-12-03.
 
-Not done: OpenTimestamps and Rekor anchoring, the scheduler on the shared GPU, the pipeline that scores live days and publishes the board, resolution connectors, market mapping (`questions/2026-us-midterms/markets.json` is empty) and the GitHub Pages site.
+OpenTimestamps stamping is being brought up. Until a root's proof is Bitcoin-confirmed, an entry is verifiably committed (signed receipt, published Merkle root) but its external timestamp is pending. Rekor anchoring is deferred.
 
 ## Licence
 
