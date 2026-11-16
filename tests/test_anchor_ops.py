@@ -25,16 +25,16 @@ CAL_A = "https://a.pool.opentimestamps.org"
 CAL_B = "https://b.pool.opentimestamps.org"
 
 
-def root_hex(window: int = 0) -> str:
-    return hashlib.sha256(f"merkle-root-{window}".encode()).hexdigest()
+def root_hex(window: int = 0, salt: str = "") -> str:
+    return hashlib.sha256(f"merkle-root-{window}{salt}".encode()).hexdigest()
 
 
-def make_round(tmp_path: Path, windows: int = 1) -> Path:
+def make_round(tmp_path: Path, windows: int = 1, salt: str = "") -> Path:
     """A round directory holding `windows` published root documents."""
     rd = tmp_path / "round"
     (rd / "roots").mkdir(parents=True)
     for w in range(windows):
-        doc = {"window_index": w, "root": root_hex(w), "anchor_status": "not-anchored",
+        doc = {"window_index": w, "root": root_hex(w, salt), "anchor_status": "not-anchored",
                "hub_signature": "sig"}
         (rd / "roots" / f"{w}.json").write_text(json.dumps(doc, indent=2) + "\n")
     return rd
@@ -330,8 +330,8 @@ class FakeHeaders:
         return self.mapping.get(height)
 
 
-def stamped_round(tmp_path: Path, windows: int = 1) -> Path:
-    rd = make_round(tmp_path, windows)
+def stamped_round(tmp_path: Path, windows: int = 1, salt: str = "") -> Path:
+    rd = make_round(tmp_path, windows, salt)
     A.stamp_round_dir(rd, calendars=(CAL_A, CAL_B), http_post=FakePost())
     return rd
 
@@ -645,7 +645,7 @@ def test_cli_upgrade_pending_prints_counts_and_exits_zero(tmp_path, capsys):
 
 def test_cli_upgrade_confirms_and_sums_over_round_dirs(tmp_path, capsys, floor0):
     first = stamped_round(tmp_path / "x")
-    second = stamped_round(tmp_path / "y")
+    second = stamped_round(tmp_path / "y", salt="-other-round")
     cal = FakeCalendar()
     hdr = cal.complete(first)
     code = A.main(["upgrade", "--round-dir", str(first), str(second)], http_get=cal,

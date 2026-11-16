@@ -35,6 +35,7 @@ from collections.abc import Callable, Iterator
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from typing import NamedTuple
 
 from fc import __version__
 from fc import commit as C
@@ -1213,6 +1214,186 @@ def stamp_round_dir(round_dir, calendars=DEFAULT_CALENDARS,
     return stamped
 
 
+# ------------------------------------------------------------------------- upgrading
+
+# (level, message) with level in {"info", "warning", "error"}. Network trouble is a
+# warning (a calendar being down never fails a sweep); an unreadable or inconsistent
+# file on disk is an error.
+Note = tuple[str, str]
+
+
+class UpgradeCounts(NamedTuple):
+    confirmed: int  # windows whose proof is verified against a Bitcoin header (now or before)
+    pending: int  # stamped windows still waiting for Bitcoin
+    upgraded: int  # windows promoted to bitcoin by this call
+
+
+def _short(text: str, limit: int = 80) -> str:
+    return text if len(text) <= limit else text[: limit - 3] + "..."
+
+
+def upgrade_timestamp(ts: Timestamp, http_get=calendar_get, timeout: float = 20.0,
+                      notes: list[Note] | None = None) -> int:
+    """Ask each pending attestation's calendar for its completed timestamp.
+
+    GET {uri}/timestamp/{hex(msg at the pending node)}: 200 is parsed and merged into
+    that node, 404 means still pending, anything else is noted and skipped. Pending
+    attestations are kept. A URI that is not an allow-listed https calendar is never
+    requested (T-06-10: a proof can name any URI). Returns how many nodes gained
+    something.
+    """
+    notes = [] if notes is None else notes
+    targets = [(node, att) for node in ts.walk_nodes() for att in node.attestations
+               if isinstance(att, Pending)]
+    upgraded = 0
+    for node, att in targets:
+        if not calendar_allowed(att.uri):
+            shown = _short(repr(att.uri))
+            notes.append(("warning", f"not contacting pending URI outside the allowlist: {shown}"))
+            continue
+        if node.msg is None:
+            notes.append((
+                "warning",
+                f"cannot query {att.uri}: its message needs an operation this build cannot run",
+            ))
+            continue
+        url = f"{att.uri.rstrip('/')}/timestamp/{node.msg.hex()}"
+        try:
+            body = http_get(url, timeout, CALENDAR_MAX_BYTES)
+            got = _parse_calendar_timestamp(body, node.msg)
+        except urllib.error.HTTPError as exc:
+            if exc.code != 404:
+                notes.append(("warning", f"{att.uri}: HTTP {exc.code}"))
+            continue
+        except (OSError, ValueError, http.client.HTTPException) as exc:
+            notes.append(("warning", f"{att.uri}: {type(exc).__name__}"))
+            continue
+        before = node.serialize()
+        node.merge(got)
+        if node.serialize() != before:
+            upgraded += 1
+    return upgraded
+
+
+class _MemoHeaders:
+    """Ask the wrapped header source once per height."""
+
+    def __init__(self, source) -> None:
+        self.source = source
+        self._seen: dict[int, BlockHeader | None] = {}
+
+    def header(self, height: int) -> BlockHeader | None:
+        if height not in self._seen:
+            self._seen[height] = self.source.header(height)
+        return self._seen[height]
+
+
+def _read_json_dict(path: Path) -> dict:
+    if not path.exists():
+        return {}
+    data = json.loads(path.read_text())
+    if isinstance(data, dict):
+        return data
+    raise ValueError(f"{path.name} is not a JSON object")
+
+
+def _record_header(roots_dir: Path, height: int, hdr: BlockHeader) -> None:
+    """Merge {height: {hash, header}} into roots/bitcoin-headers.json (sorted keys)."""
+    path = roots_dir / "bitcoin-headers.json"
+    data = _read_json_dict(path)
+    entry = {"hash": hdr.block_hash_hex, "header": hdr.raw.hex()}
+    if data.get(str(height)) != entry:
+        data[str(height)] = entry
+        _atomic_write(path, _json_bytes(data))
+
+
+def upgrade_round_dir(round_dir, http_get=calendar_get, headers=None, timeout: float = 20.0,
+                      *, notes: list[Note] | None = None,
+                      now: datetime | None = None) -> UpgradeCounts:
+    """Upgrade every stamped window that is not yet Bitcoin-confirmed.
+
+    For each roots/<w>.root.ots whose anchor.json status is not bitcoin: fetch completed
+    attestations from the proof's calendars, rewrite the .ots if it grew, and, when it
+    now verifies against a Bitcoin header from `headers` (default: two public explorers
+    that must agree), mark anchor.json bitcoin and commit the header to
+    roots/bitcoin-headers.json so a third party can verify offline. A proof that grew an
+    attestation which does not verify is not kept. <w>.json is never touched.
+    """
+    notes = [] if notes is None else notes
+    roots_dir = Path(round_dir) / "roots"
+    source = _MemoHeaders(headers if headers is not None else ExplorerHeaders())
+    confirmed = pending = upgraded = 0
+    for window in _window_indices(roots_dir):
+        ots_path = roots_dir / f"{window}.root.ots"
+        if not ots_path.exists():
+            continue
+        anchor_path = roots_dir / f"{window}.anchor.json"
+        try:
+            anchor = _read_json_dict(anchor_path)
+            if anchor.get("status") == BITCOIN:
+                confirmed += 1
+                continue
+            root = _window_root(roots_dir, window)
+            original = ots_path.read_bytes()
+            proof = parse_ots(original)
+            if proof.digest != root:
+                raise ValueError("proof digest does not match the window's Merkle root")
+        except (OSError, ValueError) as exc:
+            notes.append(("error", f"window {window}: {type(exc).__name__}: {exc}"))
+            pending += 1
+            continue
+
+        grew = upgrade_timestamp(proof.timestamp, http_get, timeout, notes) > 0
+        has_bitcoin = any(isinstance(att, Bitcoin) for _m, att in proof.timestamp.walk())
+        verdict = verify_digest_anchor(root, proof, source) if has_bitcoin else None
+        if verdict is not None and verdict.status == INVALID:
+            notes.append(("warning", f"window {window}: attestation rejected: {verdict.detail}"))
+            pending += 1
+            continue
+        try:
+            if grew:
+                _atomic_write(ots_path, serialize_ots(proof))
+            if verdict is not None and verdict.confirmed and verdict.height is not None:
+                hdr = source.header(verdict.height)
+                if hdr is None:  # cannot happen after a verified verdict; fail safe
+                    raise ValueError(f"header for block {verdict.height} vanished")
+                _record_header(roots_dir, verdict.height, hdr)
+                anchor.update({
+                    "schema_version": C.SCHEMA_VERSION,
+                    "scheme": ANCHOR_SCHEME,
+                    "digest": root.hex(),
+                    "status": BITCOIN,
+                    "bitcoin_block_height": verdict.height,
+                    "block_hash": verdict.block_hash,
+                    "upgraded_at": C.iso_z(now or datetime.now(UTC)),
+                })
+                anchor.setdefault("calendar_uris", verdict.calendar_uris)
+                _atomic_write(anchor_path, _json_bytes(anchor))
+                line = f"upgraded {anchor_path} {BITCOIN} height {verdict.height}"
+                notes.append(("info", f"{line} block {verdict.block_hash}"))
+                confirmed += 1
+                upgraded += 1
+                continue
+        except (OSError, ValueError) as exc:
+            notes.append(("error", f"window {window}: {type(exc).__name__}: {exc}"))
+        pending += 1
+    return UpgradeCounts(confirmed, pending, upgraded)
+
+
+def verify_round_window(round_dir, window: int, headers) -> AnchorVerdict:
+    """Verify roots/<window>.root.ots against the window's Merkle root and `headers`."""
+    roots_dir = Path(round_dir) / "roots"
+    root = _window_root(roots_dir, window)
+    ots_path = roots_dir / f"{window}.root.ots"
+    if not ots_path.exists():
+        return AnchorVerdict(NOT_ANCHORED, detail=f"no proof roots/{window}.root.ots")
+    try:
+        proof = parse_ots(ots_path.read_bytes())
+    except ValueError as exc:
+        return AnchorVerdict(INVALID, detail=f"unreadable proof: {exc}")
+    return verify_digest_anchor(root, proof, headers)
+
+
 # ------------------------------------------------------------------------------ CLI
 
 
@@ -1228,6 +1409,19 @@ def _build_parser() -> argparse.ArgumentParser:
                        help="https calendar URL (repeatable); default: the four public calendars")
     stamp.add_argument("--min-calendars", type=int, default=DEFAULT_MIN_CALENDARS)
     stamp.add_argument("--timeout", type=float, default=20.0)
+
+    upgrade = sub.add_parser(
+        "upgrade", help="fetch completed Bitcoin attestations and record verified headers")
+    upgrade.add_argument("--round-dir", nargs="+", required=True, metavar="DIR")
+    upgrade.add_argument("--timeout", type=float, default=20.0)
+
+    verify = sub.add_parser("verify", help="exit 0 iff a window's proof verifies against Bitcoin")
+    verify.add_argument("--round-dir", required=True, metavar="DIR")
+    verify.add_argument("--window", type=int, required=True)
+    verify.add_argument("--headers", metavar="FILE",
+                        help="header file (default: DIR/roots/bitcoin-headers.json)")
+    verify.add_argument("--fetch", action="store_true",
+                        help="also ask two public explorers for headers the file lacks")
     return parser
 
 
@@ -1259,11 +1453,61 @@ def _cmd_stamp(args, http_post) -> int:
     return 1 if failed else 0
 
 
-def main(argv: list[str] | None = None, *, http_post=http_post) -> int:
-    """`python -m fc.anchor stamp|upgrade|verify`; HTTP is injectable for tests."""
+def _cmd_upgrade(args, http_get, headers) -> int:
+    failed = False
+    totals = [0, 0, 0]
+    for round_dir in args.round_dir:
+        roots_dir = Path(round_dir) / "roots"
+        if not roots_dir.is_dir():
+            print(f"error: {roots_dir}: no such directory", file=sys.stderr)
+            failed = True
+            continue
+        notes: list[Note] = []
+        counts = upgrade_round_dir(round_dir, http_get, headers, args.timeout, notes=notes)
+        for level, message in notes:
+            if level == "info":
+                print(message)
+            else:
+                print(f"{level}: {message}", file=sys.stderr)
+                failed = failed or level == "error"
+        totals = [a + b for a, b in zip(totals, counts, strict=True)]
+    print(f"confirmed {totals[0]}, pending {totals[1]}, upgraded {totals[2]}")
+    return 1 if failed else 0
+
+
+def _cmd_verify(args, explorer) -> int:
+    roots_dir = Path(args.round_dir) / "roots"
+    file_path = Path(args.headers) if args.headers else roots_dir / "bitcoin-headers.json"
+    source = HeaderFile(file_path)
+    if args.fetch:
+        source = ChainedHeaders(source, explorer if explorer is not None else ExplorerHeaders())
+    try:
+        verdict = verify_round_window(args.round_dir, args.window, source)
+    except (OSError, ValueError) as exc:
+        print(f"error: window {args.window}: {type(exc).__name__}: {exc}", file=sys.stderr)
+        return 2
+    if verdict.confirmed and verdict.anchored_before is not None:
+        print(f"window {args.window}: {verdict.status} height {verdict.height} "
+              f"block {verdict.block_hash} anchored_before {C.iso_z(verdict.anchored_before)}")
+        return 0
+    print(f"window {args.window}: {verdict.status} {verdict.detail}")
+    return 1
+
+
+def main(argv: list[str] | None = None, *, http_post=http_post, http_get=calendar_get,
+         headers=None) -> int:
+    """`python -m fc.anchor stamp|upgrade|verify`.
+
+    HTTP and the Bitcoin header source are injectable so tests never open a socket;
+    `headers=None` means two public explorers that must agree.
+    """
     args = _build_parser().parse_args(argv)
     if args.command == "stamp":
         return _cmd_stamp(args, http_post)
+    if args.command == "upgrade":
+        return _cmd_upgrade(args, http_get, headers)
+    if args.command == "verify":
+        return _cmd_verify(args, headers)
     return 2  # pragma: no cover - argparse rejects unknown subcommands
 
 
