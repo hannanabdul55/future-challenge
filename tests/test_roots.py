@@ -43,48 +43,76 @@ def test_root_chain_integrity(fixture_round):
 
 
 def test_anchor_status_transition(fixture_round):
-    """COMMIT-03: pending-calendar becomes bitcoin only when the attestation says so."""
+    """COMMIT-03 / FREEZE-03: pending-calendar becomes bitcoin only when a proof verifies.
+
+    The scheme is fc-ots/v1: the Merkle root is stamped and the upgrade path never rewrites
+    the hub-signed <w>.json, so no later step can invalidate a published proof.
+    """
+    import struct
+    import urllib.error
+    from pathlib import Path
+
     from fc import anchor as A
     from fc import service as S
 
     fr = fixture_round
-    calls: list[str] = []
-
-    def pending_anchor(path, data):
-        calls.append(str(path))
-        return A.AnchorResult(
-            status="pending-calendar",
-            ots_path=str(path) + ".ots",
-            rekor_log_index=184223991,
-            rekor_bundle_path=str(path) + ".sigstore.json",
-            stamped_at="2026-09-09T12:00:00.000Z",
-        )
-
     req, _nonce = fr.request(b"sub", b"")
-    _r, outcome = S.submit_commitment(
-        req, fr.team_pk, fr.hub_sk, fr.round_dir, now=BEFORE_COMMIT, anchor=pending_anchor
-    )
+    _r, outcome = S.submit_commitment(req, fr.team_pk, fr.hub_sk, fr.round_dir, now=BEFORE_COMMIT)
     assert outcome == "accepted"
-    assert len(calls) == 1
+    roots = fr.round_dir / "roots"
+    doc_bytes = (roots / "0.json").read_bytes()
 
-    doc = json.loads((fr.round_dir / "roots" / "0.json").read_text())
-    assert doc["anchor_status"] == "pending-calendar"
+    # Stamping is a separate step (`python -m fc.anchor stamp`), here with an injected POST.
+    live = (Path(__file__).parent / "fixtures" / "ots" / "calendar-pending.bin").read_bytes()
+    stamped = A.stamp_round_dir(
+        fr.round_dir,
+        calendars=("https://a.pool.opentimestamps.org", "https://b.pool.opentimestamps.org"),
+        http_post=lambda url, body, timeout=20.0, max_bytes=10240: live,
+    )
+    assert stamped == [0]
+    anchor_path = roots / "0.anchor.json"
+    assert json.loads(anchor_path.read_text())["status"] == "pending-calendar"
+    assert (roots / "0.root.ots").is_file()
 
-    # The upgrade sweep promotes only when a Bitcoin attestation is actually present.
-    def still_pending(ots_bytes, target_digest):
-        return A.OtsAttestation(
-            status="pending-calendar", bitcoin_block_height=None, calendar_uris=[], digest=target_digest
-        )
+    # 404 from the calendar: still pending, nothing rewritten.
+    def not_yet(url, timeout=20.0, max_bytes=10240):
+        raise urllib.error.HTTPError(url, 404, "Not Found", {}, None)  # type: ignore[arg-type]
 
-    S.upgrade_pending_anchors(fr.round_dir, ots_parser=still_pending)
-    doc = json.loads((fr.round_dir / "roots" / "0.json").read_text())
-    assert doc["anchor_status"] == "pending-calendar"
+    assert S.upgrade_pending_anchors(fr.round_dir, http_get=not_yet, headers=_Headers()) == 0
+    assert json.loads(anchor_path.read_text())["status"] == "pending-calendar"
 
-    def confirmed(ots_bytes, target_digest):
-        return A.OtsAttestation(
-            status="bitcoin", bitcoin_block_height=912345, calendar_uris=[], digest=target_digest
-        )
+    # The calendar now returns a completed timestamp and the block header is available.
+    proof = A.parse_ots((roots / "0.root.ots").read_bytes())
+    (msg, att), *_ = [(m, a) for m, a in proof.timestamp.walk() if isinstance(a, A.Pending)]
+    done = A.Timestamp(msg)
+    node = done.add_op(A.Op(A._OP_SHA256))
+    node.add_attestation(A.Bitcoin(950_001))
+    head = (struct.pack("<i", 0x20000000) + bytes(32) + node.msg
+            + struct.pack("<II", 1_789_000_000, 0x207FFFFF))
+    nonce = 0
+    while not A.BlockHeader(head + struct.pack("<I", nonce)).pow_ok:
+        nonce += 1
+    header = A.BlockHeader(head + struct.pack("<I", nonce))
 
-    S.upgrade_pending_anchors(fr.round_dir, ots_parser=confirmed)
-    doc = json.loads((fr.round_dir / "roots" / "0.json").read_text())
-    assert doc["anchor_status"] == "bitcoin"
+    def completed(url, timeout=20.0, max_bytes=10240):
+        if url == f"{att.uri}/timestamp/{msg.hex()}":
+            return done.serialize()
+        raise urllib.error.HTTPError(url, 404, "Not Found", {}, None)  # type: ignore[arg-type]
+
+    assert S.upgrade_pending_anchors(
+        fr.round_dir, http_get=completed, headers=_Headers({950_001: header})) == 1
+    anchor = json.loads(anchor_path.read_text())
+    assert anchor["status"] == "bitcoin" and anchor["bitcoin_block_height"] == 950_001
+
+    # The hub-signed root document is byte-identical, and the window verifies offline.
+    assert (roots / "0.json").read_bytes() == doc_bytes
+    verdict = A.verify_round_window(fr.round_dir, 0, A.HeaderFile(roots / "bitcoin-headers.json"))
+    assert verdict.status == A.BITCOIN
+
+
+class _Headers:
+    def __init__(self, mapping=None):
+        self.mapping = dict(mapping or {})
+
+    def header(self, height):
+        return self.mapping.get(height)

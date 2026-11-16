@@ -153,14 +153,20 @@ def test_tree_without_attestation_is_not_anchored():
     assert v.status == A.NOT_ANCHORED
 
 
-def test_legacy_names_still_importable():
+def test_names_the_service_relies_on_are_still_importable():
     for name in (
         "null_anchor", "AnchorResult", "Anchor", "AnchorToolUnavailable",
-        "parse_detached_timestamp", "FileHeaderSource", "OtsAttestation",
         "OTS_MAGIC", "OTS_BITCOIN_TAG", "NOT_ANCHORED", "PENDING_CALENDAR", "BITCOIN",
         "FAILED",
     ):
         assert hasattr(A, name), name
+
+
+def test_legacy_heuristic_parser_is_gone():
+    """Only the verified OTS path remains (plan 06-13): no parser that trusts a status
+    string or a block time typed into a header file."""
+    for name in ("parse_detached_timestamp", "FileHeaderSource", "OtsAttestation"):
+        assert not hasattr(A, name), name
 
 
 # ================================================== Task 2: more proofs, forged headers,
