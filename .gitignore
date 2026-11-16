@@ -3,7 +3,8 @@ __pycache__/
 *.pyc
 *.egg-info/
 eval/out/
-keys/
+/keys/
+private.pem
 .pytest_cache/
 .ruff_cache/
 .gsd/
