@@ -1,0 +1,90 @@
+name: watchdog
+# Dead-man check for the hub-run tier (OPS-03). The GPU box commits at 00:05 UTC and reveals at
+# 18:00 UTC. If the box is asleep or its job failed silently, nothing on the box can say so, so
+# GitHub looks for the day's artifacts and alerts through the same webhook.
+#   02:15 UTC commit check: after the longest commit phase scripts/run_day.sh permits
+#             (00:05 + 30 min manifest wait + 10 min backstop + 60 min run budget + 15 min
+#             commit/stamp/push = 02:00 UTC) plus 15 min margin. Plan 06-04 binds the caps.
+#   18:45 UTC reveal check: reveal runs at 18:00 UTC and takes minutes.
+on:
+  schedule:
+    - cron: "15 2 * * *"
+    - cron: "45 18 * * *"
+  workflow_dispatch:
+    inputs:
+      check:
+        description: "Which check to run on a manual dispatch"
+        type: choice
+        options: [commit, reveal]
+        default: commit
+      test_alert:
+        description: "Send a test alert through the webhook instead of checking"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: watchdog
+  cancel-in-progress: false
+
+env:
+  SEASON: 2026-27-rolling
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check the box ran
+        env:
+          ALERT_WEBHOOK: ${{ secrets.ALERT_WEBHOOK }}
+          CHECK_INPUT: ${{ github.event.inputs.check }}
+          TEST_ALERT: ${{ github.event.inputs.test_alert }}
+          SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          if [ -z "$ALERT_WEBHOOK" ]; then
+            echo "ALERT_WEBHOOK secret not set"
+            exit 1
+          fi
+
+          if [ "$TEST_ALERT" = "true" ]; then
+            rc=0
+            python3 -m fc.alert --title "fc watchdog test" \
+              --message "watchdog test alert from GitHub Actions run $GITHUB_RUN_ID" || rc=$?
+            exit "$rc"
+          fi
+
+          case "$SCHEDULE" in
+            "15 2 * * *") CHECK=commit ;;
+            "45 18 * * *") CHECK=reveal ;;
+            *) CHECK="${CHECK_INPUT:-commit}" ;;
+          esac
+
+          DAY=$(date -u +%F)
+          FIRST=$(python3 -c "import json,os;print(json.load(open('rounds/%s/season.json' % os.environ['SEASON']))['first_day'])")
+          LAST=$(python3 -c "import json,os;print(json.load(open('rounds/%s/season.json' % os.environ['SEASON']))['last_day'])")
+          if [[ "$DAY" < "$FIRST" || "$DAY" > "$LAST" ]]; then
+            echo "$DAY is outside season $SEASON ($FIRST..$LAST); nothing to check"
+            exit 0
+          fi
+
+          ok=0
+          if [ "$CHECK" = "commit" ]; then
+            if [ -f "rounds/$SEASON/$DAY/manifest.json" ] && compgen -G "rounds/$SEASON/$DAY/roots/*.json" > /dev/null; then ok=1; fi
+          else
+            if compgen -G "runs/$SEASON/$DAY/*/bundle.json" > /dev/null; then ok=1; fi
+          fi
+
+          if [ "$ok" = "1" ]; then
+            echo "$CHECK check passed for $SEASON $DAY"
+            exit 0
+          fi
+
+          echo "$CHECK check FAILED for $SEASON $DAY"
+          rc=0
+          python3 -m fc.alert --title "fc watchdog: $CHECK missing" \
+            --message "season $SEASON day $DAY check $CHECK: GPU box job missing or failed" || rc=$?
+          if [ "$rc" != "0" ]; then echo "alert delivery failed (exit $rc)"; fi
+          exit 1

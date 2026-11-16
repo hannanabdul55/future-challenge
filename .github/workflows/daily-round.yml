@@ -20,7 +20,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  SEASON: 2026-year-end
+  SEASON: 2026-27-rolling
 
 jobs:
   open:
