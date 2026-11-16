@@ -1,0 +1,12 @@
+# Second alert path (OPS-02): started through OnFailure= of fc-commit / fc-reveal, so a crash the
+# job script itself cannot report still pages the operator. The webhook comes from the env file;
+# fc.alert adds the host name to the delivered payload only. %i is the failed unit's name.
+[Unit]
+Description=Future Challenge alert: %i failed
+
+[Service]
+Type=oneshot
+WorkingDirectory=@FC_ROOT@
+EnvironmentFile=%h/.config/fc/env
+Environment=PATH=%h/.local/bin:/usr/lib/wsl/lib:/usr/local/bin:/usr/bin:/bin
+ExecStart=/usr/bin/env python3 -m fc.alert --title "fc systemd unit failed" --message "unit %i failed; see journalctl --user -u %i"

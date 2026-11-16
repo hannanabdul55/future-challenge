@@ -1,0 +1,14 @@
+# Commit phase of the daily job (D-06). Rendered by install.sh: @FC_ROOT@ is the checkout path.
+# Secrets reach the job only through EnvironmentFile; nothing sensitive lives in this file.
+[Unit]
+Description=Future Challenge daily job: commit phase (run models, commit outputs)
+OnFailure=fc-alert@%n.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=@FC_ROOT@
+EnvironmentFile=%h/.config/fc/env
+Environment=PATH=%h/.local/bin:/usr/lib/wsl/lib:/usr/local/bin:/usr/bin:/bin
+Environment=MODE=commit
+ExecStart=@FC_ROOT@/scripts/run_day.sh
+TimeoutStartSec=11h
