@@ -25,6 +25,7 @@ import shutil
 import subprocess
 import sys
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -41,6 +42,12 @@ from .validate import validate_frame
 
 RUN_DOMAIN_SEP = b"future-challenge/run/v1"
 DEFAULT_IMAGE = "fc-forecaster:2026.10"
+
+# Host-settable runtime knobs. Everything else the container sees (context, max tokens,
+# thinking, seed, weights file) comes from the frozen identity and is never read from the host.
+RUNTIME_OVERRIDE_KEYS = ("FC_BATCH", "FC_GPU_LAYERS", "FC_THREADS")
+# lowest accepted integer per key
+_OVERRIDE_MIN = {"FC_BATCH": 1, "FC_THREADS": 1, "FC_GPU_LAYERS": -1}
 
 
 @dataclass
@@ -86,13 +93,65 @@ def day_seed(manifest: dict[str, Any], *, fetch: bool = True) -> tuple[int, dict
     return r, {"drand_round": r, "source": "fallback:no-fetch"}
 
 
-def docker_cmd(image: str, *, snapshot: Path, paths: RunPaths, prompt: Path, out: Path,
-               env: dict[str, str], gpus: bool = True, cpus: float = 8, memory: str = "24g") -> list[str]:
+def runtime_overrides(environ: dict[str, str] | os._Environ[str] = os.environ,
+                      ) -> tuple[dict[str, str], str | None]:
+    """The allow-listed host overrides that are set, validated as integers. Returns
+    (overrides, error); error names the first invalid key."""
+    found: dict[str, str] = {}
+    for key in RUNTIME_OVERRIDE_KEYS:
+        value = environ.get(key)
+        if value is None:
+            continue
+        try:
+            ok = int(value) >= _OVERRIDE_MIN[key]
+        except ValueError:
+            ok = False
+        if not ok:
+            return {}, f"invalid runtime override {key}={value!r}"
+        found[key] = value
+    return found, None
+
+
+def public_command(cmd: list[str], root: Path) -> list[str]:
+    """The docker argv as it is recorded in the signed bundle: the host side of every
+    ``-v HOST:CONTAINER[:ro]`` becomes repo-relative, else ``~/``-relative, else is kept.
+    The raw argv (absolute paths) is what actually runs."""
+    root_r, home_r = root.resolve(), Path.home().resolve()
+    out = list(cmd)
+    for i, tok in enumerate(cmd[:-1]):
+        if tok != "-v":
+            continue
+        host, sep, rest = cmd[i + 1].partition(":/")
+        hp = Path(host)
+        if not hp.is_absolute():
+            continue
+        hp = hp.resolve()
+        if hp.is_relative_to(root_r):
+            shown = hp.relative_to(root_r).as_posix()
+        elif hp.is_relative_to(home_r):
+            shown = "~/" + hp.relative_to(home_r).as_posix()
+        else:
+            continue
+        out[i + 1] = f"{shown}{sep}{rest}"
+    return out
+
+
+def _inspect_image_id(image: str) -> str | None:
+    """The local image's content ID (``sha256:...``), or None when docker cannot find it."""
+    res = subprocess.run(["docker", "image", "inspect", "--format", "{{.Id}}", image],
+                         check=False, capture_output=True, text=True, timeout=30)
+    ident = res.stdout.strip()
+    return ident if res.returncode == 0 and ident else None
+
+
+def docker_cmd(image: str, *, snapshot: Path, paths: RunPaths, questions_dir: Path, prompt: Path,
+               out: Path, env: dict[str, str], gpus: bool = True, cpus: float = 8,
+               memory: str = "24g") -> list[str]:
     cmd = ["docker", "run", "--rm", "--network", "none", "--read-only",
            "--tmpfs", "/tmp:size=2g", "--security-opt", "no-new-privileges",
            "--cap-drop", "ALL", "--pids-limit", "256", f"--cpus={cpus}", f"--memory={memory}",
            "-v", f"{snapshot}:/model:ro", "-v", f"{paths.packet_dir}:/packet:ro",
-           "-v", f"{paths.questions.parent}:/questions:ro", "-v", f"{prompt.parent}:/prompt:ro",
+           "-v", f"{questions_dir}:/questions:ro", "-v", f"{prompt.parent}:/prompt:ro",
            "-v", f"{out}:/out"]
     if gpus:
         cmd += ["--gpus", "all"]
@@ -105,7 +164,8 @@ def docker_cmd(image: str, *, snapshot: Path, paths: RunPaths, prompt: Path, out
 def run_entry(entry_yaml: Path, *, root: Path, season: str, day: str, snapshot: Path | None,
               image: str = DEFAULT_IMAGE, runner_key: Path | None = None,
               timeout_s: int = 3600, dry_run: bool = False, local: bool = False,
-              fetch: bool = False, gpus: bool = True, fetch_drand: bool = True) -> dict[str, Any]:
+              fetch: bool = False, gpus: bool = True, fetch_drand: bool = True,
+              image_inspect: Callable[[str], str | None] | None = None) -> dict[str, Any]:
     doc = yaml.safe_load(entry_yaml.read_text())
     model_id = doc["model_id"]
     if doc.get("tier") != "S":
@@ -130,6 +190,16 @@ def run_entry(entry_yaml: Path, *, root: Path, season: str, day: str, snapshot: 
         "started": C.iso_z(datetime.now(UTC)), "status": "missing", "reason": None,
     }
     paths.run_dir.mkdir(parents=True, exist_ok=True)
+
+    # ---- questions: the container only ever sees what is still active on `day`
+    if not qs:
+        bundle.update(reason=f"no active questions on {day}")
+        return _finish(bundle, paths, runner_key)
+    qdir = paths.run_dir / "questions"
+    Q.write_question_set(qdir / "questions.json", qs, season=season)
+    bundle["asked_questions"] = len(qs)
+    bundle["asked_question_ids"] = sorted(q["question_id"] for q in qs)
+    bundle["asked_questions_hash"] = Q.questions_hash(qs)
 
     # ---- weights: locate, verify
     if snapshot is None:
@@ -164,12 +234,31 @@ def run_entry(entry_yaml: Path, *, root: Path, season: str, day: str, snapshot: 
            "FC_MAX_TOKENS": str(inf.get("decoding", {}).get("max_tokens", 4096)),
            "FC_THINKING": "1" if inf.get("thinking", False) else "0"}
     bundle["thinking"] = bool(inf.get("thinking", False))
-    cmd = docker_cmd(image, snapshot=snapshot, paths=paths, prompt=prompt, out=out, env=env,
-                     gpus=gpus)
-    bundle["command"] = cmd
+    overrides, override_err = runtime_overrides()
+    if override_err:
+        bundle.update(reason=override_err)
+        return _finish(bundle, paths, runner_key)
+    env.update(overrides)
+    bundle["runtime_overrides"] = overrides
+    cmd = docker_cmd(image, snapshot=snapshot, paths=paths, questions_dir=qdir, prompt=prompt,
+                     out=out, env=env, gpus=gpus)
+    # Signed bundles are committed daily and published: record the command without host paths.
+    bundle["command"] = public_command(cmd, root)
     if dry_run:
         bundle.update(status="dry-run", reason="not executed")
         return _finish(bundle, paths, runner_key)
+
+    if not local:
+        pinned = manifest.get("runner_image_digest")
+        image_id = (image_inspect or _inspect_image_id)(image)
+        if image_id is None:
+            bundle.update(reason=f"runner image {image} not found")
+            return _finish(bundle, paths, runner_key)
+        bundle["image_id"] = image_id
+        if pinned and image_id != pinned:
+            bundle.update(reason=f"runner image {image_id} does not match the season's "
+                                 f"pinned digest {pinned}")
+            return _finish(bundle, paths, runner_key)
 
     t0 = time.time()
     try:
@@ -234,7 +323,7 @@ def _run_local(snapshot: Path, paths: RunPaths, prompt: Path, out: Path, env: di
     import tempfile
     tree = Path(tempfile.mkdtemp(prefix="fc-local-"))
     for name, target in (("model", snapshot), ("packet", paths.packet_dir),
-                         ("questions", paths.questions.parent), ("prompt", prompt.parent)):
+                         ("questions", paths.run_dir / "questions"), ("prompt", prompt.parent)):
         (tree / name).symlink_to(target.resolve())
     (tree / "out").symlink_to(out.resolve())
     script = Path(__file__).resolve().parents[1] / "runner" / "forecast" / "forecast.py"
