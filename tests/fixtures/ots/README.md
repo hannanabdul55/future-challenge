@@ -22,6 +22,30 @@ only reads, never links or modifies. Each is checked by a byte-exact parse/seria
   at the attestation equals the block header's merkle root.
 - Does **not** use RIPEMD-160, so it verifies on every platform.
 
+### hello-world.txt.ots
+
+- File digest (SHA-256): `03ba204e50d126e4674c005e04d82e84c21366780af1f43bd54a37816b6ab340`
+- Attests: Bitcoin block **358391** (2015, about 2^67 work, so the tests lower the work floor to
+  60 for it; the production floor of 70 correctly refuses it). Block hash
+  `000000000000000003e892881a8cdcdc117c06d444057c98b6f04a9ee75a2319`, merkle root
+  `007ee445d23ad061af4a36b809501fab1ac4f2d7e7a739817dd0cbb7ec661b8a`.
+- Single attestation path, ops in order (tags): **`ripemd160`** `prepend(200 B)` `append(6 B)`
+  `sha256 sha256` then repeated `append/prepend(32 B)` + `sha256 sha256` pairs, ending in the
+  Bitcoin attestation.
+- **The first op is ripemd160 (RIPEMD-160), so this path needs `hashlib.new("ripemd160")`.**
+  Some OpenSSL 3 builds lack it; the verification test skips there, and a separate test
+  monkeypatches the helper to raise `UnsupportedOp` to prove the path is skipped and named in
+  the verdict detail. The byte-exact round trip needs no hashing and runs everywhere.
+
+### two-calendars.txt.ots
+
+- File digest (SHA-256): `efaa174f68e59705757460f4f7d204bd2b535cfd194d9d945418732129404ddb`
+- Attests: nothing on Bitcoin yet. Two **pending** calendar attestations,
+  `https://alice.btc.calendar.opentimestamps.org` and `https://bob.btc.calendar.opentimestamps.org`.
+- Both paths, ops in order: `append(16 B)` `sha256` `append(16 B)` `sha256` `prepend(4 B)`
+  `append(8 B)`; the message at each pending node is 44 bytes, not 32.
+- No ripemd160 anywhere, so it runs on every platform.
+
 ## Block headers (`headers.json`)
 
 `{"<height>": {"hash": "<block hash, big-endian hex>", "header": "<80-byte header, hex>"}}` for

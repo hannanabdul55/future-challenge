@@ -19,13 +19,18 @@ behind these same seams without changing a caller.
 from __future__ import annotations
 
 import hashlib
+import http.client
 import json
 import math
 import struct
+import urllib.error
+import urllib.request
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+
+from fc import __version__
 
 # Anchor status vocabulary. "failed" records a broken anchoring attempt without
 # ever blocking receipt issuance.
@@ -225,7 +230,8 @@ ANCHOR_SCHEME = "fc-ots/v1"
 # Parser bounds (T-06-09): a proof is untrusted input that can arrive in a pull request.
 MAX_PROOF_BYTES = 65536
 MAX_DEPTH = 256
-MAX_ARG_BYTES = 4096  # one op argument; also the ceiling for any intermediate message
+MAX_ARG_BYTES = 4096  # one op argument
+MAX_MSG_BYTES = 8192  # any intermediate message an operation chain may produce
 MAX_PAYLOAD_BYTES = 8192  # one attestation payload
 MAX_URI_BYTES = 1000
 
@@ -369,8 +375,8 @@ class Op:
             out = msg.hex().encode("ascii")
         else:  # pragma: no cover - parse rejects unknown tags
             raise ValueError(f"unknown OTS op 0x{self.tag:02x}")
-        if len(out) > MAX_ARG_BYTES:
-            raise ValueError(f"OTS operation result exceeds {MAX_ARG_BYTES} bytes")
+        if len(out) > MAX_MSG_BYTES:
+            raise ValueError(f"OTS operation result exceeds {MAX_MSG_BYTES} bytes")
         return out
 
 
@@ -846,3 +852,118 @@ def verify_digest_anchor(digest: bytes | str, proof: DetachedProof, headers) -> 
             detail="cannot evaluate the Bitcoin attestation: needs " + ", ".join(sorted(set(skipped))),
         )
     return AnchorVerdict(NOT_ANCHORED, detail="proof carries no attestation")
+
+
+# ------------------------------------------------------------------------- networking
+
+
+class _HttpsOnlyRedirects(urllib.request.HTTPRedirectHandler):
+    """Refuse a redirect that would leave https."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        if not newurl.lower().startswith("https://"):
+            raise urllib.error.URLError(f"refusing redirect to non-https URL {newurl!r}")
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+def http_get(url: str, timeout: float = 20.0, max_bytes: int = 1024) -> bytes:
+    """GET `url` over https and return at most `max_bytes` of the body.
+
+    Anything larger raises ValueError rather than being truncated: a truncated
+    header or hash must never look like a short valid one. Every network user in
+    this module takes an injectable callable defaulting to this, so tests stay offline.
+    """
+    if not url.lower().startswith("https://"):
+        raise ValueError(f"refusing non-https URL {url!r}")
+    req = urllib.request.Request(url, headers={"User-Agent": f"future-challenge-fc/{__version__}"})
+    opener = urllib.request.build_opener(_HttpsOnlyRedirects)
+    with opener.open(req, timeout=timeout) as resp:
+        body = resp.read(max_bytes + 1)
+    if len(body) > max_bytes:
+        raise ValueError(f"response from {url} exceeds {max_bytes} bytes")
+    return body
+
+
+# --------------------------------------------------------------------- header sources
+
+BLOCKSTREAM_API = "https://blockstream.info/api"
+MEMPOOL_API = "https://mempool.space/api"
+
+
+class ExplorerHeaders:
+    """Block headers from two public explorers that must agree (T-06-08).
+
+    blockstream.info and mempool.space are asked for the block hash at a height and
+    must return the same one. The header itself comes from blockstream.info and is
+    returned only when it double-SHA-256 hashes to that agreed hash and passes its own
+    proof-of-work. Any failure, disagreement or malformed answer resolves to None.
+    """
+
+    def __init__(self, http_get: Callable[[str, float, int], bytes] = http_get,
+                 timeout: float = 20.0) -> None:
+        self.http_get = http_get
+        self.timeout = timeout
+
+    def _hash_at(self, base: str, height: int) -> str | None:
+        raw = self.http_get(f"{base}/block-height/{height}", self.timeout, 1024)
+        text = raw.decode("ascii").strip().lower()
+        if len(text) != 64 or any(c not in "0123456789abcdef" for c in text):
+            return None
+        return text
+
+    def header(self, height: int) -> BlockHeader | None:
+        try:
+            first = self._hash_at(BLOCKSTREAM_API, height)
+            second = self._hash_at(MEMPOOL_API, height)
+            if first is None or first != second:
+                return None
+            raw = self.http_get(f"{BLOCKSTREAM_API}/block/{first}/header", self.timeout, 200)
+            hdr = BlockHeader.from_bytes(bytes.fromhex(raw.decode("ascii").strip()))
+        except (OSError, ValueError, http.client.HTTPException):
+            return None
+        if hdr.block_hash_hex != first or not hdr.pow_ok:
+            return None
+        return hdr
+
+
+class ChainedHeaders:
+    """Try each header source in order and return the first hit."""
+
+    def __init__(self, *sources) -> None:
+        self.sources = sources
+
+    def header(self, height: int) -> BlockHeader | None:
+        for source in self.sources:
+            hdr = source.header(height)
+            if hdr is not None:
+                return hdr
+        return None
+
+
+# ----------------------------------------------------------------------------- regtest
+
+
+def regtest_anchor(root_hex: str, block_time: datetime | int, height: int) -> tuple[bytes, str]:
+    """Build a synthetic Bitcoin-attested proof and its block header.
+
+    For tests and demos only. The header is mined at the easiest possible difficulty
+    (bits 0x207fffff, about one bit of work), so production verification rejects it
+    through MIN_HEADER_WORK_BITS; it verifies only when that floor is lowered
+    explicitly. Returns (ots_bytes, header_hex).
+    """
+    digest = bytes.fromhex(root_hex)
+    if len(digest) != 32:
+        raise ValueError("root must be 32 bytes (64 hex characters)")
+    ts = Timestamp(digest)
+    node = ts.add_op(Op(_OP_SHA256))
+    node.add_attestation(Bitcoin(height))
+    assert node.msg is not None
+    when = int(block_time.timestamp()) if isinstance(block_time, datetime) else int(block_time)
+    head = struct.pack("<i", 0x20000000) + bytes(32) + node.msg + struct.pack("<II", when, 0x207FFFFF)
+    nonce = 0
+    while True:
+        raw = head + struct.pack("<I", nonce)
+        if BlockHeader(raw).pow_ok:
+            break
+        nonce += 1
+    return serialize_ots(DetachedProof(digest, ts)), raw.hex()
