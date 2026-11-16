@@ -158,3 +158,45 @@ def test_filter_packet_for_batch_slices_sections_and_caps_rows():
     assert "### house" in filtered
     assert "p2" in filtered and "p3" not in filtered
     assert "## Prediction markets" in filtered
+
+
+def _gov(d, r, other):
+    q = BY_ID["governor-wi"]
+    return F.parse_answer(json.dumps({"governor-wi": {"D": d, "R": r, "Other": other}}), [q],
+                          round_id="d")
+
+
+def test_categorical_sum_band_is_one_plus_minus_ten_percent():
+    assert F.CATEGORICAL_SUM_TOLERANCE == 0.10
+    for d, r, o in [(0.54, 0.50, 0.04), (0.46, 0.44, 0.02), (0.55, 0.50, 0.05)]:  # 1.08/0.92/1.10
+        parsed = _gov(d, r, o)
+        assert parsed.missing == {}, (d, r, o)
+        df = parsed.frame()
+        assert abs(df["value"].sum() - 1) < 1e-9
+        tot = d + r + o
+        got = dict(zip(df["output_type_id"], df["value"]))
+        assert abs(got["D"] / got["R"] - d / r) < 1e-9
+        assert abs(got["D"] - d / tot) < 1e-9
+
+
+def test_categorical_outside_the_band_is_missing_with_reason():
+    for d, r, o in [(0.56, 0.50, 0.05), (0.45, 0.42, 0.02)]:  # 1.11 / 0.89
+        parsed = _gov(d, r, o)
+        assert "governor-wi" in parsed.missing and parsed.rows == []
+        assert "outside 1 ± 0.10" in parsed.missing["governor-wi"]
+
+
+def test_categorical_still_fails_closed_on_negative_or_missing_category():
+    q = BY_ID["governor-wi"]
+    for ans in ({"D": 1.1, "R": -0.1, "Other": 0.0}, {"D": 0.5, "R": 0.5}):
+        parsed = F.parse_answer(json.dumps({"governor-wi": ans}), [q], round_id="d")
+        assert "governor-wi" in parsed.missing and parsed.rows == []
+
+
+def test_batches_default_is_one_question_per_prompt():
+    assert F.DEFAULT_QUESTIONS_PER_PROMPT == 1
+    bs = F.batches(QS)
+    assert len(bs) == len(QS) and all(len(b) == 1 for b in bs)
+    assert [q["question_id"] for b in bs for q in b] != []
+    fam = F.batches(QS, max_per_batch=20)
+    assert max(len(b) for b in fam) > 1 and sum(len(b) for b in fam) == len(QS)

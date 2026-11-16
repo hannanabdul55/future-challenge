@@ -183,7 +183,7 @@ def _expected_sizes(n: int) -> list[int]:
 ])
 def test_batch_family_sizes(year, expected):
     got: dict[str, list[int]] = {}
-    for b in F.batches(_questions(year)):
+    for b in F.batches(_questions(year), max_per_batch=20):
         got.setdefault(b[0]["family"], []).append(len(b))
     assert got == expected
 
@@ -191,7 +191,7 @@ def test_batch_family_sizes(year, expected):
 def test_batch_family_sizes_2022_follow_the_audited_counts():
     audit = _audit_counts()
     got: dict[str, list[int]] = {}
-    for b in F.batches(_questions(2022)):
+    for b in F.batches(_questions(2022), max_per_batch=20):
         got.setdefault(b[0]["family"], []).append(len(b))
     assert got == {"control": [2], "seats": [2],
                    "governor": _expected_sizes(audit[(2022, "governor")]),

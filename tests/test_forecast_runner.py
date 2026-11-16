@@ -5,7 +5,13 @@ chat renderer is injected so llama_cpp is never imported."""
 from __future__ import annotations
 
 import importlib.util
+import json
+import re
+import sys
+import types
 from pathlib import Path
+
+import pytest
 
 SCRIPT = Path(__file__).resolve().parents[1] / "runner" / "forecast" / "forecast.py"
 _spec = importlib.util.spec_from_file_location("fc_runner_forecast_under_test", SCRIPT)
@@ -72,3 +78,60 @@ def test_thinking_off_prefills_exactly_one_empty_think_block():
         assert info == {"mode": "prefill", "think_prefill": True} and text == "answer"
         kw = llm.calls[0][1]
         assert kw["temperature"] == 0.0 and kw["stop"] == ["<|im_end|>"]
+
+
+# --------------------------------------------------------------------------- main()
+
+class _MainLlama:
+    """Stands in for llama_cpp.Llama: answers every question id found in the prompt."""
+
+    def __init__(self, **kw):
+        self.metadata = {}
+
+    def create_chat_completion(self, *, messages, **kw):
+        ids = re.findall(r'^- "([^"]+)":', messages[0]["content"], flags=re.M)
+        body = {i: {"p": 0.5} for i in ids}
+        return {"choices": [{"message": {"content": json.dumps(body)}}], "usage": {}}
+
+
+def _binary(qid: str, family: str) -> dict:
+    return {"question_id": qid, "family": family, "output_type": "binary",
+            "statement": f"Will {qid} happen?"}
+
+
+def _stage(tmp_path: Path, monkeypatch) -> Path:
+    qs = [_binary("control-house", "control"), _binary("control-senate", "control"),
+          _binary("seats-x", "seats")]
+    (tmp_path / "model").mkdir()
+    (tmp_path / "model" / "m.gguf").write_bytes(b"")
+    (tmp_path / "questions.json").write_text(json.dumps({"questions": qs}))
+    (tmp_path / "packet.md").write_text("## Overview\nrows\n")
+    (tmp_path / "template.md").write_text("Day {{DAY}}\n{{PACKET}}\n{{QUESTIONS}}\n")
+    out = tmp_path / "out"
+    monkeypatch.setattr(RUNNER, "MODEL_DIR", tmp_path / "model")
+    monkeypatch.setattr(RUNNER, "PACKET", tmp_path / "packet.md")
+    monkeypatch.setattr(RUNNER, "QUESTIONS", tmp_path / "questions.json")
+    monkeypatch.setattr(RUNNER, "TEMPLATE", tmp_path / "template.md")
+    monkeypatch.setattr(RUNNER, "OUT", out)
+    fake = types.ModuleType("llama_cpp")
+    fake.Llama = _MainLlama
+    monkeypatch.setitem(sys.modules, "llama_cpp", fake)
+    monkeypatch.setenv("FC_ROUND_ID", "r1")
+    monkeypatch.setenv("FC_DAY", "2026-11-24")
+    monkeypatch.setenv("FC_WEIGHTS_FILE", "m.gguf")
+    monkeypatch.delenv("FC_BATCH", raising=False)
+    return out
+
+
+@pytest.mark.parametrize("batch,lines", [(None, 3), ("20", 2)])
+def test_main_prompts_one_question_at_a_time_unless_fc_batch_says_otherwise(
+        tmp_path, monkeypatch, batch, lines):
+    out = _stage(tmp_path, monkeypatch)
+    if batch is not None:
+        monkeypatch.setenv("FC_BATCH", batch)
+    assert RUNNER.main() == 0
+    recs = [json.loads(x) for x in (out / "transcript.jsonl").read_text().splitlines()]
+    assert len(recs) == lines
+    status = json.loads((out / "status.json").read_text())
+    assert status["questions_per_prompt"] == (1 if batch is None else 20)
+    assert status["n_missing"] == 0 and status["parse_rate"] == 1.0
