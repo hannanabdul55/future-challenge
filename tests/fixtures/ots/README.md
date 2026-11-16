@@ -52,3 +52,17 @@ only reads, never links or modifies. Each is checked by a byte-exact parse/seria
 heights 912095 and 358391. For each height, `https://blockstream.info/api/block-height/{h}` and
 `https://mempool.space/api/block-height/{h}` returned the same block hash, the header came from
 `https://blockstream.info/api/block/{hash}/header`, and it double-SHA-256 hashes to that block hash.
+
+## Calendar response
+
+### calendar-pending.bin
+
+- Captured 2026-11-16 from a live POST of 32 random bytes to
+  `https://a.pool.opentimestamps.org/digest` (headers `Accept: application/vnd.opentimestamps.v1`
+  and a User-Agent). HTTP 200, 242 bytes.
+- Digest posted: `a58ef9f839009e86d1256d2528d97f9a98ed111b0de36abb99728418f9806927`.
+- The body is a bare serialized timestamp (no file header) whose root message is the posted digest;
+  it ends in a pending attestation (tag `83dfe30d2ef90c8e`) naming
+  `https://alice.btc.calendar.opentimestamps.org`. It grounds the pending tag and the URI shape the
+  allowlist in `fc/anchor.py` has to accept. Tests parse it against whatever digest they stamp; the
+  structure, not the digest, is what matters.
