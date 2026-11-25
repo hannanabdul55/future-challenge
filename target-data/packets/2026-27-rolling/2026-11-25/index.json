@@ -1,0 +1,24 @@
+{
+  "schema": "fc-packet/2026.10",
+  "day": "2026-11-25",
+  "season": "2026-27-rolling",
+  "built_at": "2026-11-25T06:05:03Z",
+  "packet.json": "8755fb807db87fa12d3e6c27f6699cacccfdb66316d134e7c743f970d48199da",
+  "packet.md": "b481b006de7f6fe37b7603c5adda81b5fc8fefadc5fd5b2c91f643e36712f351",
+  "attribution.json": "3553e3a48b97374e52ea2a3008294edfced6966257775ef422a9c08ea2a3fb8e",
+  "raw": {
+    "gdelt_headlines.json": "f03a417bf2e5c8606743aa7db561c19467482bf42868ea4e6dff2056e111282c",
+    "macro_series.json": "f7f0291d6159b182cd659e03e038b67fe3241507910ddb487b5246a38e626b9b",
+    "wikipedia_polls.json": "7f82f7cb56802e26b2d5a80a3c4f7321cd54676f6b55ef468e0afe8ff7fe592a"
+  },
+  "sections": {
+    "wikipedia_polls": "ok",
+    "prediction_markets": "unavailable",
+    "gdelt_headlines": "ok",
+    "macro_series": "ok"
+  },
+  "section_reasons": {
+    "prediction_markets": "no market mapping configured",
+    "gdelt_headlines": "'\"U.S. Bureau of Labor Statistics\" Average sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"U.S. Bureau of Labor Statistics\" CPI-U sourcelang:english': URLError: <urlopen error _ssl.c:1063: The handshake operation timed out>; '\"Federal Open Market Committee\" FOMC sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"U.S. Bureau of Labor Statistics\" Total sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"U.S. Bureau of Economic Analysis\" PCE sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"Federal Reserve Board\" 10-year sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"government shutdown\" OR \"lapse in appropriations\" OR \"continuing resolution\" sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"National Defense Authorization Act\" OR NDAA sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"Speaker of the House\" election ballot sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; 'LMArena OR \"Chatbot Arena\" leaderboard sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"context window\" \"million tokens\" model release sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"open-weight\" OR \"open weights\" LMArena sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests"
+  }
+}
