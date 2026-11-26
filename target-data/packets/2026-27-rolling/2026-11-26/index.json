@@ -1,0 +1,24 @@
+{
+  "schema": "fc-packet/2026.10",
+  "day": "2026-11-26",
+  "season": "2026-27-rolling",
+  "built_at": "2026-11-26T05:56:18Z",
+  "packet.json": "57a9325c1c69271f42d653602f41cedf16829b6ee6fdc5058c1f51e7b9fdb169",
+  "packet.md": "5e8f307e0a235916583f6a9b6b80fed82f7628a5df2ca9316826bc5fa2546ff0",
+  "attribution.json": "1289411f4eeb258a7b0f1d01ef16f8dc45800af2e1b857a1a88de22dd47851f1",
+  "raw": {
+    "gdelt_headlines.json": "59528fbc1bb74b0b41a9b3ad9e97e6c45e3c674e9331c0284e093a6ffdf3578b",
+    "macro_series.json": "2ae6ea8e352660a77a59a749b1e57a94ba22c600ed2e2db4753754dae8208bd6",
+    "wikipedia_polls.json": "1612d98287afb6ddac5b0254d7c5f4588f55ea70b869866590dbb3e2fa69cf14"
+  },
+  "sections": {
+    "wikipedia_polls": "ok",
+    "prediction_markets": "unavailable",
+    "gdelt_headlines": "ok",
+    "macro_series": "ok"
+  },
+  "section_reasons": {
+    "prediction_markets": "no market mapping configured",
+    "gdelt_headlines": "'\"U.S. Bureau of Labor Statistics\" CPI-U sourcelang:english': ValueError: non-JSON body: 'One or more of your keywords contained an illegal character. To use a dash in a '; '\"U.S. Bureau of Labor Statistics\" Unemployment sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"Federal Reserve Board\" 10-year sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"government shutdown\" OR \"lapse in appropriations\" OR \"continuing resolution\" sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"National Defense Authorization Act\" OR NDAA sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"Speaker of the House\" election ballot sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; 'LMArena OR \"Chatbot Arena\" leaderboard sourcelang:english': ValueError: non-JSON body: \"Queries containing OR'd terms must be surrounded by ().\\n\"; '\"open-weight\" OR \"open weights\" LMArena sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests"
+  }
+}

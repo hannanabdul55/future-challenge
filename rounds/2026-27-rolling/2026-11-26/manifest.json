@@ -1,0 +1,28 @@
+{
+  "round_id": "2026-27-rolling-2026-11-26",
+  "kind": "daily",
+  "season": "2026-27-rolling",
+  "day": "2026-11-26",
+  "rules_version": "2026.10",
+  "T_open": "2026-11-26T00:00:00Z",
+  "T_commit": "2026-11-26T12:00:00Z",
+  "T_reveal": "2026-11-26T18:00:00Z",
+  "questions_hash": "2d04529e3c4a034fe77dc381c93ea22ca1ea4a31d575009caca1f6d32c04de33",
+  "season_manifest_sha256": "5909c36d5b3df6f70f9aa945018ca316bceb42103d745c5e17cb2611ff7d59d9",
+  "packet": {
+    "path": "target-data/packets/2026-27-rolling/2026-11-26",
+    "index_sha256": "ec134c8cb1858b53b8fe3747c4fc313c5d38f83c006d2b166f02ab0d3e05d90f",
+    "packet_json_sha256": "57a9325c1c69271f42d653602f41cedf16829b6ee6fdc5058c1f51e7b9fdb169",
+    "packet_md_sha256": "5e8f307e0a235916583f6a9b6b80fed82f7628a5df2ca9316826bc5fa2546ff0",
+    "built_at": "2026-11-26T05:56:18Z"
+  },
+  "drand": {
+    "chain": "quicknet",
+    "round": 34282613,
+    "expected_time": "2026-11-26T00:00:03Z"
+  },
+  "hub_secret_commitment": null,
+  "runner_image_digest": null,
+  "evaluator_image_digest": null,
+  "published_at": "2026-11-26T05:56:19Z"
+}
