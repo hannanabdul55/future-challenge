@@ -1,0 +1,24 @@
+{
+  "schema": "fc-packet/2026.10",
+  "day": "2026-11-27",
+  "season": "2026-27-rolling",
+  "built_at": "2026-11-27T05:50:44Z",
+  "packet.json": "8207e6b20bda735cb056407c3c4ba386028f0d077c2deb70ecf19537ead9bd93",
+  "packet.md": "418b6c73c35ea58dacef0d7f81519c2c0dc5c1616d78e36133d6d2165adacf0c",
+  "attribution.json": "8cdb35f2ed2c8f295e1d752645799b92da267902c59314cc6a38dbc2a41e57e7",
+  "raw": {
+    "gdelt_headlines.json": "46c24376f8b2533e51b200d5bbd364a896f956db3a21b1742bf3d2b722109c35",
+    "macro_series.json": "2ae6ea8e352660a77a59a749b1e57a94ba22c600ed2e2db4753754dae8208bd6",
+    "wikipedia_polls.json": "c38827da319bb327757edab951b27668d0bdc1ca5988672c184b8d732cd6ae6e"
+  },
+  "sections": {
+    "wikipedia_polls": "ok",
+    "prediction_markets": "unavailable",
+    "gdelt_headlines": "ok",
+    "macro_series": "ok"
+  },
+  "section_reasons": {
+    "prediction_markets": "no market mapping configured",
+    "gdelt_headlines": "'\"U.S. Bureau of Labor Statistics\" CPI-U sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"Federal Open Market Committee\" FOMC sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"U.S. Bureau of Economic Analysis\" PCE sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"Federal Reserve Board\" 10-year sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"government shutdown\" OR \"lapse in appropriations\" OR \"continuing resolution\" sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"National Defense Authorization Act\" OR NDAA sourcelang:english': ValueError: non-JSON body: \"Queries containing OR'd terms must be surrounded by ().\\n\"; '\"Speaker of the House\" election ballot sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; 'LMArena OR \"Chatbot Arena\" leaderboard sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"context window\" \"million tokens\" model release sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"open-weight\" OR \"open weights\" LMArena sourcelang:english': ValueError: non-JSON body: \"Queries containing OR'd terms must be surrounded by ().\\n\""
+  }
+}
