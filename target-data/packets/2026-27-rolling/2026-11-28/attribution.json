@@ -1,0 +1,56 @@
+{
+  "packet_licence": "CC-BY-SA-4.0",
+  "sources": [
+    {
+      "name": "wikipedia_polls",
+      "status": "ok",
+      "licence": "CC-BY-SA-4.0",
+      "attribution": {
+        "pages": {
+          "politics-house-d-seats-120th": {
+            "title": "2026_United_States_House_of_Representatives_elections",
+            "revid": 1388419570,
+            "url": "https://en.wikipedia.org/w/index.php?title=2026_United_States_House_of_Representatives_elections&oldid=1388419570"
+          }
+        }
+      }
+    },
+    {
+      "name": "prediction_markets",
+      "status": "unavailable",
+      "licence": "platform terms (see legal-review \u00a72.4)",
+      "attribution": {}
+    },
+    {
+      "name": "gdelt_headlines",
+      "status": "unavailable",
+      "licence": "GDELT terms (free, attribution)",
+      "attribution": {
+        "queries": [
+          "\"U.S. Bureau of Labor Statistics\" Average sourcelang:english",
+          "\"U.S. Bureau of Labor Statistics\" CPI-U sourcelang:english",
+          "\"Federal Open Market Committee\" FOMC sourcelang:english",
+          "\"U.S. Bureau of Labor Statistics\" Total sourcelang:english",
+          "\"U.S. Bureau of Economic Analysis\" PCE sourcelang:english",
+          "\"U.S. Bureau of Labor Statistics\" Unemployment sourcelang:english",
+          "\"Federal Reserve Board\" 10-year sourcelang:english",
+          "\"government shutdown\" OR \"lapse in appropriations\" OR \"continuing resolution\" sourcelang:english",
+          "\"National Defense Authorization Act\" OR NDAA sourcelang:english",
+          "\"Speaker of the House\" election ballot sourcelang:english",
+          "LMArena OR \"Chatbot Arena\" leaderboard sourcelang:english",
+          "\"context window\" \"million tokens\" model release sourcelang:english",
+          "\"open-weight\" OR \"open weights\" LMArena sourcelang:english"
+        ]
+      }
+    },
+    {
+      "name": "macro_series",
+      "status": "ok",
+      "licence": "FRED terms of use (public-domain US government data)",
+      "attribution": {
+        "provider": "Federal Reserve Bank of St. Louis (FRED)",
+        "note": "latest vintage as of the snapshot"
+      }
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "schema": "fc-packet/2026.10",
+  "day": "2026-11-28",
+  "season": "2026-27-rolling",
+  "built_at": "2026-11-28T05:29:55Z",
+  "packet.json": "2576b14f61203f3973e898558843628d944d65de4a239e92f2a9b4d930524d3c",
+  "packet.md": "72207c034fe3dcd2b211582976b012bde0cc238b03e99cf017058258be0aabb2",
+  "attribution.json": "7ccf6c5da0dcb1d121c1e6625701178342a68ed53c7c9deb0ee98e67c77632ac",
+  "raw": {
+    "macro_series.json": "634c2d240e5d38716f2890db91b6de43ec6eb71b0898c2a9f18480828586a422",
+    "wikipedia_polls.json": "2e91195fa8db974220f31d09f2eb963cb1bcd03c9d181b33291229a108bda7cf"
+  },
+  "sections": {
+    "wikipedia_polls": "ok",
+    "prediction_markets": "unavailable",
+    "gdelt_headlines": "unavailable",
+    "macro_series": "ok"
+  },
+  "section_reasons": {
+    "prediction_markets": "no market mapping configured",
+    "gdelt_headlines": "'\"U.S. Bureau of Labor Statistics\" Average sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"U.S. Bureau of Labor Statistics\" CPI-U sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"Federal Open Market Committee\" FOMC sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"U.S. Bureau of Economic Analysis\" PCE sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"Federal Reserve Board\" 10-year sourcelang:english': ValueError: non-JSON body: 'One or more of your keywords contained an illegal character. To use a dash in a '; '\"government shutdown\" OR \"lapse in appropriations\" OR \"continuing resolution\" sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"National Defense Authorization Act\" OR NDAA sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"Speaker of the House\" election ballot sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; 'LMArena OR \"Chatbot Arena\" leaderboard sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"context window\" \"million tokens\" model release sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests; '\"open-weight\" OR \"open weights\" LMArena sourcelang:english': HTTPError: HTTP Error 429: Too Many Requests"
+  }
+}
